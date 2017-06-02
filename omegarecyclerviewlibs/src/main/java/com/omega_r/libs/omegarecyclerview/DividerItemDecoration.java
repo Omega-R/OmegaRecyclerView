@@ -129,7 +129,7 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
                             right = left + size;
                         }
                         divider.setAlpha((int) (child.getAlpha() * 255f));
-                        divider.setBounds(left, top, right , bottom);
+                        divider.setBounds(left, top, right, bottom);
                         divider.draw(c);
                         startIndex = i;
                         break;
@@ -160,7 +160,7 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
 
             // show end divider
             if ((mShowDivider & ShowDivider.END) == ShowDivider.END) {
-                for (int i = childCount - 1; i >=0; i--) {
+                for (int i = childCount - 1; i >= 0; i--) {
                     child = parent.getChildAt(i);
                     int childLayoutPosition = parent.getChildLayoutPosition(child);
                     int childAdapterPosition = parent.getChildAdapterPosition(child);
