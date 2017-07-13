@@ -4,6 +4,10 @@
 # OmegaRecyclerView
 Custom RecyclerView allow you add divider
 
+<p align="center">
+    <img src="/images/recycler_view.gif?raw=true" width="300" height="533" />
+</p>
+
 # Installation
 To get a Git project into your build:
 
