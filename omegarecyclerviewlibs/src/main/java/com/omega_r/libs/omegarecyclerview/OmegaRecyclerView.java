@@ -105,7 +105,9 @@ public class OmegaRecyclerView extends RecyclerView {
         public ViewHolder(View itemView) {
             super(itemView);
         }
+
+        public final <T extends View> T findViewById(int id) {
+            return (T) itemView.findViewById(id);
+        }
     }
-
-
 }
