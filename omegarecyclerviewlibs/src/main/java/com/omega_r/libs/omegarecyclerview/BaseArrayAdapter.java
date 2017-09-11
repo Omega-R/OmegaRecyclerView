@@ -3,6 +3,7 @@ package com.omega_r.libs.omegarecyclerview;
 
 import android.support.v7.widget.RecyclerView;
 
+import java.lang.reflect.Array;
 import java.util.Arrays;
 
 public abstract class BaseArrayAdapter<M, VH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<VH> {
@@ -27,24 +28,17 @@ public abstract class BaseArrayAdapter<M, VH extends RecyclerView.ViewHolder> ex
     }
 
     public void add(M... array) {
-        concatAll(mArray, array);
+        concat(mArray, array);
         notifyItemRangeInserted(mArray.length, array.length);
     }
 
-    private static <T> T[] concatAll(T[] first, T[]... rest) {
-        int totalLength = first.length;
+    private static <T> T concat(T[] first, T[]... rest) {
+        int totalLength = first.length + rest.length;
 
-        for (T[] array : rest) {
-            totalLength += array.length;
-        }
+        T result = (T) Arrays.copyOf(first, totalLength);
 
-        T[] result = Arrays.copyOf(first, totalLength);
-        int offset = first.length;
-
-        for (T[] array : rest) {
-            System.arraycopy(array, 0, result, offset, array.length);
-            offset += array.length;
-        }
+        System.arraycopy(first, 0, result, 0, first.length);
+        System.arraycopy(rest, 0, result, first.length, rest.length);
 
         return result;
     }
