@@ -2,7 +2,8 @@
 [![GitHub license](https://img.shields.io/github/license/dcendents/android-maven-gradle-plugin.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
 
 # OmegaRecyclerView
-Custom RecyclerView allow you add divider
+Custom RecyclerView with additional functionality. Allow you add divider, itemSpace, emptyView, sticky header
+and some other features
 
 <p align="center">
     <img src="/images/recycler_view.gif?raw=true" width="300" height="533" />
@@ -38,6 +39,31 @@ com.omega_r.libs.omegarecyclerview.OmegaRecyclerView
         android:dividerHeight="1dp"
         app:itemSpace="12dp"
         app:showDivider="middle"/>
+```
+
+To add sticky header into project you need implements StickyHeaderAdapter in adapters class
+```
+public class TestAdapter extends RecyclerView.Adapter<TestAdapter.ViewHolder>
+        implements StickyHeaderAdapter<TestAdapter.HeaderHolder>
+```
+
+Proper appearence of sticky header when using space item
+```
+stickyHeaderDecoration.setItemSpace(omegaRecyclerView.getItemSpace());
+```
+
+You can use findViewById without itemView
+```
+nameTextView = findViewById(R.id.text_contact_name);
+messageButton = findViewById(R.id.button_message);
+```
+
+For array use BaseArrayAdapter
+```
+getItemCount()
+getItem(position)
+set(array)
+add(array)
 ```
 
 # License
