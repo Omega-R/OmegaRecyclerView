@@ -1,10 +1,9 @@
 package com.omega_r.libs.omegarecyclerview.sticky_header;
 
+import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
-import com.omega_r.libs.omegarecyclerview.OmegaRecyclerView;
-
-public interface StickyHeaderAdapter<T extends OmegaRecyclerView.ViewHolder> {
+public interface StickyHeaderAdapter<T extends RecyclerView.ViewHolder> {
 
     long getHeaderId(int position);
 

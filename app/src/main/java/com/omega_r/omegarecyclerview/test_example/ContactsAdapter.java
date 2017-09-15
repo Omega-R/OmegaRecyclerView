@@ -1,5 +1,4 @@
-package com.omega_r.omegarecyclerview.adapter;
-
+package com.omega_r.omegarecyclerview.test_example;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -10,31 +9,16 @@ import android.widget.TextView;
 
 import com.omega_r.libs.omegarecyclerview.OmegaRecyclerView;
 import com.omega_r.omegarecyclerview.R;
-import com.omega_r.omegarecyclerview.model.Contact;
 
 import java.util.List;
 
 public class ContactsAdapter extends  OmegaRecyclerView.Adapter<ContactsAdapter.ViewHolder> {
 
-    public class ViewHolder extends OmegaRecyclerView.ViewHolder {
-
-        public TextView nameTextView;
-        public Button messageButton;
-
-
-        public ViewHolder(View itemView) {
-            super(itemView);
-
-            nameTextView = (TextView) itemView.findViewById(R.id.contact_name);
-            messageButton = (Button) itemView.findViewById(R.id.message_button);
-        }
-    }
-
-    private List<Contact> mContacts;
+    private List<Contacts> mContactsList;
     private Context mContext;
 
-    public ContactsAdapter(Context context, List<Contact> contacts) {
-        mContacts = contacts;
+    public ContactsAdapter(Context context, List<Contacts> contactsList) {
+        mContactsList = contactsList;
         mContext = context;
     }
 
@@ -54,14 +38,14 @@ public class ContactsAdapter extends  OmegaRecyclerView.Adapter<ContactsAdapter.
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Contact contact = mContacts.get(position);
+        Contacts contacts = mContactsList.get(position);
 
         TextView textView = holder.nameTextView;
-        textView.setText(contact.getName());
+        textView.setText(contacts.getName());
         Button button = holder.messageButton;
         button.setText(R.string.message);
 
-        if (contact.isOnline()) {
+        if (contacts.isOnline()) {
             button.setVisibility(View.VISIBLE);
         } else {
             button.setVisibility(View.GONE);
@@ -70,7 +54,20 @@ public class ContactsAdapter extends  OmegaRecyclerView.Adapter<ContactsAdapter.
 
     @Override
     public int getItemCount() {
-        return mContacts.size();
+        return mContactsList.size();
     }
 
+    public class ViewHolder extends OmegaRecyclerView.ViewHolder {
+
+        public TextView nameTextView;
+        public Button messageButton;
+
+
+        public ViewHolder(View itemView) {
+            super(itemView);
+
+            nameTextView = itemView.findViewById(R.id.contact_name);
+            messageButton = itemView.findViewById(R.id.message_button);
+        }
+    }
 }

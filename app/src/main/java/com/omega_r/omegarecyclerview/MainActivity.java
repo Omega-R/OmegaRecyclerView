@@ -1,12 +1,12 @@
 package com.omega_r.omegarecyclerview;
 
-import android.app.Activity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 
-import com.omega_r.omegarecyclerview.fragments.StickyHeaderFragment;
-import com.omega_r.omegarecyclerview.fragments.TestFragment;
+import com.omega_r.omegarecyclerview.sticky_header_example.StickyHeaderFragment;
+import com.omega_r.omegarecyclerview.test_example.TestFragment;
 
-public class MainActivity extends Activity {
+public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -16,7 +16,7 @@ public class MainActivity extends Activity {
         TestFragment testFragment = new TestFragment();
         StickyHeaderFragment stickyHeaderFragment = new StickyHeaderFragment();
 
-        getFragmentManager()
+        getSupportFragmentManager()
                 .beginTransaction()
                 .add(R.id.fragment_test_first, testFragment)
                 .add(R.id.fragment_test_second, stickyHeaderFragment)

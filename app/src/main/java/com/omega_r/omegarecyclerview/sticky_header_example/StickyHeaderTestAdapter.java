@@ -1,4 +1,4 @@
-package com.omega_r.omegarecyclerview.adapter;
+package com.omega_r.omegarecyclerview.sticky_header_example;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -8,27 +8,25 @@ import android.widget.TextView;
 
 import com.omega_r.libs.omegarecyclerview.OmegaRecyclerView;
 import com.omega_r.libs.omegarecyclerview.sticky_header.StickyHeaderAdapter;
-import com.omega_r.libs.omegarecyclerview.sticky_header.StickyHeaderDecoration;
 import com.omega_r.omegarecyclerview.R;
 
-public class StickyTestAdapter extends OmegaRecyclerView.Adapter<StickyTestAdapter.ViewHolder> implements
-        StickyHeaderAdapter<StickyTestAdapter.HeaderHolder> {
+public class StickyHeaderTestAdapter extends OmegaRecyclerView.Adapter<StickyHeaderTestAdapter.ViewHolder>
+        implements StickyHeaderAdapter<StickyHeaderTestAdapter.HeaderHolder> {
 
     private LayoutInflater mInflater;
 
-    public StickyTestAdapter(Context context) {
+    public StickyHeaderTestAdapter(Context context) {
         mInflater = LayoutInflater.from(context);
     }
 
     @Override
-    public StickyTestAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public StickyHeaderTestAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = mInflater.inflate(R.layout.item_test, parent, false);
-
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(StickyTestAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(StickyHeaderTestAdapter.ViewHolder holder, int position) {
         holder.item.setText("Item " + position);
     }
 
@@ -39,30 +37,25 @@ public class StickyTestAdapter extends OmegaRecyclerView.Adapter<StickyTestAdapt
 
     @Override
     public long getHeaderId(int position) {
-        if (position == 0) { // don't show header for first item
-            return StickyHeaderDecoration.NO_HEADER_ID;
-        }
         return (long) position / 7;
     }
 
     @Override
     public HeaderHolder onCreateHeaderViewHolder(ViewGroup parent) {
-        final View view = mInflater.inflate(R.layout.header_test, parent, false);
+        View view = mInflater.inflate(R.layout.sticky_header_test, parent, false);
         return new HeaderHolder(view);
     }
 
     @Override
-    public void onBindHeaderViewHolder(HeaderHolder viewholder, int position) {
-        viewholder.header.setText("Header " + getHeaderId(position));
+    public void onBindHeaderViewHolder(HeaderHolder viewHolder, int position) {
+        viewHolder.header.setText("Header " + getHeaderId(position));
     }
-
 
     static class ViewHolder extends OmegaRecyclerView.ViewHolder {
         public TextView item;
 
         public ViewHolder(View itemView) {
             super(itemView);
-
             item = (TextView) itemView;
         }
     }
@@ -72,7 +65,6 @@ public class StickyTestAdapter extends OmegaRecyclerView.Adapter<StickyTestAdapt
 
         public HeaderHolder(View itemView) {
             super(itemView);
-
             header = (TextView) itemView;
         }
     }

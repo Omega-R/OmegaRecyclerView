@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        tools:layout="@layout/fragment_sticky_header"/>
+        tools:layout="@layout/fragment_test"/>
 
     <FrameLayout
         android:id="@+id/fragment_test_second"

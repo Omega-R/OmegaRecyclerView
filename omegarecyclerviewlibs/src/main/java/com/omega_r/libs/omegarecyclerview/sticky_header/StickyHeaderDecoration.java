@@ -2,25 +2,18 @@ package com.omega_r.libs.omegarecyclerview.sticky_header;
 
 import android.graphics.Canvas;
 import android.graphics.Rect;
-import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.omega_r.libs.omegarecyclerview.OmegaRecyclerView;
-
-import java.util.HashMap;
-import java.util.Map;
-
-public class StickyHeaderDecoration extends OmegaRecyclerView.ItemDecoration {
+public class StickyHeaderDecoration extends RecyclerView.ItemDecoration {
 
     public static final long NO_HEADER_ID = -1L;
 
-    private Map<Long, RecyclerView.ViewHolder> mHeaderCache;
-
     private StickyHeaderAdapter mAdapter;
-
     private boolean mRenderInline;
+
+    private int mItemSpace;
 
     public StickyHeaderDecoration(StickyHeaderAdapter adapter) {
         this(adapter, false);
@@ -28,7 +21,6 @@ public class StickyHeaderDecoration extends OmegaRecyclerView.ItemDecoration {
 
     public StickyHeaderDecoration(StickyHeaderAdapter adapter, boolean renderInline) {
         mAdapter = adapter;
-        mHeaderCache = new HashMap<>();
         mRenderInline = renderInline;
     }
 
@@ -42,36 +34,16 @@ public class StickyHeaderDecoration extends OmegaRecyclerView.ItemDecoration {
                 && showHeaderAboveItem(position)) {
 
             View header = getHeader(parent, position).itemView;
-            headerHeight = getHeaderHeightForLayout(header);
+            headerHeight = getHeaderHeightForLayout(header) - mItemSpace;
         }
 
         outRect.set(0, headerHeight, 0, 0);
     }
 
     private boolean showHeaderAboveItem(int itemAdapterPosition) {
-        return itemAdapterPosition == 0 || mAdapter.getHeaderId(itemAdapterPosition - 1)
+        return itemAdapterPosition == 0
+                || mAdapter.getHeaderId(itemAdapterPosition - 1)
                 != mAdapter.getHeaderId(itemAdapterPosition);
-    }
-
-    public void clearHeaderCache() {
-        mHeaderCache.clear();
-    }
-
-    public View findHeaderViewUnder(float x, float y) {
-        for (RecyclerView.ViewHolder holder : mHeaderCache.values()) {
-            final View child = holder.itemView;
-            final float translationX = ViewCompat.getTranslationX(child);
-            final float translationY = ViewCompat.getTranslationY(child);
-
-            if (x >= child.getLeft() + translationX &&
-                    x <= child.getRight() + translationX &&
-                    y >= child.getTop() + translationY &&
-                    y <= child.getBottom() + translationY) {
-                return child;
-            }
-        }
-
-        return null;
     }
 
     private boolean hasHeader(int position) {
@@ -79,32 +51,24 @@ public class StickyHeaderDecoration extends OmegaRecyclerView.ItemDecoration {
     }
 
     private RecyclerView.ViewHolder getHeader(RecyclerView parent, int position) {
-        final long key = mAdapter.getHeaderId(position);
+        RecyclerView.ViewHolder holder = mAdapter.onCreateHeaderViewHolder(parent);
+        View header = holder.itemView;
 
-        if (mHeaderCache.containsKey(key)) {
-            return mHeaderCache.get(key);
-        } else {
-            OmegaRecyclerView.ViewHolder holder = mAdapter.onCreateHeaderViewHolder(parent);
-            View header = holder.itemView;
+        //noinspection unchecked
+        mAdapter.onBindHeaderViewHolder(holder, position);
 
-            //noinspection unchecked
-            mAdapter.onBindHeaderViewHolder(holder, position);
+        int widthSpec = View.MeasureSpec.makeMeasureSpec(parent.getMeasuredWidth(), View.MeasureSpec.EXACTLY);
+        int heightSpec = View.MeasureSpec.makeMeasureSpec(parent.getMeasuredHeight(), View.MeasureSpec.UNSPECIFIED);
 
-            int widthSpec = View.MeasureSpec.makeMeasureSpec(parent.getMeasuredWidth(), View.MeasureSpec.EXACTLY);
-            int heightSpec = View.MeasureSpec.makeMeasureSpec(parent.getMeasuredHeight(), View.MeasureSpec.UNSPECIFIED);
+        int childWidth = ViewGroup.getChildMeasureSpec(widthSpec,
+                parent.getPaddingLeft() + parent.getPaddingRight(), header.getLayoutParams().width);
+        int childHeight = ViewGroup.getChildMeasureSpec(heightSpec,
+                parent.getPaddingTop() + parent.getPaddingBottom(), header.getLayoutParams().height);
 
-            int childWidth = ViewGroup.getChildMeasureSpec(widthSpec,
-                    parent.getPaddingLeft() + parent.getPaddingRight(), header.getLayoutParams().width);
-            int childHeight = ViewGroup.getChildMeasureSpec(heightSpec,
-                    parent.getPaddingTop() + parent.getPaddingBottom(), header.getLayoutParams().height);
+        header.measure(childWidth, childHeight);
+        header.layout(0, 0, header.getMeasuredWidth(), header.getMeasuredHeight());
 
-            header.measure(childWidth, childHeight);
-            header.layout(0, 0, header.getMeasuredWidth(), header.getMeasuredHeight());
-
-            mHeaderCache.put(key, holder);
-
-            return holder;
-        }
+        return holder;
     }
 
     @Override
@@ -159,11 +123,13 @@ public class StickyHeaderDecoration extends OmegaRecyclerView.ItemDecoration {
                     }
                 }
             }
-
             top = Math.max(0, top);
         }
-
         return top;
+    }
+
+    public void setItemSpace(int itemSpace) {
+        mItemSpace = itemSpace;
     }
 
     private int getHeaderHeightForLayout(View header) {

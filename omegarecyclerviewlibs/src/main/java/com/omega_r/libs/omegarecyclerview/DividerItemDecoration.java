@@ -194,5 +194,4 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
 
         return true;
     }
-
 }
