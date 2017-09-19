@@ -41,6 +41,11 @@ com.omega_r.libs.omegarecyclerview.OmegaRecyclerView
         app:showDivider="middle"/>
 ```
 
+## StickyHeader
+<p align="center">
+    <img src="/images/sticky_header.gif?raw=true" width="300" height="533" />
+</p>
+
 To add sticky header into project you need implements StickyHeaderAdapter in adapters class
 ```
 public class TestAdapter extends RecyclerView.Adapter<TestAdapter.ViewHolder>
