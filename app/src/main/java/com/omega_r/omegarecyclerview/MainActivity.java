@@ -1,32 +1,25 @@
 package com.omega_r.omegarecyclerview;
 
-import android.app.Activity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.app.AppCompatActivity;
 
-import com.omega_r.libs.omegarecyclerview.OmegaRecyclerView;
-import com.omega_r.omegarecyclerview.adapter.ContactsAdapter;
-import com.omega_r.omegarecyclerview.model.Contact;
+import com.omega_r.omegarecyclerview.sticky_header_example.StickyHeaderFragment;
+import com.omega_r.omegarecyclerview.test_example.TestFragment;
 
-import java.util.ArrayList;
-
-public class MainActivity extends Activity {
-
-    ArrayList<Contact> mContacts;
+public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        OmegaRecyclerView omegaRecyclerView = (OmegaRecyclerView) findViewById(R.id.recycler_view_contacts);
+        TestFragment testFragment = new TestFragment();
+        StickyHeaderFragment stickyHeaderFragment = new StickyHeaderFragment();
 
-        mContacts = Contact.createContactsList(20);
-        ContactsAdapter adapter = new ContactsAdapter(this, mContacts);
-        omegaRecyclerView.setAdapter(adapter);
-        omegaRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        mContacts.add(20, new Contact(null, false));
-        adapter.notifyItemInserted(20);
+        getSupportFragmentManager()
+                .beginTransaction()
+                .add(R.id.fragment_test_first, testFragment)
+                .add(R.id.fragment_test_second, stickyHeaderFragment)
+                .commit();
     }
 }

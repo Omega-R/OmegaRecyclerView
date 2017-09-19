@@ -24,6 +24,8 @@ public class OmegaRecyclerView extends RecyclerView {
     private View mEmptyView;
     private int mEmptyViewId;
 
+    private int mItemSpace;
+
     private AdapterDataObserver mEmptyObserver = new AdapterDataObserver() {
         @Override
         public void onChanged() {
@@ -99,8 +101,8 @@ public class OmegaRecyclerView extends RecyclerView {
 
     public void initItemSpace(TypedArray a) {
         if (a.hasValue(R.styleable.OmegaRecyclerView_itemSpace)) {
-            int space = (int) a.getDimension(R.styleable.OmegaRecyclerView_itemSpace, 0);
-            addItemSpace(space);
+            mItemSpace = (int) a.getDimension(R.styleable.OmegaRecyclerView_itemSpace, 0);
+            addItemSpace(mItemSpace);
         }
     }
 
@@ -134,6 +136,9 @@ public class OmegaRecyclerView extends RecyclerView {
         addItemDecoration(new SpaceItemDecoration(space));
     }
 
+    public int getItemSpace() {
+        return mItemSpace;
+    }
 
     public abstract static class Adapter<VH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<VH> {
         public boolean isShowDivided(int position) {

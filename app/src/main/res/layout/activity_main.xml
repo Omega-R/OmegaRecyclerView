@@ -1,20 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:padding="16dp"
     tools:context="com.omega_r.omegarecyclerview.MainActivity">
 
-    <com.omega_r.libs.omegarecyclerview.OmegaRecyclerView
-        android:id="@+id/recycler_view_contacts"
+    <FrameLayout
+        android:id="@+id/fragment_test_first"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:divider="@drawable/divider"
-        android:dividerHeight="1dp"
-        app:itemSpace="8dp"
-        app:showDivider="middle"/>
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        tools:layout="@layout/fragment_test"/>
 
-</RelativeLayout>
+    <FrameLayout
+        android:id="@+id/fragment_test_second"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        tools:layout="@layout/fragment_sticky_header"/>
+</LinearLayout>
