@@ -3,12 +3,10 @@ package com.omega_r.libs.omegarecyclerview;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
-import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -21,8 +19,54 @@ import android.view.ViewGroup;
 
 public class OmegaRecyclerView extends RecyclerView {
 
-    private static final int[] DEFAULT_DIVIDER_ATTRS = new int[]{ android.R.attr.listDivider };
+    private static final int[] DEFAULT_DIVIDER_ATTRS = new int[]{android.R.attr.listDivider};
 
+    private View mEmptyView;
+    private int mEmptyViewId;
+
+    private int mItemSpace;
+
+    private AdapterDataObserver mEmptyObserver = new AdapterDataObserver() {
+        @Override
+        public void onChanged() {
+            RecyclerView.Adapter adapter = getAdapter();
+            if (adapter != null && mEmptyView != null) {
+                if (adapter.getItemCount() == 0) {
+                    mEmptyView.setVisibility(View.VISIBLE);
+                } else {
+                    mEmptyView.setVisibility(View.GONE);
+                }
+            }
+        }
+    };
+
+    @Override
+    public void setAdapter(RecyclerView.Adapter adapter) {
+        if (getAdapter() != null) {
+            getAdapter().unregisterAdapterDataObserver(mEmptyObserver);
+        }
+        if (adapter != null) {
+            adapter.registerAdapterDataObserver(mEmptyObserver);
+        }
+        super.setAdapter(adapter);
+        mEmptyObserver.onChanged();
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        findEmptyView();
+    }
+
+    private void findEmptyView() {
+        if (mEmptyViewId == 0 || isInEditMode()) {
+            return;
+        }
+        if (getParent() instanceof ViewGroup) {
+            ViewGroup viewGroup = (ViewGroup) getParent();
+            mEmptyView = viewGroup.findViewById(mEmptyViewId);
+        }
+    }
 
     public OmegaRecyclerView(Context context) {
         super(context);
@@ -44,14 +88,21 @@ public class OmegaRecyclerView extends RecyclerView {
             TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.OmegaRecyclerView, defStyleAttr, 0);
             initItemSpace(a);
             initDivider(a);
+            initEmptyView(a);
             a.recycle();
+        }
+    }
+
+    private void initEmptyView(TypedArray a) {
+        if (a.hasValue(R.styleable.OmegaRecyclerView_emptyView)) {
+            mEmptyViewId = a.getResourceId(R.styleable.OmegaRecyclerView_emptyView, 0);
         }
     }
 
     public void initItemSpace(TypedArray a) {
         if (a.hasValue(R.styleable.OmegaRecyclerView_itemSpace)) {
-            int space = (int) a.getDimension(R.styleable.OmegaRecyclerView_itemSpace, 0);
-            addItemSpace(space);
+            mItemSpace = (int) a.getDimension(R.styleable.OmegaRecyclerView_itemSpace, 0);
+            addItemSpace(mItemSpace);
         }
     }
 
@@ -85,6 +136,9 @@ public class OmegaRecyclerView extends RecyclerView {
         addItemDecoration(new SpaceItemDecoration(space));
     }
 
+    public int getItemSpace() {
+        return mItemSpace;
+    }
 
     public abstract static class Adapter<VH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<VH> {
         public boolean isShowDivided(int position) {
@@ -94,18 +148,20 @@ public class OmegaRecyclerView extends RecyclerView {
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        public ViewHolder (ViewGroup parent, @LayoutRes int res) {
+        public ViewHolder(ViewGroup parent, @LayoutRes int res) {
             this(parent, LayoutInflater.from(parent.getContext()), res);
         }
 
-        public ViewHolder (ViewGroup parent, LayoutInflater layoutInflater, @LayoutRes int res) {
+        public ViewHolder(ViewGroup parent, LayoutInflater layoutInflater, @LayoutRes int res) {
             this(layoutInflater.inflate(res, parent, false));
         }
 
         public ViewHolder(View itemView) {
             super(itemView);
         }
+
+        protected final <T extends View> T findViewById(int id) {
+            return (T) itemView.findViewById(id);
+        }
     }
-
-
 }
