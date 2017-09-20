@@ -1,4 +1,4 @@
-package com.omega_r.omegarecyclerview.test_example;
+package com.omega_r.omegarecyclerview.swipe_menu_example;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -62,12 +62,11 @@ public class ContactsAdapter extends  OmegaRecyclerView.Adapter<ContactsAdapter.
         public TextView nameTextView;
         public Button messageButton;
 
-
         public ViewHolder(View itemView) {
             super(itemView);
 
-            nameTextView = itemView.findViewById(R.id.contact_name);
-            messageButton = itemView.findViewById(R.id.message_button);
+            nameTextView = itemView.findViewById(R.id.text_contact_name);
+            messageButton = itemView.findViewById(R.id.button_message);
         }
     }
 }

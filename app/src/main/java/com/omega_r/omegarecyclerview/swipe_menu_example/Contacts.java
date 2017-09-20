@@ -1,4 +1,4 @@
-package com.omega_r.omegarecyclerview.test_example;
+package com.omega_r.omegarecyclerview.swipe_menu_example;
 
 
 import java.util.ArrayList;
