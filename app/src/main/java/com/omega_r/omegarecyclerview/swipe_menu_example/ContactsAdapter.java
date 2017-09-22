@@ -6,38 +6,31 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.omega_r.libs.omegarecyclerview.OmegaRecyclerView;
 import com.omega_r.omegarecyclerview.R;
 
 import java.util.List;
 
-public class ContactsAdapter extends  OmegaRecyclerView.Adapter<ContactsAdapter.ViewHolder> {
+public class ContactsAdapter extends OmegaRecyclerView.Adapter<ContactsAdapter.ViewHolder> {
 
     private List<Contacts> mContactsList;
-    private Context mContext;
 
-    public ContactsAdapter(Context context, List<Contacts> contactsList) {
+    public ContactsAdapter(List<Contacts> contactsList) {
         mContactsList = contactsList;
-        mContext = context;
-    }
-
-    private Context getContext() {
-        return mContext;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Context context = parent.getContext();
-        LayoutInflater inflater = LayoutInflater.from(context);
+        View view = LayoutInflater.from(context).inflate(R.layout.item_swipe, parent, false);
 
-        View contactView = inflater.inflate(R.layout.item_contact, parent, false);
-
-        return new ViewHolder(contactView);
+        return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, int position) {
         Contacts contacts = mContactsList.get(position);
 
         TextView textView = holder.nameTextView;
@@ -50,6 +43,20 @@ public class ContactsAdapter extends  OmegaRecyclerView.Adapter<ContactsAdapter.
         } else {
             button.setVisibility(View.GONE);
         }
+
+        holder.editTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(holder.itemView.getContext(), "Edit", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        holder.deleteTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(holder.itemView.getContext(), "Delete", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
@@ -59,14 +66,17 @@ public class ContactsAdapter extends  OmegaRecyclerView.Adapter<ContactsAdapter.
 
     public class ViewHolder extends OmegaRecyclerView.ViewHolder {
 
-        public TextView nameTextView;
-        public Button messageButton;
+        TextView nameTextView;
+        Button messageButton;
+        TextView editTextView;
+        TextView deleteTextView;
 
         public ViewHolder(View itemView) {
             super(itemView);
-
-            nameTextView = itemView.findViewById(R.id.text_contact_name);
-            messageButton = itemView.findViewById(R.id.button_message);
+            nameTextView = findViewById(R.id.text_contact_name);
+            messageButton = findViewById(R.id.button_message);
+            editTextView = findViewById(R.id.text_edit);
+            deleteTextView = findViewById(R.id.text_delete);
         }
     }
 }

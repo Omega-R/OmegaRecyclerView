@@ -18,7 +18,7 @@ public class SwipeMenuActivity extends AppCompatActivity {
 
         OmegaRecyclerView omegaRecyclerView = findViewById(R.id.recycler_view_contacts);
         ArrayList<Contacts> contactsList = Contacts.createContactsList(20);
-        ContactsAdapter adapter = new ContactsAdapter(this, contactsList);
+        ContactsAdapter adapter = new ContactsAdapter(contactsList);
 
         omegaRecyclerView.setAdapter(adapter);
         omegaRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
