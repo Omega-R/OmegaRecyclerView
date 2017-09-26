@@ -45,7 +45,7 @@ public class SwipeMenuHelper {
 
         touchingView = mCallback.transformTouchView(touchingPosition, touchingView);
 
-        if (touchingView != null) {
+        if (touchingView != null && touchingView instanceof ViewGroup) {
             View itemView = getSwipeMenuView((ViewGroup) touchingView);
             if (itemView != null && itemView instanceof SwipeHorizontalMenuLayout) {
                 mOldSwipedView = (SwipeHorizontalMenuLayout) itemView;

@@ -2,19 +2,13 @@ package com.omega_r.libs.omegarecyclerview.swipe_menu;
 
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.util.AttributeSet;
-import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
-import android.view.animation.AnimationUtils;
-import android.view.animation.Interpolator;
 import android.widget.FrameLayout;
 import android.widget.OverScroller;
 
-import com.omega_r.libs.omegarecyclerview.R;
-import com.omega_r.libs.omegarecyclerview.swipe_menu.listener.SwipeFractionListener;
 import com.omega_r.libs.omegarecyclerview.swipe_menu.listener.SwipeSwitchListener;
 import com.omega_r.libs.omegarecyclerview.swipe_menu.swiper.Swiper;
 
@@ -51,9 +45,6 @@ public abstract class SwipeMenuLayout extends FrameLayout {
     protected VelocityTracker mVelocityTracker;
 
     protected SwipeSwitchListener mSwipeSwitchListener;
-    protected SwipeFractionListener mSwipeFractionListener;
-
-    protected NumberFormat mDecimalFormat = new DecimalFormat("#.00", new DecimalFormatSymbols(Locale.US));
 
     public SwipeMenuLayout(Context context) {
         this(context, null);

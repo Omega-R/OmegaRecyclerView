@@ -139,9 +139,10 @@ public class OmegaRecyclerView extends RecyclerView implements SwipeMenuHelper.C
     }
 
     private Drawable getDefaultDivider() {
-        final TypedArray attributes = getContext().obtainStyledAttributes(DEFAULT_DIVIDER_ATTRS);
+        TypedArray attributes = getContext().obtainStyledAttributes(DEFAULT_DIVIDER_ATTRS);
         Drawable dividerDrawable = attributes.getDrawable(0);
         attributes.recycle();
+
         if (dividerDrawable == null) {
             dividerDrawable = new ColorDrawable(Color.GRAY);
         }
