@@ -33,18 +33,20 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
     private int mDividerSize;
     private int mShowDivider;
     private final int mOffset;
+    private final float mDividerAlpha;
     private int mOrientation;
 
-    public DividerItemDecoration(Drawable divider, int dividerSize, int showDivider, int offset) {
-        this(divider, Orientation.UNKNOWN, dividerSize, showDivider, offset);
+    public DividerItemDecoration(Drawable divider, int dividerSize, int showDivider, int offset, float dividerAlpha) {
+        this(divider, Orientation.UNKNOWN, dividerSize, showDivider, offset, dividerAlpha);
     }
 
-    public DividerItemDecoration(Drawable divider, int orientation, int dividerSize, int showDivider, int offset) {
+    public DividerItemDecoration(Drawable divider, int orientation, int dividerSize, int showDivider, int offset, float dividerAlpha) {
         mOrientation = orientation;
         mDivider = divider;
         mDividerSize = dividerSize;
         mShowDivider = showDivider;
         mOffset = offset;
+        mDividerAlpha = dividerAlpha;
         updateSize();
     }
 
@@ -129,7 +131,7 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
                             left = child.getRight() + params.rightMargin;
                             right = left + size;
                         }
-                        divider.setAlpha((int) (child.getAlpha() * 255f));
+                        divider.setAlpha((int) (child.getAlpha() * 255f * mDividerAlpha));
                         divider.setBounds(left, top, right, bottom);
                         divider.draw(c);
                         startIndex = i;
@@ -152,7 +154,7 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
                             left = child.getLeft() - params.leftMargin - mOffset;
                             right = left + size;
                         }
-                        divider.setAlpha((int) (child.getAlpha() * 255f));
+                        divider.setAlpha((int) (child.getAlpha() * 255f * mDividerAlpha));
                         divider.setBounds(left, top, right, bottom);
                         divider.draw(c);
                     }
@@ -176,7 +178,7 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
                             right = left + size;
                         }
 
-                        divider.setAlpha((int) (child.getAlpha() * 255f));
+                        divider.setAlpha((int) (child.getAlpha() * 255f * mDividerAlpha));
                         divider.setBounds(left, top, right, bottom);
                         divider.draw(c);
                         break;
