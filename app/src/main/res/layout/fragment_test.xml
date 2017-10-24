@@ -11,6 +11,6 @@
         android:layout_height="match_parent"
         android:divider="@drawable/divider"
         android:dividerHeight="1dp"
-        app:itemSpace="4dp"
+        app:itemSpace="32dp"
         app:showDivider="middle"/>
 </FrameLayout>
