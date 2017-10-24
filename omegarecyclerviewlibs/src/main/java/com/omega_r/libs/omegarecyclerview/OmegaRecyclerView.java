@@ -116,7 +116,8 @@ public class OmegaRecyclerView extends RecyclerView {
                 }
 
                 float dividerHeight = a.getDimension(R.styleable.OmegaRecyclerView_android_dividerHeight, -1);
-                addItemDecoration(new DividerItemDecoration(dividerDrawable, (int) dividerHeight, showDivider, mItemSpace / 2));
+                float alpha = a.getFloat(R.styleable.OmegaRecyclerView_alphaDivider, 1);
+                addItemDecoration(new DividerItemDecoration(dividerDrawable, (int) dividerHeight, showDivider, mItemSpace / 2, alpha));
             }
         }
     }
