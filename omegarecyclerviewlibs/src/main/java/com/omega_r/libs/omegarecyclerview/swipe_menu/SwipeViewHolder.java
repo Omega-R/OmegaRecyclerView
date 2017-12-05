@@ -1,6 +1,7 @@
 package com.omega_r.libs.omegarecyclerview.swipe_menu;
 
 import android.support.annotation.LayoutRes;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,10 +10,13 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 import com.omega_r.libs.omegarecyclerview.OmegaRecyclerView;
+import com.omega_r.libs.omegarecyclerview.swipe_menu.listener.SwipeFractionListener;
+import com.omega_r.libs.omegarecyclerview.swipe_menu.listener.SwipeSwitchListener;
 
 public class SwipeViewHolder extends OmegaRecyclerView.ViewHolder {
 
     public static final int NO_ID = 0;
+    private SwipeHorizontalMenuLayout mSwipeMenuLayout;
 
     public SwipeViewHolder(ViewGroup parent, @LayoutRes int contentRes,
                            @LayoutRes int swipeLeftMenuRes, @LayoutRes int swipeRightMenuRes) {
@@ -48,15 +52,43 @@ public class SwipeViewHolder extends OmegaRecyclerView.ViewHolder {
     private SwipeViewHolder(SwipeHorizontalMenuLayout swipeMenuLayout,
                             View contentView, @Nullable View swipeLeftMenuView, @Nullable View swipeRightMenuView) {
         super(swipeMenuLayout);
-        swipeMenuLayout.setClickable(true);
-        swipeMenuLayout.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        swipeMenuLayout.setContentView(contentView);
-        if (swipeLeftMenuView != null) swipeMenuLayout.setLeftMenu(swipeLeftMenuView);
-        if (swipeRightMenuView != null) swipeMenuLayout.setRightMenu(swipeRightMenuView);
+        mSwipeMenuLayout = swipeMenuLayout;
+        mSwipeMenuLayout.setClickable(true);
+        mSwipeMenuLayout.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        mSwipeMenuLayout.setContentView(contentView);
+        if (swipeLeftMenuView != null) mSwipeMenuLayout.setLeftMenu(swipeLeftMenuView);
+        if (swipeRightMenuView != null) mSwipeMenuLayout.setRightMenu(swipeRightMenuView);
     }
 
     private static View inflateView(ViewGroup parent, LayoutInflater layoutInflater, @LayoutRes int resId) {
         return resId == NO_ID ? null : layoutInflater.inflate(resId, parent, false);
     }
 
+    public void setSwipeFractionListener(@Nullable SwipeFractionListener listener) {
+        mSwipeMenuLayout.setSwipeFractionListener(listener);
+    }
+
+    public void setSwipeListener(@Nullable SwipeSwitchListener listener) {
+        mSwipeMenuLayout.setSwipeListener(listener);
+    }
+
+    public void smoothCloseMenu(int duration) {
+        mSwipeMenuLayout.smoothCloseMenu(duration);
+    }
+
+    public void smoothCloseMenu() {
+        mSwipeMenuLayout.smoothCloseMenu();
+    }
+
+    public void smoothOpenBeginMenu() {
+        mSwipeMenuLayout.smoothOpenBeginMenu();
+    }
+
+    public void smoothOpenEndMenu() {
+        mSwipeMenuLayout.smoothOpenEndMenu();
+    }
+
+    public void setSwipeEnable(boolean enable) {
+        mSwipeMenuLayout.setSwipeEnable(enable);
+    }
 }
