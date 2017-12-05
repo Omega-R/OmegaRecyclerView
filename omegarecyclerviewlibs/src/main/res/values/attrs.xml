@@ -10,6 +10,7 @@
             <flag name="middle" value="2" />
             <flag name="end" value="4" />
         </attr>
+        <attr name="alphaDivider" format="float"/>
         <attr name="emptyView" format="reference" />
     </declare-styleable>
 </resources>

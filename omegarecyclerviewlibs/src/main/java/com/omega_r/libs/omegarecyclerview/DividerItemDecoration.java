@@ -32,18 +32,21 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
     private final Drawable mDivider;
     private int mDividerSize;
     private int mShowDivider;
+    private final int mOffset;
+    private final float mDividerAlpha;
     private int mOrientation;
-    private int mDividerPadding;
 
-    public DividerItemDecoration(Drawable divider, int dividerSize, int showDivider) {
-        this(divider, Orientation.UNKNOWN, dividerSize, showDivider);
+    public DividerItemDecoration(Drawable divider, int dividerSize, int showDivider, int offset, float dividerAlpha) {
+        this(divider, Orientation.UNKNOWN, dividerSize, showDivider, offset, dividerAlpha);
     }
 
-    public DividerItemDecoration(Drawable divider, int orientation, int dividerSize, int showDivider) {
+    public DividerItemDecoration(Drawable divider, int orientation, int dividerSize, int showDivider, int offset, float dividerAlpha) {
         mOrientation = orientation;
         mDivider = divider;
         mDividerSize = dividerSize;
         mShowDivider = showDivider;
+        mOffset = offset;
+        mDividerAlpha = dividerAlpha;
         updateSize();
     }
 
@@ -101,12 +104,12 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
         if (childCount > 0) {
             if (mOrientation == Orientation.VERTICAL) {
                 size = mDividerSize;
-                left = parent.getPaddingLeft() + mDividerPadding;
-                right = parent.getWidth() - parent.getPaddingRight() - mDividerPadding;
+                left = parent.getPaddingLeft();
+                right = parent.getWidth() - parent.getPaddingRight();
             } else { //horizontal
                 size = mDividerSize;
-                top = parent.getPaddingTop() + mDividerPadding;
-                bottom = parent.getHeight() - parent.getPaddingBottom() - mDividerPadding;
+                top = parent.getPaddingTop();
+                bottom = parent.getHeight() - parent.getPaddingBottom() ;
             }
 
             // show beginning divider
@@ -128,7 +131,7 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
                             left = child.getRight() + params.rightMargin;
                             right = left + size;
                         }
-                        divider.setAlpha((int) (child.getAlpha() * 255f));
+                        divider.setAlpha((int) (child.getAlpha() * 255f * mDividerAlpha));
                         divider.setBounds(left, top, right, bottom);
                         divider.draw(c);
                         startIndex = i;
@@ -145,13 +148,13 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
                         params = (RecyclerView.LayoutParams) child.getLayoutParams();
 
                         if (mOrientation == Orientation.VERTICAL) {
-                            top = child.getTop() - params.topMargin - mDividerSize;
+                            top = child.getTop() - params.topMargin - mDividerSize - mOffset;
                             bottom = top + size;
                         } else { //horizontal
-                            left = child.getLeft() - params.leftMargin;
+                            left = child.getLeft() - params.leftMargin - mOffset;
                             right = left + size;
                         }
-                        divider.setAlpha((int) (child.getAlpha() * 255f));
+                        divider.setAlpha((int) (child.getAlpha() * 255f * mDividerAlpha));
                         divider.setBounds(left, top, right, bottom);
                         divider.draw(c);
                     }
@@ -175,7 +178,7 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
                             right = left + size;
                         }
 
-                        divider.setAlpha((int) (child.getAlpha() * 255f));
+                        divider.setAlpha((int) (child.getAlpha() * 255f * mDividerAlpha));
                         divider.setBounds(left, top, right, bottom);
                         divider.draw(c);
                         break;
