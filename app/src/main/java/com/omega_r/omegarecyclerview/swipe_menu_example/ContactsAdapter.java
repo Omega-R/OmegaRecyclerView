@@ -10,11 +10,12 @@ import com.omega_r.libs.omegarecyclerview.OmegaRecyclerView;
 import com.omega_r.libs.omegarecyclerview.swipe_menu.SwipeViewHolder;
 import com.omega_r.omegarecyclerview.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ContactsAdapter extends OmegaRecyclerView.Adapter<ContactsAdapter.ViewHolder> {
 
-    private List<Contacts> mContactsList;
+    private List<Contacts> mContactsList = new ArrayList<>();
 
     public ContactsAdapter(List<Contacts> contactsList) {
         mContactsList = contactsList;
@@ -22,7 +23,7 @@ public class ContactsAdapter extends OmegaRecyclerView.Adapter<ContactsAdapter.V
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new ViewHolder(parent, R.layout.item_swipe_content, SwipeViewHolder.NO_ID, R.layout.item_swipe_menu);
+        return new ViewHolder(parent);
     }
 
     @Override
@@ -42,8 +43,8 @@ public class ContactsAdapter extends OmegaRecyclerView.Adapter<ContactsAdapter.V
         private TextView editTextView;
         private TextView deleteTextView;
 
-        public ViewHolder(ViewGroup parent, int contentRes, int swipeLeftMenuRes, int swipeRightMenuRes) {
-            super(parent, contentRes, swipeLeftMenuRes, swipeRightMenuRes);
+        public ViewHolder(ViewGroup parent) {
+            super(parent, R.layout.item_swipe_content, R.layout.item_swipe_menu);
 
             nameTextView = findViewById(R.id.text_contact_name);
             messageButton = findViewById(R.id.button_message);

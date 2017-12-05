@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 import com.omega_r.libs.omegarecyclerview.OmegaRecyclerView;
@@ -28,6 +29,18 @@ public class SwipeViewHolder extends OmegaRecyclerView.ViewHolder {
                 inflateView(parent, layoutInflater, swipeRightMenuRes));
     }
 
+    public SwipeViewHolder(ViewGroup parent, @LayoutRes int contentRes, @LayoutRes int swipeMenuRes) {
+        this(parent, LayoutInflater.from(parent.getContext()), contentRes, swipeMenuRes);
+    }
+
+    public SwipeViewHolder(ViewGroup parent, LayoutInflater inflater, int contentRes, int swipeMenuRes) {
+        this(inflateView(parent, inflater, contentRes), inflateView(parent, inflater, swipeMenuRes));
+    }
+
+    public SwipeViewHolder(View contentView, @Nullable View swipeMenuView) {
+        this(new SwipeHorizontalMenuLayout(contentView.getContext()), contentView, swipeMenuView, swipeMenuView);
+    }
+
     public SwipeViewHolder(View contentView, @Nullable View swipeLeftMenuView, @Nullable View swipeRightMenuView) {
         this(new SwipeHorizontalMenuLayout(contentView.getContext()), contentView, swipeLeftMenuView, swipeRightMenuView);
     }
@@ -35,7 +48,8 @@ public class SwipeViewHolder extends OmegaRecyclerView.ViewHolder {
     private SwipeViewHolder(SwipeHorizontalMenuLayout swipeMenuLayout,
                             View contentView, @Nullable View swipeLeftMenuView, @Nullable View swipeRightMenuView) {
         super(swipeMenuLayout);
-        swipeMenuLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        swipeMenuLayout.setClickable(true);
+        swipeMenuLayout.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         swipeMenuLayout.setContentView(contentView);
         if (swipeLeftMenuView != null) swipeMenuLayout.setLeftMenu(swipeLeftMenuView);
         if (swipeRightMenuView != null) swipeMenuLayout.setRightMenu(swipeRightMenuView);

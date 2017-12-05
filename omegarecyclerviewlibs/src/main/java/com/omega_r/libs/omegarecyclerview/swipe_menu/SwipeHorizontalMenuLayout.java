@@ -2,6 +2,7 @@ package com.omega_r.libs.omegarecyclerview.swipe_menu;
 
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
@@ -191,6 +192,28 @@ public class SwipeHorizontalMenuLayout extends SwipeMenuLayout {
         shouldResetSwiper = checker.shouldResetSwiper;
         if (checker.x != getScrollX()) {
             super.scrollTo(checker.x, checker.y);
+
+            if (mContentView != null && mBeginSwiper != null && mEndSwiper != null) {
+                int parentViewWidth = ViewCompat.getMeasuredWidthAndState(this);
+                LayoutParams lp = (LayoutParams) mContentView.getLayoutParams();
+                int tGap = getPaddingTop() + lp.topMargin;
+                int menuViewWidth = ViewCompat.getMeasuredWidthAndState(mEndSwiper.getMenuView());
+                int menuViewHeight = ViewCompat.getMeasuredHeightAndState(mEndSwiper.getMenuView());
+
+                if (mBeginSwiper.getMenuView() == mEndSwiper.getMenuView()) {
+                    if (checker.x >= 0) {
+                        mBeginSwiper.getMenuView().layout(parentViewWidth,
+                                tGap,
+                                parentViewWidth + menuViewWidth,
+                                tGap + menuViewHeight);
+                    } else {
+                        mEndSwiper.getMenuView().layout(-menuViewWidth,
+                                tGap,
+                                0,
+                                tGap + menuViewHeight);
+                    }
+                }
+            }
         }
         if (getScrollX() != mPreScrollX) {
             int absScrollX = Math.abs(getScrollX());
@@ -229,35 +252,27 @@ public class SwipeHorizontalMenuLayout extends SwipeMenuLayout {
         }
     }
 
-    @Override
-    protected void onFinishInflate() {
-        super.onFinishInflate();
-        setClickable(true);
-//        mContentView = findViewById(R.id.ContentView);
-//        if (mContentView == null) {
-//            throw new IllegalArgumentException("Not find contentView by id smContentView");
-//        }
-//        View menuViewLeft = findViewById(R.id.MenuViewLeft);
-//        View menuViewRight = findViewById(R.id.MenuViewRight);
-//        if (menuViewLeft == null && menuViewRight == null) {
-//            throw new IllegalArgumentException("Not find menuView by id (smMenuViewLeft, smMenuViewRight)");
-//        }
-//        if (menuViewLeft != null) mBeginSwiper = new LeftHorizontalSwiper(menuViewLeft);
-//        if (menuViewRight != null) mEndSwiper = new RightHorizontalSwiper(menuViewRight);
-    }
-
     public void setContentView(View view) {
-        addView(view);
-        mContentView = view;
+        if (view.getParent() != this) {
+            addView(view);
+            mContentView = view;
+            mContentView.setClickable(true);
+        }
     }
 
     public void setLeftMenu(@NonNull View view) {
-        addView(view);
+        if (view.getParent() != this) {
+            addView(view);
+            view.setClickable(true);
+        }
         mBeginSwiper = new LeftHorizontalSwiper(view);
     }
 
     public void setRightMenu(View view) {
-        addView(view);
+        if (view.getParent() != this) {
+            addView(view);
+            view.setClickable(true);
+        }
         mEndSwiper = new RightHorizontalSwiper(view);
     }
 
