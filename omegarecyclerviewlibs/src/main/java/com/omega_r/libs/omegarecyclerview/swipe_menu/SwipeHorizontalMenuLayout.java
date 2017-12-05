@@ -2,6 +2,7 @@ package com.omega_r.libs.omegarecyclerview.swipe_menu;
 
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -50,7 +51,7 @@ public class SwipeHorizontalMenuLayout extends SwipeMenuLayout {
                 isIntercepted = false;
                 // menu view opened and click on content view,
                 // we just close the menu view and intercept the up event
-                if (isMenuOpen() && mCurrentSwiper.isClickOnContentView(this, ev.getX())) {
+                if (mCurrentSwiper != null && isMenuOpen() && mCurrentSwiper.isClickOnContentView(this, ev.getX())) {
                     smoothCloseMenu();
                     isIntercepted = true;
                 }
@@ -184,6 +185,8 @@ public class SwipeHorizontalMenuLayout extends SwipeMenuLayout {
 
     @Override
     public void scrollTo(int x, int y) {
+        if (mCurrentSwiper == null) return;
+
         Swiper.Checker checker = mCurrentSwiper.checkXY(x, y);
         shouldResetSwiper = checker.shouldResetSwiper;
         if (checker.x != getScrollX()) {
@@ -195,7 +198,7 @@ public class SwipeHorizontalMenuLayout extends SwipeMenuLayout {
                 if (mSwipeSwitchListener != null) {
                     if (absScrollX == 0) {
                         mSwipeSwitchListener.beginMenuClosed(this);
-                    } else if (absScrollX == mBeginSwiper.getMenuWidth()) {
+                    } else if (mBeginSwiper != null && absScrollX == mBeginSwiper.getMenuWidth()) {
                         mSwipeSwitchListener.beginMenuOpened(this);
                     }
                 }
@@ -203,7 +206,7 @@ public class SwipeHorizontalMenuLayout extends SwipeMenuLayout {
                 if (mSwipeSwitchListener != null) {
                     if (absScrollX == 0) {
                         mSwipeSwitchListener.endMenuClosed(this);
-                    } else if (absScrollX == mEndSwiper.getMenuWidth()) {
+                    } else if (mEndSwiper != null && absScrollX == mEndSwiper.getMenuWidth()) {
                         mSwipeSwitchListener.endMenuOpened(this);
                     }
                 }
@@ -230,17 +233,32 @@ public class SwipeHorizontalMenuLayout extends SwipeMenuLayout {
     protected void onFinishInflate() {
         super.onFinishInflate();
         setClickable(true);
-        mContentView = findViewById(R.id.ContentView);
-        if (mContentView == null) {
-            throw new IllegalArgumentException("Not find contentView by id smContentView");
-        }
-        View menuViewLeft = findViewById(R.id.MenuViewLeft);
-        View menuViewRight = findViewById(R.id.MenuViewRight);
-        if (menuViewLeft == null && menuViewRight == null) {
-            throw new IllegalArgumentException("Not find menuView by id (smMenuViewLeft, smMenuViewRight)");
-        }
-        if (menuViewLeft != null) mBeginSwiper = new LeftHorizontalSwiper(menuViewLeft);
-        if (menuViewRight != null) mEndSwiper = new RightHorizontalSwiper(menuViewRight);
+//        mContentView = findViewById(R.id.ContentView);
+//        if (mContentView == null) {
+//            throw new IllegalArgumentException("Not find contentView by id smContentView");
+//        }
+//        View menuViewLeft = findViewById(R.id.MenuViewLeft);
+//        View menuViewRight = findViewById(R.id.MenuViewRight);
+//        if (menuViewLeft == null && menuViewRight == null) {
+//            throw new IllegalArgumentException("Not find menuView by id (smMenuViewLeft, smMenuViewRight)");
+//        }
+//        if (menuViewLeft != null) mBeginSwiper = new LeftHorizontalSwiper(menuViewLeft);
+//        if (menuViewRight != null) mEndSwiper = new RightHorizontalSwiper(menuViewRight);
+    }
+
+    public void setContentView(View view) {
+        addView(view);
+        mContentView = view;
+    }
+
+    public void setLeftMenu(@NonNull View view) {
+        addView(view);
+        mBeginSwiper = new LeftHorizontalSwiper(view);
+    }
+
+    public void setRightMenu(View view) {
+        addView(view);
+        mEndSwiper = new RightHorizontalSwiper(view);
     }
 
     public boolean isMenuOpen() {
@@ -254,17 +272,23 @@ public class SwipeHorizontalMenuLayout extends SwipeMenuLayout {
     }
 
     public void smoothOpenMenu(int duration) {
+        if (mCurrentSwiper == null) return;
+
         mCurrentSwiper.autoOpenMenu(mScroller, getScrollX(), duration);
         invalidate();
     }
 
     public void smoothCloseMenu(int duration) {
+        if (mCurrentSwiper == null) return;
+
         mCurrentSwiper.autoCloseMenu(mScroller, getScrollX(), duration);
         invalidate();
     }
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        if (mContentView == null) return;
+
         int parentViewWidth = ViewCompat.getMeasuredWidthAndState(this);
         int contentViewWidth = ViewCompat.getMeasuredWidthAndState(mContentView);
         int contentViewHeight = ViewCompat.getMeasuredHeightAndState(mContentView);

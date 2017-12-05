@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <item name="ContentView" type="id"/>
-    <item name="MenuViewLeft" type="id"/>
-    <item name="MenuViewRight" type="id"/>
-</resources>

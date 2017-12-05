@@ -205,6 +205,7 @@ public class OmegaRecyclerView extends RecyclerView implements SwipeMenuHelper.C
         }
 
         protected final <T extends View> T findViewById(int id) {
+            //noinspection unchecked
             return (T) itemView.findViewById(id);
         }
     }

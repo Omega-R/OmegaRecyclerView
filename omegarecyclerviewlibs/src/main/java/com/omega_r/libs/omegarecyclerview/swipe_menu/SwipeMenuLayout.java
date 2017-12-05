@@ -2,6 +2,7 @@ package com.omega_r.libs.omegarecyclerview.swipe_menu;
 
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.VelocityTracker;
 import android.view.View;
@@ -30,10 +31,13 @@ public abstract class SwipeMenuLayout extends FrameLayout {
     protected int mScaledMinimumFlingVelocity;
     protected int mScaledMaximumFlingVelocity;
 
+    @Nullable
     protected View mContentView;
-
+    @Nullable
     protected Swiper mBeginSwiper;
+    @Nullable
     protected Swiper mEndSwiper;
+    @Nullable
     protected Swiper mCurrentSwiper;
 
     protected boolean shouldResetSwiper;
