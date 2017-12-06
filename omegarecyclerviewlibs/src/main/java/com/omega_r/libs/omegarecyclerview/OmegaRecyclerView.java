@@ -7,6 +7,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -43,6 +44,7 @@ public class OmegaRecyclerView extends RecyclerView implements SwipeMenuHelper.C
     }
 
     private void init(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+        initDefaultLayoutManager();
         if (attrs != null) {
             TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.OmegaRecyclerView, defStyleAttr, 0);
             initItemSpace(a);
@@ -51,6 +53,12 @@ public class OmegaRecyclerView extends RecyclerView implements SwipeMenuHelper.C
             a.recycle();
         }
         mSwipeMenuHelper = new SwipeMenuHelper(getContext(), this);
+    }
+
+    private void initDefaultLayoutManager() {
+        if (getLayoutManager() == null) {
+            setLayoutManager(new LinearLayoutManager(getContext()));
+        }
     }
 
     private void initEmptyView(TypedArray a) {
