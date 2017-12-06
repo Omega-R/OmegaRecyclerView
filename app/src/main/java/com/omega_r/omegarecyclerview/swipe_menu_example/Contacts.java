@@ -1,4 +1,4 @@
-package com.omega_r.omegarecyclerview.test_example;
+package com.omega_r.omegarecyclerview.swipe_menu_example;
 
 
 import java.util.ArrayList;
@@ -24,13 +24,13 @@ public class Contacts {
     private static int lastContactId = 0;
 
     public static ArrayList<Contacts> createContactsList(int numContacts) {
-        ArrayList<Contacts> contactses = new ArrayList<>();
+        ArrayList<Contacts> contactsArrayList = new ArrayList<>();
 
         for (int i = 1; i <= numContacts; i++) {
-            contactses.add(new Contacts("Person " + ++lastContactId, i <= numContacts / 2));
+            contactsArrayList.add(new Contacts("Person " + ++lastContactId, i <= numContacts / 2));
         }
 
-        return contactses;
+        return contactsArrayList;
     }
 
 }
