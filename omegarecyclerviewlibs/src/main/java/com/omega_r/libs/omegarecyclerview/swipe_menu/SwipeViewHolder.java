@@ -91,4 +91,8 @@ public class SwipeViewHolder extends OmegaRecyclerView.ViewHolder {
     public void setSwipeEnable(boolean enable) {
         mSwipeMenuLayout.setSwipeEnable(enable);
     }
+
+    public boolean isSwipeEnable() {
+        return mSwipeMenuLayout.isSwipeEnable();
+    }
 }

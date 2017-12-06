@@ -4,5 +4,6 @@
     <string name="swipe_menu_example">Swipe Menu Example</string>
     <string name="sticky_header_example">Sticky Header Example</string>
     <string name="edit">Edit</string>
+    <string name="open">Open</string>
     <string name="delete">Delete</string>
 </resources>
