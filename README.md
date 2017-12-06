@@ -71,6 +71,39 @@ set(array)
 add(array)
 ```
 
+## SwipeMenu
+<p align="center">
+    <img src="/images/swipe_menu_example.gif?raw=true" width="300" height="533" />
+</p>
+
+To add swipe menu into project you need to use SwipeViewHolder or create your own ViewHolder.
+```
+public class ViewHolder extends SwipeViewHolder {
+
+    public ViewHolder(ViewGroup parent) {
+            super(parent, R.layout.item_swipe_content, R.layout.item_left_swipe_menu, R.layout.item_right_swipe_menu);
+    }        
+```
+
+Also you can use constructor only with left menu, or only with right menu. 
+```
+    public ViewHolder(ViewGroup parent) {
+            super(parent, R.layout.item_swipe_content, R.layout.item_left_swipe_menu, SwipeViewHolder.NO_ID);
+    }
+```
+
+You can use following methods for controlling swipe menu state:
+```
+public void setSwipeFractionListener(@Nullable SwipeFractionListener listener);
+public void setSwipeListener(@Nullable SwipeSwitchListener listener);
+public void smoothCloseMenu(int duration);
+public void smoothCloseMenu();
+public void smoothOpenBeginMenu();
+public void smoothOpenEndMenu();
+public void setSwipeEnable(boolean enable);
+public boolean isSwipeEnable();
+```
+
 # License
 ```
 The MIT License
