@@ -81,14 +81,22 @@ To add swipe menu into project you need to use SwipeViewHolder or create your ow
 public class ViewHolder extends SwipeViewHolder {
 
     public ViewHolder(ViewGroup parent) {
-            super(parent, R.layout.item_swipe_content, R.layout.item_left_swipe_menu, R.layout.item_right_swipe_menu);
+            super(parent, R.layout.item_swipe_content, 
+            R.layout.item_left_swipe_menu, R.layout.item_right_swipe_menu);
     }        
 ```
 
 Also you can use constructor only with left menu, or only with right menu. 
 ```
     public ViewHolder(ViewGroup parent) {
-            super(parent, R.layout.item_swipe_content, R.layout.item_left_swipe_menu, SwipeViewHolder.NO_ID);
+            super(parent, R.layout.item_swipe_content, 
+            R.layout.item_left_swipe_menu, SwipeViewHolder.NO_ID);
+    }
+```
+Also you can use one layout for left menu and right menu. 
+```
+    public ViewHolder(ViewGroup parent) {
+            super(parent, R.layout.item_swipe_content, R.layout.swipe_menu);
     }
 ```
 
