@@ -7,6 +7,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -84,12 +85,19 @@ public class OmegaRecyclerView extends RecyclerView {
     }
 
     private void init(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+        initDefaultLayoutManager();
         if (attrs != null) {
             TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.OmegaRecyclerView, defStyleAttr, 0);
             initItemSpace(a);
             initDivider(a);
             initEmptyView(a);
             a.recycle();
+        }
+    }
+
+    private void initDefaultLayoutManager() {
+        if (getLayoutManager() == null) {
+            setLayoutManager(new LinearLayoutManager(getContext()));
         }
     }
 

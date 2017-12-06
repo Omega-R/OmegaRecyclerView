@@ -29,7 +29,6 @@ public class TestFragment extends Fragment {
         ArrayList<Contacts> contactsList = Contacts.createContactsList(20);
         ContactsAdapter adapter = new ContactsAdapter(getActivity(), contactsList);
         omegaRecyclerView.setAdapter(adapter);
-        omegaRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         contactsList.add(20, new Contacts(null, false));
         adapter.notifyItemInserted(20);
