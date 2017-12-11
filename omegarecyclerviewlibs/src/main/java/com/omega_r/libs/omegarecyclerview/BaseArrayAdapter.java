@@ -5,7 +5,7 @@ import android.support.v7.widget.RecyclerView;
 
 import java.util.Arrays;
 
-public abstract class BaseArrayAdapter<M, VH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<VH> {
+public abstract class BaseArrayAdapter<M, VH extends RecyclerView.ViewHolder> extends OmegaRecyclerView.Adapter<VH> {
 
     private M[] mArray;
 
