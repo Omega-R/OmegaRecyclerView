@@ -80,10 +80,14 @@ public class OmegaRecyclerView extends RecyclerView implements SwipeMenuHelper.C
             if (showDivider != DividerItemDecoration.ShowDivider.NONE) {
                 Drawable dividerDrawable = a.getDrawable(R.styleable.OmegaRecyclerView_android_divider);
                 if (dividerDrawable == null) {
-                    dividerDrawable = getDefaultDivider();
+                    dividerDrawable = a.getDrawable(R.styleable.OmegaRecyclerView_divider);
+                    if (dividerDrawable == null) {
+                        dividerDrawable = getDefaultDivider();
+                    }
                 }
 
-                float dividerHeight = a.getDimension(R.styleable.OmegaRecyclerView_android_dividerHeight, -1);
+                float dividerHeight = a.getDimension(R.styleable.OmegaRecyclerView_heightDivider,
+                        a.getDimension(R.styleable.OmegaRecyclerView_android_dividerHeight, -1));
                 float alpha = a.getFloat(R.styleable.OmegaRecyclerView_alphaDivider, 1);
                 addItemDecoration(new DividerItemDecoration(dividerDrawable, (int) dividerHeight, showDivider, mItemSpace / 2, alpha));
             }

@@ -4,6 +4,10 @@
         <attr name="itemSpace" format="dimension" />
         <attr name="android:divider" />
         <attr name="android:dividerHeight" />
+        
+        <attr name="divider" format="reference"/>
+        <attr name="heightDivider" format="dimension"/>
+        
         <attr name="showDivider">
             <flag name="none" value="0" />
             <flag name="beginning" value="1" />

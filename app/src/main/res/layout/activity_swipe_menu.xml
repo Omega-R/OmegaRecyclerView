@@ -15,6 +15,9 @@
         app:layoutManager="LinearLayoutManager"
         android:orientation="vertical"
         app:reverseLayout="false"
+        app:divider="@color/white_two"
+        app:heightDivider="2dp"
         app:itemSpace="4dp"
         app:showDivider="middle"/>
+
 </RelativeLayout>
