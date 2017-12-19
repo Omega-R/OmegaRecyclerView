@@ -16,5 +16,7 @@
         </attr>
         <attr name="alphaDivider" format="float"/>
         <attr name="emptyView" format="reference" />
+        <attr name="paginationLayout" format="reference"/>
+        <attr name="paginationErrorLayout" format="reference"/>
     </declare-styleable>
 </resources>

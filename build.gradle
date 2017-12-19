@@ -29,8 +29,8 @@ task clean(type: Delete) {
 }
 
 ext {
-    buildToolsVersion = "27.0.1"
-    supportLibVersion = "27.0.1"
+    buildToolsVersion = "27.0.2"
+    supportLibVersion = "27.0.2"
     espressoVersion = "3.0.1"
     junitVersion = "4.12"
 }

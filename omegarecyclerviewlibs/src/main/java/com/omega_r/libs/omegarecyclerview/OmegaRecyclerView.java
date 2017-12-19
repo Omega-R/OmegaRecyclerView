@@ -15,6 +15,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.omega_r.libs.omegarecyclerview.pagination.PaginationAdapter;
+import com.omega_r.libs.omegarecyclerview.pagination.OnPageRequestListener;
+import com.omega_r.libs.omegarecyclerview.pagination.PageRequester;
 import com.omega_r.libs.omegarecyclerview.swipe_menu.SwipeMenuHelper;
 
 public class OmegaRecyclerView extends RecyclerView implements SwipeMenuHelper.Callback {
@@ -27,6 +30,11 @@ public class OmegaRecyclerView extends RecyclerView implements SwipeMenuHelper.C
     private int mItemSpace;
 
     private SwipeMenuHelper mSwipeMenuHelper;
+    private PageRequester mPageRequester = new PageRequester();
+    @LayoutRes
+    private int mPaginationLayout = R.layout.pagination_omega_layout;
+    @LayoutRes
+    private int mPaginationErrorLayout = R.layout.pagination_error_omega_layout;
 
     public OmegaRecyclerView(Context context) {
         super(context);
@@ -50,9 +58,11 @@ public class OmegaRecyclerView extends RecyclerView implements SwipeMenuHelper.C
             initItemSpace(a);
             initDivider(a);
             initEmptyView(a);
+            initPagination(a);
             a.recycle();
         }
         mSwipeMenuHelper = new SwipeMenuHelper(getContext(), this);
+        mPageRequester.attach(this);
     }
 
     private void initDefaultLayoutManager() {
@@ -94,6 +104,15 @@ public class OmegaRecyclerView extends RecyclerView implements SwipeMenuHelper.C
         }
     }
 
+    private void initPagination(TypedArray a) {
+        if (a.hasValue(R.styleable.OmegaRecyclerView_paginationLayout)) {
+            mPaginationLayout = a.getResourceId(R.styleable.OmegaRecyclerView_paginationLayout, R.layout.pagination_omega_layout);
+        }
+        if (a.hasValue(R.styleable.OmegaRecyclerView_paginationErrorLayout)) {
+            mPaginationErrorLayout = a.getResourceId(R.styleable.OmegaRecyclerView_paginationErrorLayout, R.layout.pagination_error_omega_layout);
+        }
+    }
+
     private AdapterDataObserver mEmptyObserver = new AdapterDataObserver() {
         @Override
         public void onChanged() {
@@ -113,11 +132,23 @@ public class OmegaRecyclerView extends RecyclerView implements SwipeMenuHelper.C
         if (getAdapter() != null) {
             getAdapter().unregisterAdapterDataObserver(mEmptyObserver);
         }
-        if (adapter != null) {
-            adapter.registerAdapterDataObserver(mEmptyObserver);
-        }
-        super.setAdapter(adapter);
         mEmptyObserver.onChanged();
+
+        if (adapter == null) {
+            super.setAdapter(null);
+            return;
+        }
+
+        if (mPageRequester.getCallback() != null) {
+            super.setAdapter(new PaginationAdapter(adapter, mPaginationLayout, mPaginationErrorLayout));
+        } else {
+            super.setAdapter(adapter);
+        }
+        mPageRequester.reset();
+
+        if (getAdapter() != null) {
+            getAdapter().registerAdapterDataObserver(mEmptyObserver);
+        }
     }
 
     @Override
@@ -197,9 +228,107 @@ public class OmegaRecyclerView extends RecyclerView implements SwipeMenuHelper.C
         return touchView;
     }
 
+    public void setPaginationCallback(OnPageRequestListener callback, int preventionForValue) {
+        RecyclerView.Adapter adapter = getAdapter();
+        if (adapter != null && mPageRequester.getCallback() != null && !(adapter instanceof PaginationAdapter)) {
+            setAdapter(new PaginationAdapter(adapter, mPaginationLayout, mPaginationErrorLayout));
+        }
+        mPageRequester.setPaginationCallback(callback, preventionForValue);
+    }
+
+    public void showProgressPagination() {
+        if (getAdapter() instanceof PaginationAdapter) {
+            ((PaginationAdapter) getAdapter()).showProgressPagination();
+            mPageRequester.setEnabled(true);
+        }
+    }
+
+    public void showErrorPagination() {
+        if (getAdapter() instanceof PaginationAdapter) {
+            ((PaginationAdapter) getAdapter()).showErrorPagination();
+            mPageRequester.setEnabled(false);
+        }
+    }
+
+    public void hidePagination() {
+        if (getAdapter() instanceof PaginationAdapter) {
+            ((PaginationAdapter) getAdapter()).hidePagination();
+            mPageRequester.setEnabled(false);
+        }
+    }
+
     public abstract static class Adapter<VH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<VH> {
+
+        private RecyclerView recyclerView;
+
         public boolean isShowDivided(int position) {
             return true;
+        }
+
+        @Override
+        public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+            super.onAttachedToRecyclerView(recyclerView);
+            this.recyclerView = recyclerView;
+        }
+
+        protected void tryNotifyDataSetChanged() {
+            if (recyclerView == null) return;
+
+            if (!recyclerView.isComputingLayout()) {
+                notifyDataSetChanged();
+            } else {
+                recyclerView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        tryNotifyDataSetChanged();
+                    }
+                });
+            }
+        }
+
+        protected void tryNotifyItemRangeInserted(final int positionStart, final int itemCount) {
+            if (recyclerView == null) return;
+
+            if (!recyclerView.isComputingLayout()) {
+                notifyItemRangeInserted(positionStart, itemCount);
+            } else {
+                recyclerView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        tryNotifyItemRangeInserted(positionStart, itemCount);
+                    }
+                });
+            }
+        }
+
+        protected void tryNotifyItemRemoved(final int positionStart, final int itemCount) {
+            if (recyclerView == null) return;
+
+            if (!recyclerView.isComputingLayout()) {
+                notifyItemRangeRemoved(positionStart, itemCount);
+            } else {
+                recyclerView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        tryNotifyItemRemoved(positionStart, itemCount);
+                    }
+                });
+            }
+        }
+
+        protected void tryNotifyItemRangeChanged(final int positionStart, final int itemCount, final Object payload) {
+            if (recyclerView == null) return;
+
+            if (!recyclerView.isComputingLayout()) {
+                notifyItemRangeChanged(positionStart, itemCount, payload);
+            } else {
+                recyclerView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        tryNotifyItemRangeChanged(positionStart, itemCount, payload);
+                    }
+                });
+            }
         }
     }
 
