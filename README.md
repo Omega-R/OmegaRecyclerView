@@ -123,6 +123,58 @@ public boolean isSwipeEnable();
     <img src="/images/pagination.gif?raw=true" width="300" height="533" />
 </p>
 
+To add pagination into project you just need to setPaginationCallback to OmegaRecyclerView.
+```
+mRecyclerView.setPaginationCallback(new OnPageRequestListener() {
+            @Override
+            public void onPageRequest(int page) {
+                // You can load data inside this callback
+            }
+        }, PREVENTION_VALUE); // PREVENTION_VALUE - for how many positions until the end you want to be informed
+```
+How to control pagination: 
+```
+mRecyclerView.showProgressPagination(); // show progress
+mRecyclerView.hidePagination(); // hide pagination
+mRecyclerView.showErrorPagination(); // show error
+```
+
+You have two ways to add your custom pagination layout and error layout. 
+First way:
+```
+<com.omega_r.libs.omegarecyclerview.OmegaRecyclerView
+        android:id="@+id/recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:paginationLayout="R.layout.item_progress"
+        app:paginationErrorLayout="R.layout.item_error_loading"/>
+        
+```
+You can implement PaginationView in your Adapter class. 
+Second:
+```
+public class RecyclerAdapter extends OmegaRecyclerView.Adapter<RecyclerView.ViewHolder> implements PaginationView {
+....
+@Nullable
+    @Override
+    public View createPaginationView(ViewGroup parent, LayoutInflater inflater) {
+        return inflater.inflate(R.layout.item_progress, parent, false);
+    }
+
+    @Nullable
+    @Override
+    public View createPaginationErrorView(ViewGroup parent, LayoutInflater inflater) {
+        View view = inflater.inflate(R.layout.item_error_loading, parent, false);
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // on error clicked....
+            }
+        });
+        return view;
+    }
+```
+
 # License
 ```
 The MIT License
