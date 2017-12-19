@@ -4,4 +4,6 @@ public interface OnPageRequestListener {
 
     void onPageRequest(int page);
 
+    int getPagePreventionForEnd();
+
 }

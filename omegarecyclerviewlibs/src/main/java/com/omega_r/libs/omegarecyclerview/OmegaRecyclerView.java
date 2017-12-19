@@ -139,6 +139,10 @@ public class OmegaRecyclerView extends RecyclerView implements SwipeMenuHelper.C
             return;
         }
 
+        if (adapter instanceof OnPageRequestListener) {
+            setPaginationCallback((OnPageRequestListener)adapter);
+        }
+
         if (mPageRequester.getCallback() != null) {
             super.setAdapter(new PaginationAdapter(adapter, mPaginationLayout, mPaginationErrorLayout));
         } else {
@@ -228,12 +232,12 @@ public class OmegaRecyclerView extends RecyclerView implements SwipeMenuHelper.C
         return touchView;
     }
 
-    public void setPaginationCallback(OnPageRequestListener callback, int preventionForValue) {
+    public void setPaginationCallback(OnPageRequestListener callback) {
         RecyclerView.Adapter adapter = getAdapter();
         if (adapter != null && mPageRequester.getCallback() != null && !(adapter instanceof PaginationAdapter)) {
             setAdapter(new PaginationAdapter(adapter, mPaginationLayout, mPaginationErrorLayout));
         }
-        mPageRequester.setPaginationCallback(callback, preventionForValue);
+        mPageRequester.setPaginationCallback(callback);
     }
 
     public void showProgressPagination() {

@@ -7,13 +7,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.omega_r.libs.omegarecyclerview.OmegaRecyclerView;
-import com.omega_r.libs.omegarecyclerview.pagination.PaginationView;
+import com.omega_r.libs.omegarecyclerview.pagination.PaginationViewCreator;
 import com.omega_r.omegarecyclerview.R;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ImageAdapter extends OmegaRecyclerView.Adapter<ImageAdapter.ViewHolder> implements PaginationView {
+public class ImageAdapter extends OmegaRecyclerView.Adapter<ImageAdapter.ViewHolder> implements PaginationViewCreator {
 
     private List<Image> mList = new ArrayList<>();
     @Nullable

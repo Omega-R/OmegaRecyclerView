@@ -11,6 +11,7 @@
         android:id="@+id/recyclerview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layoutManager="LinearLayoutManager" />
+        app:paginationLayout="@layout/item_progress"
+        app:paginationErrorLayout="@layout/item_error_loading"/>
 
 </FrameLayout>

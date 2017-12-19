@@ -21,7 +21,7 @@ public class PaginationActivity extends AppCompatActivity implements OnPageReque
         setContentView(R.layout.activity_pagination);
         mRecyclerView = findViewById(R.id.recyclerview);
 
-        mRecyclerView.setPaginationCallback(this, 5);
+        mRecyclerView.setPaginationCallback(this);
         mAdapter = new ImageAdapter();
         mAdapter.setCallback(this);
         mRecyclerView.setAdapter(mAdapter);
@@ -43,6 +43,11 @@ public class PaginationActivity extends AppCompatActivity implements OnPageReque
         }
 
         downloadItems();
+    }
+
+    @Override
+    public int getPagePreventionForEnd() {
+        return 5;
     }
 
     @Override

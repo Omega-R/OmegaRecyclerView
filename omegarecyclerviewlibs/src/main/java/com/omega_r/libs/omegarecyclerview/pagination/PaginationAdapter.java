@@ -46,8 +46,8 @@ public class PaginationAdapter extends WrapperAdapter {
 
     private OmegaRecyclerView.ViewHolder createPaginationViewHolder(ViewGroup parent, LayoutInflater inflater) {
         View view = null;
-        if (mChildAdapter instanceof PaginationView) {
-            view = ((PaginationView) mChildAdapter).createPaginationView(parent, inflater);
+        if (mChildAdapter instanceof PaginationViewCreator) {
+            view = ((PaginationViewCreator) mChildAdapter).createPaginationView(parent, inflater);
         }
         if (view == null) {
             view = inflater.inflate(mPaginationLayout, parent, false);
@@ -57,8 +57,8 @@ public class PaginationAdapter extends WrapperAdapter {
 
     private OmegaRecyclerView.ViewHolder createPaginationErrorViewHolder(ViewGroup parent, LayoutInflater inflater) {
         View view = null;
-        if (mChildAdapter instanceof PaginationView) {
-            view = ((PaginationView) mChildAdapter).createPaginationErrorView(parent, inflater);
+        if (mChildAdapter instanceof PaginationViewCreator) {
+            view = ((PaginationViewCreator) mChildAdapter).createPaginationErrorView(parent, inflater);
         }
         if (view == null) {
             view = inflater.inflate(mPaginationErrorLayout, parent, false);

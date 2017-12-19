@@ -130,7 +130,12 @@ mRecyclerView.setPaginationCallback(new OnPageRequestListener() {
             public void onPageRequest(int page) {
                 // You can load data inside this callback
             }
-        }, PREVENTION_VALUE); // PREVENTION_VALUE - for how many positions until the end you want to be informed
+
+            @Override
+            public int getPagePreventionForEnd() {
+                return PREVENTION_VALUE; // PREVENTION_VALUE - for how many positions until the end you want to be informed
+            }
+        });
 ```
 How to control pagination: 
 ```
@@ -146,14 +151,14 @@ First way:
         android:id="@+id/recyclerview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:paginationLayout="R.layout.item_progress"
-        app:paginationErrorLayout="R.layout.item_error_loading"/>
+        app:paginationLayout="@layout/item_progress"
+        app:paginationErrorLayout="@layout/item_error_loading"/>
         
 ```
 You can implement PaginationView in your Adapter class. 
 Second:
 ```
-public class RecyclerAdapter extends OmegaRecyclerView.Adapter<RecyclerView.ViewHolder> implements PaginationView {
+public class RecyclerAdapter extends OmegaRecyclerView.Adapter<RecyclerView.ViewHolder> implements PaginationViewCreator {
 ....
 @Nullable
     @Override

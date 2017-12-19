@@ -5,7 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-public interface PaginationView {
+public interface PaginationViewCreator {
 
     @Nullable
     View createPaginationView(ViewGroup parent, LayoutInflater inflater);

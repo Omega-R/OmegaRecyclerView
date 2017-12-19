@@ -2,16 +2,13 @@ package com.omega_r.libs.omegarecyclerview.pagination;
 
 import android.graphics.Rect;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 
 public class PageRequester extends RecyclerView.ItemDecoration {
 
     @Nullable
     private OnPageRequestListener mCallback;
-    private int mPreventionForValue;
     private int mLastItemCount = -1;
     private boolean mEnabled;
 
@@ -21,10 +18,8 @@ public class PageRequester extends RecyclerView.ItemDecoration {
         omegaRecyclerView.addItemDecoration(this);
     }
 
-    public void setPaginationCallback(@Nullable OnPageRequestListener callback, int preventionForValue) {
+    public void setPaginationCallback(@Nullable OnPageRequestListener callback) {
         mCallback = callback;
-        // RecyclerView.Adapter getItemCount gives count of values + 1 (PaginationViewHolder)
-        mPreventionForValue = preventionForValue + 1;
     }
 
     @Override
@@ -33,7 +28,8 @@ public class PageRequester extends RecyclerView.ItemDecoration {
 
         int adapterPosition = ((RecyclerView.LayoutParams) view.getLayoutParams()).getViewAdapterPosition();
         int itemCount = recyclerView.getAdapter().getItemCount();
-        int preventionPosition = itemCount - mPreventionForValue;
+        // RecyclerView.Adapter getItemCount gives count of values + 1 (PaginationViewHolder)
+        int preventionPosition = itemCount - mCallback.getPagePreventionForEnd() - 1;
         if (adapterPosition >= preventionPosition && itemCount > mLastItemCount && preventionPosition > 0) {
             mCurrentPage++;
             recyclerView.post(new Runnable() {
