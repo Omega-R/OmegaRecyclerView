@@ -8,11 +8,19 @@ import java.util.Arrays;
 public abstract class BaseArrayAdapter<M, VH extends RecyclerView.ViewHolder> extends OmegaRecyclerView.Adapter<VH> {
 
     private M[] mArray;
+    private RecyclerView mRecyclerView;
 
     public BaseArrayAdapter(M[] array) {
         mArray = array;
     }
 
+    @Override
+    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        mRecyclerView = recyclerView;
+    }
+
+    @Override
     public int getItemCount() {
         return mArray.length;
     }
@@ -23,13 +31,13 @@ public abstract class BaseArrayAdapter<M, VH extends RecyclerView.ViewHolder> ex
 
     public void set(M... array) {
         mArray = array;
-        notifyDataSetChanged();
+        notifyDataSetChangedSafe();
     }
 
     public void add(M... array) {
         int length = mArray.length;
         mArray = concat(mArray, array);
-        notifyItemRangeInserted(length, array.length);
+        notifyItemRangeInsertedSafe(length, array.length);
     }
 
     private static <T> T[] concat(T[] first, T[] second) {
@@ -37,4 +45,33 @@ public abstract class BaseArrayAdapter<M, VH extends RecyclerView.ViewHolder> ex
         System.arraycopy(second, 0, result, first.length, second.length);
         return result;
     }
+
+
+    protected void notifyDataSetChangedSafe() {
+        if (!mRecyclerView.isComputingLayout()) {
+            notifyDataSetChanged();
+        } else {
+            mRecyclerView.post(new Runnable() {
+                @Override
+                public void run() {
+                    notifyDataSetChangedSafe();
+                }
+            });
+        }
+    }
+
+
+    protected void notifyItemRangeInsertedSafe(final int positionStart, final int itemCount) {
+        if (!mRecyclerView.isComputingLayout()) {
+            notifyItemRangeInserted(positionStart, itemCount);
+        } else {
+            mRecyclerView.post(new Runnable() {
+                @Override
+                public void run() {
+                    notifyItemRangeInserted(positionStart, itemCount);
+                }
+            });
+        }
+    }
+
 }
