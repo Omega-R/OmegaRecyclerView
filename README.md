@@ -118,6 +118,11 @@ public void setSwipeEnable(boolean enable);
 public boolean isSwipeEnable();
 ```
 
+## Pagination
+<p align="center">
+    <img src="/images/pagination.gif?raw=true" width="300" height="533" />
+</p>
+
 # License
 ```
 The MIT License
