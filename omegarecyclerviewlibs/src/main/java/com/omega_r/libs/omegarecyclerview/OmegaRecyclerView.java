@@ -1,5 +1,6 @@
 package com.omega_r.libs.omegarecyclerview;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
@@ -24,6 +25,7 @@ import com.omega_r.libs.omegarecyclerview.swipe_menu.SwipeMenuHelper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.WeakHashMap;
 
 public class OmegaRecyclerView extends RecyclerView implements SwipeMenuHelper.Callback {
 
@@ -42,6 +44,8 @@ public class OmegaRecyclerView extends RecyclerView implements SwipeMenuHelper.C
     private int mPaginationErrorLayout = R.layout.pagination_error_omega_layout;
     private boolean mFinishedInflate = false;
     private List<View> mHeadersList = new ArrayList<>();
+    private List<View> mFooterList = new ArrayList<>();
+    private WeakHashMap<ViewGroup.LayoutParams, Integer> mLayoutParamCache = new WeakHashMap<>();
 
     public OmegaRecyclerView(Context context) {
         super(context);
@@ -121,71 +125,15 @@ public class OmegaRecyclerView extends RecyclerView implements SwipeMenuHelper.C
         }
     }
 
-    private final AdapterDataObserver mEmptyObserver = new AdapterDataObserver() {
-        @Override
-        public void onChanged() {
-            RecyclerView.Adapter adapter = getAdapter();
-            if (adapter != null && mEmptyView != null) {
-                if (adapter.getItemCount() == 0) {
-                    mEmptyView.setVisibility(View.VISIBLE);
-                } else {
-                    mEmptyView.setVisibility(View.GONE);
-                }
-            }
-        }
-    };
-
-    private final AdapterDataObserver mHeaderObserver = new AdapterDataObserver() {
-        @Override
-        public void onChanged() {
-            if (getAdapter() instanceof HeaderFooterWrapperAdapter) {
-                getAdapter().notifyDataSetChanged();
-            }
-        }
-
-        @Override
-        public void onItemRangeChanged(int positionStart, int itemCount) {
-            if (getAdapter() instanceof HeaderFooterWrapperAdapter) {
-                getAdapter().notifyItemRangeInserted(positionStart, itemCount);
-            }
-        }
-
-        @Override
-        public void onItemRangeChanged(int positionStart, int itemCount, Object payload) {
-            if (getAdapter() instanceof HeaderFooterWrapperAdapter) {
-                getAdapter().notifyItemRangeChanged(positionStart, itemCount, payload);
-            }
-        }
-
-        @Override
-        public void onItemRangeInserted(int positionStart, int itemCount) {
-            if (getAdapter() instanceof HeaderFooterWrapperAdapter) {
-                getAdapter().notifyItemRangeInserted(positionStart, itemCount);
-            }
-        }
-
-        @Override
-        public void onItemRangeRemoved(int positionStart, int itemCount) {
-            if (getAdapter() instanceof HeaderFooterWrapperAdapter) {
-                getAdapter().notifyItemRangeRemoved(positionStart, itemCount);
-            }
-        }
-
-        @Override
-        public void onItemRangeMoved(int fromPosition, int toPosition, int itemCount) {
-            if (getAdapter() instanceof HeaderFooterWrapperAdapter) {
-                getAdapter().notifyItemMoved(fromPosition, toPosition);
-            }
-        }
-    };
-
     @Override
     @SuppressWarnings("unchecked")
     public void setAdapter(RecyclerView.Adapter adapter) {
         RecyclerView.Adapter currentAdapter = getAdapter();
         if (currentAdapter != null) {
             currentAdapter.unregisterAdapterDataObserver(mEmptyObserver);
-            currentAdapter.unregisterAdapterDataObserver(mHeaderObserver);
+            if (currentAdapter instanceof HeaderFooterWrapperAdapter) {
+                currentAdapter.unregisterAdapterDataObserver(mHeaderObserver);
+            }
         }
         mEmptyObserver.onChanged();
         mHeaderObserver.onChanged();
@@ -196,16 +144,19 @@ public class OmegaRecyclerView extends RecyclerView implements SwipeMenuHelper.C
         }
 
         if (adapter instanceof OnPageRequestListener) {
-            setPaginationCallback((OnPageRequestListener)adapter);
+            setPaginationCallback((OnPageRequestListener) adapter);
         }
 
         RecyclerView.Adapter shellAdapter = adapter;
-        if (mPageRequester.getCallback() != null && !(adapter instanceof PaginationAdapter)) {
-            shellAdapter = new PaginationAdapter(adapter, mPaginationLayout, mPaginationErrorLayout);
-        }
-        if (!mHeadersList.isEmpty()) {
-            shellAdapter = new HeaderFooterWrapperAdapter(shellAdapter);
-            ((HeaderFooterWrapperAdapter) shellAdapter).setHeaders(mHeadersList);
+        if (!(adapter instanceof HeaderFooterWrapperAdapter)) {
+            if (mPageRequester.getCallback() != null && !(adapter instanceof PaginationAdapter)) {
+                shellAdapter = new PaginationAdapter(adapter, mPaginationLayout, mPaginationErrorLayout);
+            }
+            if (!mHeadersList.isEmpty() || !mFooterList.isEmpty()) {
+                shellAdapter = new HeaderFooterWrapperAdapter(shellAdapter);
+                ((HeaderFooterWrapperAdapter) shellAdapter).setHeaders(mHeadersList);
+                ((HeaderFooterWrapperAdapter) shellAdapter).setFooters(mFooterList);
+            }
         }
         super.setAdapter(shellAdapter);
         mPageRequester.reset();
@@ -217,6 +168,73 @@ public class OmegaRecyclerView extends RecyclerView implements SwipeMenuHelper.C
             }
             newAdapter.registerAdapterDataObserver(mEmptyObserver);
         }
+    }
+
+    @Override
+    public void addView(View view, int index, ViewGroup.LayoutParams params) {
+        if (mFinishedInflate) {
+            super.addView(view, index, params);
+        } else {
+            view.setLayoutParams(params);
+            Integer integer = mLayoutParamCache.get(params);
+            if (integer == null || integer == 0) {
+                mHeadersList.add(view);
+            } else {
+                mFooterList.add(view);
+            }
+        }
+    }
+
+    @Override
+    protected void onFinishInflate() {
+        super.onFinishInflate();
+        mFinishedInflate = true;
+        mLayoutParamCache.clear();
+        if (getAdapter() != null) {
+            setAdapter(getAdapter());
+        }
+    }
+
+    @SuppressWarnings({"unchecked", "unused"})
+    protected <T extends View> T findViewTraversal(@IdRes int id) {
+        if (id == getId()) {
+            return (T) this;
+        }
+        for (View view : mHeadersList) {
+            View viewById = view.findViewById(id);
+            if (viewById != null) return (T) viewById;
+        }
+        for (View view : mFooterList) {
+            View viewById = view.findViewById(id);
+            if (viewById != null) return (T) viewById;
+        }
+
+        final int len = getChildCount();
+
+        for (int i = 0; i < len; i++) {
+            View v = getChildAt(i);
+
+            v = v.findViewById(id);
+
+            if (v != null) {
+                return (T) v;
+            }
+        }
+
+        return null;
+    }
+
+    @SuppressLint("CustomViewStyleable")
+    @Override
+    public ViewGroup.LayoutParams generateLayoutParams(AttributeSet attrs) {
+        ViewGroup.LayoutParams layoutParams = super.generateLayoutParams(attrs);
+        if (!mFinishedInflate) {
+            final TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.OmegaRecyclerView_Layout);
+            int section = typedArray.getInt(R.styleable.OmegaRecyclerView_Layout_layout_section, 0);
+            typedArray.recycle();
+            mLayoutParamCache.put(layoutParams, section);
+        }
+        return layoutParams;
     }
 
     @Override
@@ -340,42 +358,73 @@ public class OmegaRecyclerView extends RecyclerView implements SwipeMenuHelper.C
         }
     }
 
-    @Override
-    public void addView(View view, int index, ViewGroup.LayoutParams params) {
-        if (mFinishedInflate) {
-            super.addView(view, index, params);
-        } else {
-            view.setLayoutParams(params);
-            mHeadersList.add(view);
+    public void setHeadersVisibility(boolean visible) {
+        RecyclerView.Adapter adapter = getAdapter();
+        if (adapter instanceof HeaderFooterWrapperAdapter) {
+            ((HeaderFooterWrapperAdapter) adapter).setHeadersVisible(visible);
         }
     }
 
-    @Override
-    protected void onFinishInflate() {
-        super.onFinishInflate();
-        mFinishedInflate = true;
+    public void setFootersVisibility(boolean visible) {
+        RecyclerView.Adapter adapter = getAdapter();
+        if (adapter instanceof HeaderFooterWrapperAdapter) {
+            ((HeaderFooterWrapperAdapter) adapter).setFootersVisible(visible);
+        }
     }
 
-    @SuppressWarnings({"unchecked", "unused"})
-    protected <T extends View> T findViewTraversal(@IdRes int id) {
-        if (id == getId()) {
-            return (T) this;
+    private final AdapterDataObserver mEmptyObserver = new AdapterDataObserver() {
+        @Override
+        public void onChanged() {
+            RecyclerView.Adapter adapter = getAdapter();
+            if (adapter != null && mEmptyView != null) {
+                mEmptyView.setVisibility(adapter.getItemCount() == 0 ? VISIBLE : GONE);
+            }
         }
+    };
 
-        final int len = getChildCount();
-
-        for (int i = 0; i < len; i++) {
-            View v = getChildAt(i);
-
-            v = v.findViewById(id);
-
-            if (v != null) {
-                return (T) v;
+    private final AdapterDataObserver mHeaderObserver = new AdapterDataObserver() {
+        @Override
+        public void onChanged() {
+            if (getAdapter() instanceof HeaderFooterWrapperAdapter) {
+                getAdapter().notifyDataSetChanged();
             }
         }
 
-        return null;
-    }
+        @Override
+        public void onItemRangeChanged(int positionStart, int itemCount) {
+            if (getAdapter() instanceof HeaderFooterWrapperAdapter) {
+                getAdapter().notifyItemRangeInserted(positionStart, itemCount);
+            }
+        }
+
+        @Override
+        public void onItemRangeChanged(int positionStart, int itemCount, Object payload) {
+            if (getAdapter() instanceof HeaderFooterWrapperAdapter) {
+                getAdapter().notifyItemRangeChanged(positionStart, itemCount, payload);
+            }
+        }
+
+        @Override
+        public void onItemRangeInserted(int positionStart, int itemCount) {
+            if (getAdapter() instanceof HeaderFooterWrapperAdapter) {
+                getAdapter().notifyItemRangeInserted(positionStart, itemCount);
+            }
+        }
+
+        @Override
+        public void onItemRangeRemoved(int positionStart, int itemCount) {
+            if (getAdapter() instanceof HeaderFooterWrapperAdapter) {
+                getAdapter().notifyItemRangeRemoved(positionStart, itemCount);
+            }
+        }
+
+        @Override
+        public void onItemRangeMoved(int fromPosition, int toPosition, int itemCount) {
+            if (getAdapter() instanceof HeaderFooterWrapperAdapter) {
+                getAdapter().notifyItemMoved(fromPosition, toPosition);
+            }
+        }
+    };
 
     public abstract static class Adapter<VH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<VH> {
 

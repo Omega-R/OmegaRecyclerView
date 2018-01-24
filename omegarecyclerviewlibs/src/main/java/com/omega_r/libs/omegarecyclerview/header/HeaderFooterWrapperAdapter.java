@@ -43,7 +43,7 @@ public class HeaderFooterWrapperAdapter<T extends RecyclerView.Adapter> extends 
     @SuppressWarnings("unchecked")
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (!(isHeaderPosition(position) || isFooterPosition(position))) {
-            mRealAdapter.onBindViewHolder(holder, position - mHeaderArray.size() - mFooterArray.size());
+            mRealAdapter.onBindViewHolder(holder, position - mHeaderArray.size());
         }
     }
 
@@ -99,13 +99,13 @@ public class HeaderFooterWrapperAdapter<T extends RecyclerView.Adapter> extends 
     public void setFooters(@NonNull List<View> list) {
         mFooterArray = new SparseArray<>();
         for (View view : list) {
-            mHeaderArray.append(BASE_FOOTER_VIEW_TYPE + list.indexOf(view), view);
+            mFooterArray.append(BASE_FOOTER_VIEW_TYPE + list.indexOf(view), view);
         }
         notifyDataSetChanged();
     }
 
     public void addFooter(@NonNull View view) {
-        mHeaderArray.append(BASE_FOOTER_VIEW_TYPE + mFooterArray.size(), view);
+        mFooterArray.append(BASE_FOOTER_VIEW_TYPE + mFooterArray.size(), view);
         notifyDataSetChanged();
     }
 
