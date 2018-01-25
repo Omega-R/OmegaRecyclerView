@@ -18,7 +18,12 @@ public class HeaderFooterWrapperAdapter<T extends RecyclerView.Adapter> extends 
 
     private final T mRealAdapter;
     private SparseArray<View> mHeaderArray = new SparseArray<>();
+    private SparseArray<View> mHeaderArrayCopy = new SparseArray<>();
     private SparseArray<View> mFooterArray = new SparseArray<>();
+    private SparseArray<View> mFooterArrayCopy = new SparseArray<>();
+
+    private boolean mHeadersVisibility = true;
+    private boolean mFootersVisibility = true;
 
     public HeaderFooterWrapperAdapter(T adapter) {
         mRealAdapter = adapter;
@@ -85,39 +90,55 @@ public class HeaderFooterWrapperAdapter<T extends RecyclerView.Adapter> extends 
 
     public void setHeaders(@NonNull List<View> list) {
         mHeaderArray = new SparseArray<>();
+        mHeaderArrayCopy = new SparseArray<>();
         for (View view : list) {
-            mHeaderArray.append(BASE_HEADER_VIEW_TYPE + list.indexOf(view), view);
+            int key = BASE_HEADER_VIEW_TYPE + list.indexOf(view);
+            mHeaderArray.append(key, view);
+            mHeaderArrayCopy.append(key, view);
         }
-        notifyDataSetChanged();
-    }
-
-    public void addHeader(@NonNull View view) {
-        mHeaderArray.append(BASE_HEADER_VIEW_TYPE + mHeaderArray.size(), view);
         notifyDataSetChanged();
     }
 
     public void setFooters(@NonNull List<View> list) {
         mFooterArray = new SparseArray<>();
+        mFooterArrayCopy = new SparseArray<>();
         for (View view : list) {
-            mFooterArray.append(BASE_FOOTER_VIEW_TYPE + list.indexOf(view), view);
+            int key = BASE_FOOTER_VIEW_TYPE + list.indexOf(view);
+            mFooterArray.append(key, view);
+            mFooterArrayCopy.append(key, view);
         }
-        notifyDataSetChanged();
-    }
-
-    public void addFooter(@NonNull View view) {
-        mFooterArray.append(BASE_FOOTER_VIEW_TYPE + mFooterArray.size(), view);
         notifyDataSetChanged();
     }
 
     public void setHeadersVisible(boolean visible) {
-        for (int i = 0; i < mHeaderArray.size(); i++) {
-            mHeaderArray.valueAt(i).setVisibility(visible ? View.VISIBLE : View.GONE);
+        if (mHeadersVisibility != visible) {
+            if (visible) {
+                copyTo(mHeaderArrayCopy, mHeaderArray);
+            } else {
+                mHeaderArray.clear();
+            }
+            mHeadersVisibility = visible;
+            notifyDataSetChanged();
         }
     }
 
     public void setFootersVisible(boolean visible) {
-        for (int i = 0; i < mHeaderArray.size(); i++) {
-            mFooterArray.valueAt(i).setVisibility(visible ? View.VISIBLE : View.GONE);
+        if (mFootersVisibility != visible) {
+            if (visible) {
+                copyTo(mFooterArrayCopy, mFooterArray);
+            } else {
+                mFooterArray.clear();
+            }
+            mFootersVisibility = visible;
+            notifyDataSetChanged();
+        }
+    }
+
+    private <V> void copyTo(SparseArray<V> fromArray, SparseArray<V> toArray) {
+        toArray.clear();
+
+        for (int i = 0; i < fromArray.size(); i++) {
+            toArray.append(fromArray.keyAt(i), fromArray.valueAt(i));
         }
     }
 

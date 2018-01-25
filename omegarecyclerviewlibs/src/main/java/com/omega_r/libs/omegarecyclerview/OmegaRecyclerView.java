@@ -64,7 +64,7 @@ public class OmegaRecyclerView extends RecyclerView implements SwipeMenuHelper.C
     }
 
     private void init(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
-        initDefaultLayoutManager();
+        initDefaultLayoutManager(attrs, defStyleAttr);
         if (attrs != null) {
             TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.OmegaRecyclerView, defStyleAttr, 0);
             initItemSpace(a);
@@ -77,9 +77,9 @@ public class OmegaRecyclerView extends RecyclerView implements SwipeMenuHelper.C
         mPageRequester.attach(this);
     }
 
-    private void initDefaultLayoutManager() {
+    private void initDefaultLayoutManager(@Nullable AttributeSet attrs, int defStyleAttr) {
         if (getLayoutManager() == null) {
-            setLayoutManager(new LinearLayoutManager(getContext()));
+            setLayoutManager(new LinearLayoutManager(getContext(), attrs, defStyleAttr, 0));
         }
     }
 
