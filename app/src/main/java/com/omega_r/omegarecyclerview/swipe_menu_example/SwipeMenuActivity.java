@@ -9,6 +9,9 @@ import com.omega_r.omegarecyclerview.R;
 
 import java.util.List;
 
+import omega.com.annotations.OmegaActivity;
+
+@OmegaActivity
 public class SwipeMenuActivity extends AppCompatActivity {
 
     @Override

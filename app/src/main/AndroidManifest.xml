@@ -17,10 +17,10 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".sticky_header_example.StickyHeaderActivity" />
-        <activity android:name=".swipe_menu_example.SwipeMenuActivity" />
+        <activity android:name=".sticky_header_example.StickyHeaderActivity"/>
+        <activity android:name=".swipe_menu_example.SwipeMenuActivity"/>
         <activity android:name=".pagination_example.PaginationActivity"/>
-
+        <activity android:name=".sections_example.SectionsActivity"/>
     </application>
 
 </manifest>

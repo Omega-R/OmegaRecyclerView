@@ -180,6 +180,11 @@ public class RecyclerAdapter extends OmegaRecyclerView.Adapter<RecyclerView.View
     }
 ```
 
+## Sections (Header, Footer)
+<p align="center">
+    <img src="/images/sections_example.gif?raw=true" width="480" height="800" />
+</p>
+
 # License
 ```
 The MIT License
