@@ -26,4 +26,10 @@
         android:layout_height="wrap_content"
         android:text="@string/pagination_example"/>
 
+    <Button
+        android:id="@+id/button_sections"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/sections_example"/>
+
 </LinearLayout>

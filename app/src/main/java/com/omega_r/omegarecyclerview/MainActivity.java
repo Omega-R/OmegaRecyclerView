@@ -1,13 +1,10 @@
 package com.omega_r.omegarecyclerview;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
-import com.omega_r.omegarecyclerview.pagination_example.PaginationActivity;
-import com.omega_r.omegarecyclerview.sticky_header_example.StickyHeaderActivity;
-import com.omega_r.omegarecyclerview.swipe_menu_example.SwipeMenuActivity;
+import com.omega_r.libs.omegaintentbuilder.AppOmegaIntentBuilder;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -19,21 +16,43 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.button_swipe_menu).setOnClickListener(this);
         findViewById(R.id.button_sticky_header).setOnClickListener(this);
         findViewById(R.id.button_pagination).setOnClickListener(this);
+        findViewById(R.id.button_sections).setOnClickListener(this);
     }
 
+    /**
+     * AppOmegaIntentBuilder it's amazing library for start different intents
+     * See on GitHub {@link "https://github.com/Omega-R/OmegaIntentBuilder"}.
+     */
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.button_swipe_menu:
-                startActivity(new Intent(this, SwipeMenuActivity.class));
+                AppOmegaIntentBuilder.from(this)
+                        .appActivity()
+                        .swipeMenuActivity()
+                        .createIntentHandler()
+                        .startActivity();
                 break;
             case R.id.button_sticky_header:
-                startActivity(new Intent(this, StickyHeaderActivity.class));
+                AppOmegaIntentBuilder.from(this)
+                        .appActivity()
+                        .stickyHeaderActivity()
+                        .createIntentHandler()
+                        .startActivity();
                 break;
             case R.id.button_pagination:
-                startActivity(new Intent(this, PaginationActivity.class));
+                AppOmegaIntentBuilder.from(this)
+                        .appActivity()
+                        .paginationActivity()
+                        .createIntentHandler()
+                        .startActivity();
                 break;
-            default:
+            case R.id.button_sections:
+                AppOmegaIntentBuilder.from(this)
+                        .appActivity()
+                        .sectionsActivity()
+                        .createIntentHandler()
+                        .startActivity();
                 break;
         }
     }

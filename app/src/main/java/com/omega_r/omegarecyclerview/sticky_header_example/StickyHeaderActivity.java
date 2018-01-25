@@ -8,6 +8,9 @@ import com.omega_r.libs.omegarecyclerview.OmegaRecyclerView;
 import com.omega_r.libs.omegarecyclerview.sticky_header.StickyHeaderDecoration;
 import com.omega_r.omegarecyclerview.R;
 
+import omega.com.annotations.OmegaActivity;
+
+@OmegaActivity
 public class StickyHeaderActivity extends AppCompatActivity {
 
     @Override

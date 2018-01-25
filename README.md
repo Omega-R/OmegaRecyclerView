@@ -180,6 +180,39 @@ public class RecyclerAdapter extends OmegaRecyclerView.Adapter<RecyclerView.View
     }
 ```
 
+## Sections (Header, Footer)
+<p align="center">
+    <img src="/images/sections_example.gif?raw=true" width="300" height="533" />
+</p>
+
+For usage just add you Views inside OmegaRecyclerView and add "app:layout_section" parameter.
+```
+<?xml version="1.0" encoding="utf-8"?>
+<com.omega_r.libs.omegarecyclerview.OmegaRecyclerView 
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:text="Header"
+        app:layout_section="header"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:text="Footer"
+        app:layout_section="footer"/>
+
+</com.omega_r.libs.omegarecyclerview.OmegaRecyclerView>
+```
+
+For controll
+```
+OmegaRecyclerView.setHeadersVisibility(true);
+OmegaRecyclerView.setFootersVisibility(false);
+```
+
 # License
 ```
 The MIT License

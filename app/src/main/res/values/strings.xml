@@ -9,4 +9,7 @@
     <string name="loading">Loading...</string>
     <string name="error_loading">Error loading. Click to retry.</string>
     <string name="pagination_example">Pagination example</string>
+    <string name="sections_example">Sections Example</string>
+    <string name="header">Header</string>
+    <string name="footer">Mail us (Footer)</string>
 </resources>

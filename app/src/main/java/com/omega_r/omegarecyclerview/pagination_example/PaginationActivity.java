@@ -8,6 +8,9 @@ import com.omega_r.libs.omegarecyclerview.OmegaRecyclerView;
 import com.omega_r.libs.omegarecyclerview.pagination.OnPageRequestListener;
 import com.omega_r.omegarecyclerview.R;
 
+import omega.com.annotations.OmegaActivity;
+
+@OmegaActivity
 public class PaginationActivity extends AppCompatActivity implements OnPageRequestListener, ImageAdapter.Callback {
 
     private OmegaRecyclerView mRecyclerView;

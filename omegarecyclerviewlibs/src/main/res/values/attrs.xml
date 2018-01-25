@@ -19,4 +19,12 @@
         <attr name="paginationLayout" format="reference"/>
         <attr name="paginationErrorLayout" format="reference"/>
     </declare-styleable>
+
+    <declare-styleable name="OmegaRecyclerView_Layout">
+        <attr name="layout_section" format="enum">
+            <enum name="header" value="0"/>
+            <enum name="footer" value="1"/>
+        </attr>
+    </declare-styleable>
+
 </resources>
