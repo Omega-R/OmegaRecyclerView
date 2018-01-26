@@ -5,7 +5,7 @@ import android.support.v7.widget.RecyclerView;
 
 import java.util.Arrays;
 
-public abstract class BaseArrayAdapter<M, VH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<VH> {
+public abstract class BaseArrayAdapter<M, VH extends RecyclerView.ViewHolder> extends OmegaRecyclerView.Adapter<VH> {
 
     private M[] mArray;
 
@@ -23,13 +23,13 @@ public abstract class BaseArrayAdapter<M, VH extends RecyclerView.ViewHolder> ex
 
     public void set(M... array) {
         mArray = array;
-        notifyDataSetChanged();
+        tryNotifyDataSetChanged();
     }
 
     public void add(M... array) {
         int length = mArray.length;
         mArray = concat(mArray, array);
-        notifyItemRangeInserted(length, array.length);
+        tryNotifyItemRangeInserted(length, array.length);
     }
 
     private static <T> T[] concat(T[] first, T[] second) {

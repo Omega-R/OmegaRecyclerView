@@ -8,17 +8,28 @@
     android:padding="16dp"
     tools:context="com.omega_r.omegarecyclerview.MainActivity">
 
-    <FrameLayout
-        android:id="@+id/fragment_test_first"
+    <Button
+        android:id="@+id/button_swipe_menu"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        tools:layout="@layout/fragment_test"/>
+        android:layout_height="wrap_content"
+        android:text="@string/swipe_menu_example"/>
 
-    <FrameLayout
-        android:id="@+id/fragment_test_second"
+    <Button
+        android:id="@+id/button_sticky_header"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        tools:layout="@layout/fragment_sticky_header"/>
+        android:layout_height="wrap_content"
+        android:text="@string/sticky_header_example"/>
+
+    <Button
+        android:id="@+id/button_pagination"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/pagination_example"/>
+
+    <Button
+        android:id="@+id/button_sections"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/sections_example"/>
+
 </LinearLayout>

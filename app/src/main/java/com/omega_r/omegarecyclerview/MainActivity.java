@@ -2,24 +2,58 @@ package com.omega_r.omegarecyclerview;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 
-import com.omega_r.omegarecyclerview.sticky_header_example.StickyHeaderFragment;
-import com.omega_r.omegarecyclerview.test_example.TestFragment;
+import com.omega_r.libs.omegaintentbuilder.AppOmegaIntentBuilder;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        TestFragment testFragment = new TestFragment();
-        StickyHeaderFragment stickyHeaderFragment = new StickyHeaderFragment();
+        findViewById(R.id.button_swipe_menu).setOnClickListener(this);
+        findViewById(R.id.button_sticky_header).setOnClickListener(this);
+        findViewById(R.id.button_pagination).setOnClickListener(this);
+        findViewById(R.id.button_sections).setOnClickListener(this);
+    }
 
-        getSupportFragmentManager()
-                .beginTransaction()
-                .add(R.id.fragment_test_first, testFragment)
-                .add(R.id.fragment_test_second, stickyHeaderFragment)
-                .commit();
+    /**
+     * AppOmegaIntentBuilder it's amazing library for start different intents
+     * See on GitHub {@link "https://github.com/Omega-R/OmegaIntentBuilder"}.
+     */
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.button_swipe_menu:
+                AppOmegaIntentBuilder.from(this)
+                        .appActivity()
+                        .swipeMenuActivity()
+                        .createIntentHandler()
+                        .startActivity();
+                break;
+            case R.id.button_sticky_header:
+                AppOmegaIntentBuilder.from(this)
+                        .appActivity()
+                        .stickyHeaderActivity()
+                        .createIntentHandler()
+                        .startActivity();
+                break;
+            case R.id.button_pagination:
+                AppOmegaIntentBuilder.from(this)
+                        .appActivity()
+                        .paginationActivity()
+                        .createIntentHandler()
+                        .startActivity();
+                break;
+            case R.id.button_sections:
+                AppOmegaIntentBuilder.from(this)
+                        .appActivity()
+                        .sectionsActivity()
+                        .createIntentHandler()
+                        .startActivity();
+                break;
+        }
     }
 }

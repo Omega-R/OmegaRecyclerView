@@ -71,6 +71,148 @@ set(array)
 add(array)
 ```
 
+## SwipeMenu
+<p align="center">
+    <img src="/images/swipe_menu_example.gif?raw=true" width="300" height="533" />
+</p>
+
+To add swipe menu into project you need to use SwipeViewHolder or create your own ViewHolder.
+```
+public class ViewHolder extends SwipeViewHolder {
+
+    public ViewHolder(ViewGroup parent) {
+            super(parent, 
+            R.layout.item_swipe_content, 
+            R.layout.item_left_swipe_menu, 
+            R.layout.item_right_swipe_menu);
+    }        
+```
+
+Also you can use constructor only with left menu, or only with right menu. 
+```
+    public ViewHolder(ViewGroup parent) {
+            super(parent, 
+            R.layout.item_swipe_content, 
+            R.layout.item_left_swipe_menu, 
+            SwipeViewHolder.NO_ID);
+    }
+```
+Also you can use one layout for left menu and right menu. 
+```
+    public ViewHolder(ViewGroup parent) {
+            super(parent, 
+            R.layout.item_swipe_content, 
+            R.layout.swipe_menu);
+    }
+```
+
+You can use following methods for controlling swipe menu state:
+```
+public void setSwipeFractionListener(@Nullable SwipeFractionListener listener);
+public void setSwipeListener(@Nullable SwipeSwitchListener listener);
+public void smoothCloseMenu(int duration);
+public void smoothCloseMenu();
+public void smoothOpenBeginMenu();
+public void smoothOpenEndMenu();
+public void setSwipeEnable(boolean enable);
+public boolean isSwipeEnable();
+```
+
+## Pagination
+<p align="center">
+    <img src="/images/pagination.gif?raw=true" width="300" height="533" />
+</p>
+
+To add pagination into project you just need to setPaginationCallback to OmegaRecyclerView.
+```
+mRecyclerView.setPaginationCallback(new OnPageRequestListener() {
+            @Override
+            public void onPageRequest(int page) {
+                // You can load data inside this callback
+            }
+
+            @Override
+            public int getPagePreventionForEnd() {
+                return PREVENTION_VALUE; // PREVENTION_VALUE - for how many positions until the end you want to be informed
+            }
+        });
+```
+How to control pagination: 
+```
+mRecyclerView.showProgressPagination(); // show progress
+mRecyclerView.hidePagination(); // hide pagination
+mRecyclerView.showErrorPagination(); // show error
+```
+
+You have two ways to add your custom pagination layout and error layout. 
+First way:
+```
+<com.omega_r.libs.omegarecyclerview.OmegaRecyclerView
+        android:id="@+id/recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:paginationLayout="@layout/item_progress"
+        app:paginationErrorLayout="@layout/item_error_loading"/>
+        
+```
+You can implement PaginationView in your Adapter class. 
+Second:
+```
+public class RecyclerAdapter extends OmegaRecyclerView.Adapter<RecyclerView.ViewHolder> implements PaginationViewCreator {
+....
+@Nullable
+    @Override
+    public View createPaginationView(ViewGroup parent, LayoutInflater inflater) {
+        return inflater.inflate(R.layout.item_progress, parent, false);
+    }
+
+    @Nullable
+    @Override
+    public View createPaginationErrorView(ViewGroup parent, LayoutInflater inflater) {
+        View view = inflater.inflate(R.layout.item_error_loading, parent, false);
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // on error clicked....
+            }
+        });
+        return view;
+    }
+```
+
+## Sections (Header, Footer)
+<p align="center">
+    <img src="/images/sections_example.gif?raw=true" width="300" height="533" />
+</p>
+
+For usage just add you Views inside OmegaRecyclerView and add "app:layout_section" parameter.
+```
+<?xml version="1.0" encoding="utf-8"?>
+<com.omega_r.libs.omegarecyclerview.OmegaRecyclerView 
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:text="Header"
+        app:layout_section="header"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:text="Footer"
+        app:layout_section="footer"/>
+
+</com.omega_r.libs.omegarecyclerview.OmegaRecyclerView>
+```
+
+For controll
+```
+OmegaRecyclerView.setHeadersVisibility(true);
+OmegaRecyclerView.setFootersVisibility(false);
+```
+
 # License
 ```
 The MIT License
