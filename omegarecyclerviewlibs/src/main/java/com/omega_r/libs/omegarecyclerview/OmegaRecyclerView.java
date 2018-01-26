@@ -46,6 +46,7 @@ public class OmegaRecyclerView extends RecyclerView implements SwipeMenuHelper.C
     private List<View> mHeadersList = new ArrayList<>();
     private List<View> mFooterList = new ArrayList<>();
     private WeakHashMap<ViewGroup.LayoutParams, Integer> mLayoutParamCache = new WeakHashMap<>();
+    private int mShowDivider;
 
     public OmegaRecyclerView(Context context) {
         super(context);
@@ -67,8 +68,8 @@ public class OmegaRecyclerView extends RecyclerView implements SwipeMenuHelper.C
         initDefaultLayoutManager(attrs, defStyleAttr);
         if (attrs != null) {
             TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.OmegaRecyclerView, defStyleAttr, 0);
-            initItemSpace(a);
             initDivider(a);
+            initItemSpace(a);
             initEmptyView(a);
             initPagination(a);
             a.recycle();
@@ -92,14 +93,16 @@ public class OmegaRecyclerView extends RecyclerView implements SwipeMenuHelper.C
     public void initItemSpace(TypedArray a) {
         if (a.hasValue(R.styleable.OmegaRecyclerView_itemSpace)) {
             mItemSpace = (int) a.getDimension(R.styleable.OmegaRecyclerView_itemSpace, 0);
-            addItemSpace(mItemSpace);
+            boolean addSpaceAboveFirstItem = (mShowDivider & DividerItemDecoration.ShowDivider.BEGINNING) == DividerItemDecoration.ShowDivider.BEGINNING;
+            boolean addSpaceBelowLastItem = (mShowDivider & DividerItemDecoration.ShowDivider.END) == DividerItemDecoration.ShowDivider.END;
+            addItemSpace(mItemSpace, addSpaceAboveFirstItem, addSpaceBelowLastItem);
         }
     }
 
     public void initDivider(TypedArray a) {
         if (a.hasValue(R.styleable.OmegaRecyclerView_showDivider)) {
-            int showDivider = a.getInt(R.styleable.OmegaRecyclerView_showDivider, DividerItemDecoration.ShowDivider.NONE);
-            if (showDivider != DividerItemDecoration.ShowDivider.NONE) {
+            mShowDivider = a.getInt(R.styleable.OmegaRecyclerView_showDivider, DividerItemDecoration.ShowDivider.NONE);
+            if (mShowDivider != DividerItemDecoration.ShowDivider.NONE) {
                 Drawable dividerDrawable = a.getDrawable(R.styleable.OmegaRecyclerView_android_divider);
                 if (dividerDrawable == null) {
                     dividerDrawable = a.getDrawable(R.styleable.OmegaRecyclerView_divider);
@@ -111,7 +114,7 @@ public class OmegaRecyclerView extends RecyclerView implements SwipeMenuHelper.C
                 float dividerHeight = a.getDimension(R.styleable.OmegaRecyclerView_heightDivider,
                         a.getDimension(R.styleable.OmegaRecyclerView_android_dividerHeight, -1));
                 float alpha = a.getFloat(R.styleable.OmegaRecyclerView_alphaDivider, 1);
-                addItemDecoration(new DividerItemDecoration(dividerDrawable, (int) dividerHeight, showDivider, mItemSpace / 2, alpha));
+                addItemDecoration(new DividerItemDecoration(dividerDrawable, (int) dividerHeight, mShowDivider, mItemSpace / 2, alpha));
             }
         }
     }
@@ -280,8 +283,8 @@ public class OmegaRecyclerView extends RecyclerView implements SwipeMenuHelper.C
         return dividerDrawable;
     }
 
-    public void addItemSpace(int space) {
-        addItemDecoration(new SpaceItemDecoration(space));
+    public void addItemSpace(int space, boolean addSpaceAboveFirstItem, boolean addSpaceBelowLastItem) {
+        addItemDecoration(new SpaceItemDecoration(space, addSpaceAboveFirstItem, addSpaceBelowLastItem));
     }
 
     public int getItemSpace() {
