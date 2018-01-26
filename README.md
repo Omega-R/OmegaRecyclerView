@@ -35,7 +35,7 @@ com.omega_r.libs.omegarecyclerview.OmegaRecyclerView
         android:id="@+id/custom_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:divider="1"
+        android:divider="#888"
         android:dividerHeight="1dp"
         app:itemSpace="12dp"
         app:showDivider="middle"/>
