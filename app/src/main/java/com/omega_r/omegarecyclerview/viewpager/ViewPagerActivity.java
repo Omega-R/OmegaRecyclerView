@@ -19,9 +19,7 @@ public class ViewPagerActivity extends AppCompatActivity {
         ViewPagerOmegaRecyclerView recyclerView = findViewById(R.id.recyclerview);
         ImageAdapter adapter = new ImageAdapter();
         recyclerView.setAdapter(adapter);
-        recyclerView.setItemsSize(0.8f);
-        adapter.addValues(Image.createImageList(15));
-        recyclerView.scrollToPosition(1);
+        adapter.addValues(Image.createImageList(10));
     }
 
 }

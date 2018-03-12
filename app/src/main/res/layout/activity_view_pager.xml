@@ -11,6 +11,9 @@
     <com.omega_r.libs.omegarecyclerview.viewpager.ViewPagerOmegaRecyclerView
         android:id="@+id/recyclerview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        app:elementSize="0.8"
+        app:infinite="true"/>
 
 </FrameLayout>

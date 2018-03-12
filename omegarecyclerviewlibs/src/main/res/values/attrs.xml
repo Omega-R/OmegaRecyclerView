@@ -33,6 +33,7 @@
         <attr name="elementSize" format="float"/>
         <attr name="transitionTime" format="integer"/>
         <attr name="slideOnFlingThreshold" format="integer"/>
+        <attr name="infinite" format="boolean"/>
     </declare-styleable>
 
 </resources>

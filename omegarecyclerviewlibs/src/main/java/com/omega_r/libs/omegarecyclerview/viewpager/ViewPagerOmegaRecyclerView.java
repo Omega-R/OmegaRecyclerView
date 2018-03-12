@@ -148,6 +148,13 @@ public class ViewPagerOmegaRecyclerView extends OmegaRecyclerView implements Vie
         }
     }
 
+    public void setInfinite(boolean infinite) {
+        if (mLayoutManager != null) {
+            mLayoutManager.setInfinite(infinite);
+        }
+    }
+
+
     public void addScrollStateChangeListener(@NonNull ScrollStateChangeListener<?> scrollStateChangeListener) {
         mScrollStateChangeListenerSet.add(scrollStateChangeListener);
     }

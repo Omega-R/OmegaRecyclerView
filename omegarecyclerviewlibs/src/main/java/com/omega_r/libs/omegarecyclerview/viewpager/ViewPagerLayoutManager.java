@@ -81,15 +81,11 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
     @Nullable
     private ItemTransformer mItemTransformer;
     private int mOrientation;
+    private boolean mIsInfinite;
 
-    public ViewPagerLayoutManager(@NonNull Context context,
-                                  @NonNull ScrollStateListener scrollStateListener) {
-        this(context, null, 0, scrollStateListener);
-    }
-
-    public ViewPagerLayoutManager(@NonNull Context context,
-                                  @Nullable AttributeSet attrs, int defStyleAttr,
-                                  @NonNull ScrollStateListener scrollStateListener) {
+    ViewPagerLayoutManager(@NonNull Context context,
+                           @Nullable AttributeSet attrs, int defStyleAttr,
+                           @NonNull ScrollStateListener scrollStateListener) {
         mContext = context;
         mScrollStateListener = scrollStateListener;
         setOrientation(HORIZONTAL); // init mOrientationHelper
@@ -105,6 +101,7 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
             setItemsSize(typedArray.getFloat(R.styleable.ViewPagerOmegaRecyclerView_elementSize, DEFAULT_VIEW_SIZE));
             setItemTransitionTimeMillis(typedArray.getInteger(R.styleable.ViewPagerOmegaRecyclerView_transitionTime, DEFAULT_TIME_FOR_ITEM_SETTLE));
             setSlideOnFlingThreshold(typedArray.getInteger(R.styleable.ViewPagerOmegaRecyclerView_slideOnFlingThreshold, DEFAULT_FLING_THRESHOLD));
+            mIsInfinite = typedArray.getBoolean(R.styleable.ViewPagerOmegaRecyclerView_infinite, false);
             typedArray.recycle();
         }
     }
@@ -184,7 +181,7 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
     }
 
     private View getMeasuredChildForAdapterPosition(int position, RecyclerView.Recycler recycler) {
-        View view = recycler.getViewForPosition(position);
+        View view = recycler.getViewForPosition(calculateRealPosition(position));
         addView(view);
 
         int width = getWidth();
@@ -202,6 +199,15 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
         final int heightSpec = View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY);
         measureChildWithDecorationsAndMargin(view, widthSpec, heightSpec);
         return view;
+    }
+
+    public int calculateRealPosition(int position) {
+        if (mIsInfinite) {
+            int itemCount = super.getItemCount();
+            return itemCount == 0 ? position : (position % itemCount);
+        } else {
+            return position;
+        }
     }
 
     private int getMeasuredWidthWithMargin(View child) {
@@ -301,6 +307,9 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
         } else if (mCurrentPosition >= positionStart) {
             newPosition = Math.min(mCurrentPosition + itemCount, getItemCount() - 1);
         }
+        if (newPosition == 0 && mIsInfinite && getItemCount() != 0) {
+            newPosition = Integer.MAX_VALUE / 2;
+        }
         onNewPosition(newPosition);
     }
 
@@ -322,7 +331,11 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
     @Override
     public void onItemsChanged(RecyclerView recyclerView) {
         //notifyDataSetChanged() was called. We need to ensure that mCurrentPosition is not out of bounds
-        mCurrentPosition = Math.min(Math.max(0, mCurrentPosition), getItemCount() - 1);
+        if (mIsInfinite && getItemCount() != 0) {
+            mCurrentPosition = Integer.MAX_VALUE / 2;
+        } else {
+            mCurrentPosition = Math.min(Math.max(0, mCurrentPosition), getItemCount() - 1);
+        }
         mDataSetChangeShiftedPosition = true;
     }
 
@@ -362,7 +375,7 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
 
         mOrientationHelper.offsetChildren(-delta, this);
 
-        if (mOrientationHelper.hasNewBecomeVisible(this)) {
+        if (mIsInfinite || mOrientationHelper.hasNewBecomeVisible(this)) {
             fill(recycler);
         }
 
@@ -531,7 +544,7 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
 
     private void startSmoothPendingScroll() {
         LinearSmoothScroller scroller = new DiscreteLinearSmoothScroller(mContext);
-        scroller.setTargetPosition(mCurrentPosition);
+        scroller.setTargetPosition(calculateRealPosition(mCurrentPosition));
         startSmoothScroll(scroller);
     }
 
@@ -591,11 +604,20 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
 
     @Override
     public void onAdapterChanged(RecyclerView.Adapter oldAdapter, RecyclerView.Adapter newAdapter) {
+        clearState();
+        if (mIsInfinite && newAdapter.getItemCount() != 0) {
+            scrollToPosition(Integer.MAX_VALUE / 2);
+        }
+    }
+
+    private void clearState() {
+        mViewCacheArray.clear();
         mPendingPosition = NO_POSITION;
         mScrolled = mPendingScroll = 0;
         mCurrentPosition = 0;
         removeAllViews();
     }
+
 
     @Override
     public Parcelable onSaveInstanceState() {
@@ -658,6 +680,14 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
         mItemSizePercent = itemsSize;
         removeAllViews();
         requestLayout();
+    }
+
+    public void setInfinite(boolean infinite) {
+        mIsInfinite = infinite;
+        clearState();
+        if (mIsInfinite && getItemCount() != 0) {
+            scrollToPosition(Integer.MAX_VALUE / 2);
+        }
     }
 
     public void setOrientation(int orientation) {
@@ -747,6 +777,20 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
 
     private boolean isInBounds(int itemPosition) {
         return itemPosition >= 0 && itemPosition < getItemCount();
+    }
+
+    @Override
+    public View findViewByPosition(int position) {
+        return super.findViewByPosition(calculateRealPosition(position));
+    }
+
+    @Override
+    public int getItemCount() {
+        int itemCount = super.getItemCount();
+        if (mIsInfinite && itemCount != 0) {
+            return Integer.MAX_VALUE;
+        }
+        return itemCount;
     }
 
     private boolean isViewVisible(Point viewCenter, int endBound) {

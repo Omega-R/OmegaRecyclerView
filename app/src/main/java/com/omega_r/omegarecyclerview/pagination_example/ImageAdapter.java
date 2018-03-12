@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.omega_r.libs.omegarecyclerview.OmegaRecyclerView;
 import com.omega_r.libs.omegarecyclerview.pagination.PaginationViewCreator;
@@ -71,9 +72,15 @@ public class ImageAdapter extends OmegaRecyclerView.Adapter<ImageAdapter.ViewHol
 
         ImageView imageView;
 
-        public ViewHolder(View itemView) {
+        public ViewHolder(final View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.imageview);
+            imageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(itemView.getContext(), "Clicked " + getAdapterPosition(), Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     }
 
