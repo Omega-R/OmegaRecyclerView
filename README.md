@@ -214,13 +214,7 @@ OmegaRecyclerView.setFootersVisibility(false);
 ```
 
 ## ViewPager
-<p align="left">
-    <img src="/images/viewpager_scale.gif?raw=true" width="300" height="533" />
-</p>
-
-<p align="center">
-    <img src="/images/viewpager_vertical.gif?raw=true" width="300" height="533" />
-</p>
+<img src="/images/viewpager_scale.gif?raw=true" width="300" height="533" />    <img src="/images/viewpager_vertical.gif?raw=true" width="300" height="533" />
 
 For usage just add ViewPagerOmegaRecyclerView
 ```
