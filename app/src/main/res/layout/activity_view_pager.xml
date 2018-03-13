@@ -8,7 +8,7 @@
     tools:context="com.omega_r.omegarecyclerview.viewpager.ViewPagerActivity">
 
 
-    <com.omega_r.libs.omegarecyclerview.viewpager.ViewPagerOmegaRecyclerView
+    <com.omega_r.libs.omegarecyclerview.viewpager.OmegaPagerRecyclerView
         android:id="@+id/recyclerview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

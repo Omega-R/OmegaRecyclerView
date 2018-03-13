@@ -2,7 +2,7 @@ package com.omega_r.omegarecyclerview.viewpager;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import com.omega_r.libs.omegarecyclerview.viewpager.ViewPagerOmegaRecyclerView;
+import com.omega_r.libs.omegarecyclerview.viewpager.OmegaPagerRecyclerView;
 import com.omega_r.omegarecyclerview.R;
 import com.omega_r.omegarecyclerview.pagination_example.Image;
 import com.omega_r.omegarecyclerview.pagination_example.ImageAdapter;
@@ -16,7 +16,7 @@ public class ViewPagerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_pager);
-        ViewPagerOmegaRecyclerView recyclerView = findViewById(R.id.recyclerview);
+        OmegaPagerRecyclerView recyclerView = findViewById(R.id.recyclerview);
         ImageAdapter adapter = new ImageAdapter();
         recyclerView.setAdapter(adapter);
         adapter.addValues(Image.createImageList(10));

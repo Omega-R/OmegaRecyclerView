@@ -95,13 +95,13 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
 
     private void initAttrs(@Nullable AttributeSet attrs, int defStyleAttr) {
         if (attrs != null) {
-            TypedArray typedArray = mContext.obtainStyledAttributes(attrs, R.styleable.ViewPagerOmegaRecyclerView, defStyleAttr, 0);
-            setShouldSlideOnFling(typedArray.getBoolean(R.styleable.ViewPagerOmegaRecyclerView_slideOnFling, false));
-            setOrientation(typedArray.getInt(R.styleable.ViewPagerOmegaRecyclerView_android_orientation, HORIZONTAL));
-            setItemsSize(typedArray.getFloat(R.styleable.ViewPagerOmegaRecyclerView_elementSize, DEFAULT_VIEW_SIZE));
-            setItemTransitionTimeMillis(typedArray.getInteger(R.styleable.ViewPagerOmegaRecyclerView_transitionTime, DEFAULT_TIME_FOR_ITEM_SETTLE));
-            setSlideOnFlingThreshold(typedArray.getInteger(R.styleable.ViewPagerOmegaRecyclerView_slideOnFlingThreshold, DEFAULT_FLING_THRESHOLD));
-            mIsInfinite = typedArray.getBoolean(R.styleable.ViewPagerOmegaRecyclerView_infinite, false);
+            TypedArray typedArray = mContext.obtainStyledAttributes(attrs, R.styleable.OmegaPagerRecyclerView, defStyleAttr, 0);
+            setShouldSlideOnFling(typedArray.getBoolean(R.styleable.OmegaPagerRecyclerView_slideOnFling, false));
+            setOrientation(typedArray.getInt(R.styleable.OmegaPagerRecyclerView_android_orientation, HORIZONTAL));
+            setItemsSize(typedArray.getFloat(R.styleable.OmegaPagerRecyclerView_elementSize, DEFAULT_VIEW_SIZE));
+            setItemTransitionTimeMillis(typedArray.getInteger(R.styleable.OmegaPagerRecyclerView_transitionTime, DEFAULT_TIME_FOR_ITEM_SETTLE));
+            setSlideOnFlingThreshold(typedArray.getInteger(R.styleable.OmegaPagerRecyclerView_slideOnFlingThreshold, DEFAULT_FLING_THRESHOLD));
+            mIsInfinite = typedArray.getBoolean(R.styleable.OmegaPagerRecyclerView_infinite, false);
             typedArray.recycle();
         }
     }

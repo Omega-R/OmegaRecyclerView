@@ -27,7 +27,7 @@
         </attr>
     </declare-styleable>
 
-    <declare-styleable name="ViewPagerOmegaRecyclerView">
+    <declare-styleable name="OmegaPagerRecyclerView">
         <attr name="slideOnFling" format="boolean"/>
         <attr name="android:orientation"/>
         <attr name="elementSize" format="float"/>
