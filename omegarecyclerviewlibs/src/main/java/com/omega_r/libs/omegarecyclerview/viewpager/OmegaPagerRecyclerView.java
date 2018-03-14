@@ -22,6 +22,8 @@ public class OmegaPagerRecyclerView extends OmegaRecyclerView implements ViewPag
 
     private final Set<ScrollStateChangeListener> mScrollStateChangeListenerSet = new HashSet<>();
     private final Set<OnItemChangedListener> mOnItemChangedListenerSet = new HashSet<>();
+    @Nullable
+    private ViewPager.OnPageChangeListener mViewPagerOnPageChangeListener;
     private boolean mIsOverScrollEnabled;
 
     public OmegaPagerRecyclerView(Context context) {
@@ -58,9 +60,11 @@ public class OmegaPagerRecyclerView extends OmegaRecyclerView implements ViewPag
         super.setLayoutManager(layoutManager);
     }
 
+    @Nullable
     @Override
     public ViewPagerLayoutManager getLayoutManager() {
-        return (ViewPagerLayoutManager) super.getLayoutManager();
+        LayoutManager layoutManager = super.getLayoutManager();
+        return layoutManager == null ? null : (ViewPagerLayoutManager) super.getLayoutManager();
     }
 
     @Override
@@ -89,6 +93,10 @@ public class OmegaPagerRecyclerView extends OmegaRecyclerView implements ViewPag
      */
     public int getCurrentItem() {
         return getLayoutManager() == null ? NO_POSITION : getLayoutManager().getCurrentPosition();
+    }
+
+    public void setViewPagerOnPageChangeListener(@Nullable ViewPager.OnPageChangeListener viewPagerOnPageChangeListener) {
+        mViewPagerOnPageChangeListener = viewPagerOnPageChangeListener;
     }
 
     public void setItemTransformer(ItemTransformer transformer) {
@@ -157,7 +165,6 @@ public class OmegaPagerRecyclerView extends OmegaRecyclerView implements ViewPag
         }
     }
 
-
     public void addScrollStateChangeListener(@NonNull ScrollStateChangeListener<?> scrollStateChangeListener) {
         mScrollStateChangeListenerSet.add(scrollStateChangeListener);
     }
@@ -186,28 +193,6 @@ public class OmegaPagerRecyclerView extends OmegaRecyclerView implements ViewPag
         }
     }
 
-    private void notifyScroll(float position, int currentIndex, int newIndex,
-                              ViewHolder currentHolder, ViewHolder newHolder) {
-        for (ScrollStateChangeListener listener : mScrollStateChangeListenerSet) {
-            listener.onScroll(position, currentIndex, newIndex, currentHolder, newHolder);
-        }
-    }
-
-    private void notifyCurrentItemChanged() {
-        if (mOnItemChangedListenerSet.isEmpty() || getLayoutManager() == null) {
-            return;
-        }
-        int current = getLayoutManager().getCurrentPosition();
-        ViewHolder currentHolder = getViewHolder(current);
-        notifyCurrentItemChanged(currentHolder, current);
-    }
-
-    private void notifyCurrentItemChanged(ViewHolder holder, int current) {
-        for (OnItemChangedListener listener : mOnItemChangedListenerSet) {
-            listener.onCurrentItemChanged(holder, current);
-        }
-    }
-
     @Override
     public void onIsBoundReachedFlagChange(boolean isBoundReached) {
         if (mIsOverScrollEnabled) {
@@ -223,10 +208,10 @@ public class OmegaPagerRecyclerView extends OmegaRecyclerView implements ViewPag
 
     @Override
     public void onScrollStart() {
-        if (mScrollStateChangeListenerSet.isEmpty() || getLayoutManager() == null) {
-            return;
-        }
-        int current = getLayoutManager().getCurrentPosition();
+        ViewPagerLayoutManager layoutManager = getLayoutManager();
+        if (layoutManager == null) return;
+
+        int current = layoutManager.getCurrentPosition();
         ViewHolder holder = getViewHolder(current);
         if (holder != null) {
             notifyScrollStart(holder, current);
@@ -235,9 +220,9 @@ public class OmegaPagerRecyclerView extends OmegaRecyclerView implements ViewPag
 
     @Override
     public void onScrollEnd() {
-        if ((mOnItemChangedListenerSet.isEmpty() && mScrollStateChangeListenerSet.isEmpty()) || getLayoutManager() == null) {
-            return;
-        }
+        ViewPagerLayoutManager layoutManager = getLayoutManager();
+        if (layoutManager == null) return;
+
         int current = getLayoutManager().getCurrentPosition();
         ViewHolder holder = getViewHolder(current);
         if (holder != null) {
@@ -248,14 +233,47 @@ public class OmegaPagerRecyclerView extends OmegaRecyclerView implements ViewPag
 
     @Override
     public void onScroll(float currentViewPosition) {
-        if (mScrollStateChangeListenerSet.isEmpty() || getLayoutManager() == null) {
-            return;
-        }
+        ViewPagerLayoutManager layoutManager = getLayoutManager();
+        if (layoutManager == null) return;
+
         int currentIndex = getCurrentItem();
-        int newIndex = getLayoutManager().getNextPosition();
+        int newIndex = layoutManager.getNextPosition();
         if (currentIndex != newIndex) {
             notifyScroll(currentViewPosition, currentIndex, newIndex,
                     getViewHolder(currentIndex), getViewHolder(newIndex));
+
+            if (mViewPagerOnPageChangeListener != null) {
+                float positionOffset;
+
+                if (newIndex > currentIndex) {
+                    positionOffset = -currentViewPosition;
+                    if (positionOffset == 1) {
+                        positionOffset = 0;
+                        currentIndex += 1;
+                    }
+                } else {
+                    positionOffset = 1 - currentViewPosition;
+                    currentIndex -= 1;
+                }
+
+                mViewPagerOnPageChangeListener.onPageScrolled(currentIndex, positionOffset, 0);
+            }
+        }
+    }
+
+    private void notifyScroll(float position, int currentIndex, int newIndex,
+                              ViewHolder currentHolder, ViewHolder newHolder) {
+        for (ScrollStateChangeListener listener : mScrollStateChangeListenerSet) {
+            listener.onScroll(position, currentIndex, newIndex, currentHolder, newHolder);
+        }
+    }
+
+    private void notifyCurrentItemChanged(ViewHolder holder, int current) {
+        for (OnItemChangedListener listener : mOnItemChangedListenerSet) {
+            listener.onCurrentItemChanged(holder, current);
+        }
+        if (mViewPagerOnPageChangeListener != null) {
+            mViewPagerOnPageChangeListener.onPageSelected(current);
         }
     }
 
@@ -272,6 +290,15 @@ public class OmegaPagerRecyclerView extends OmegaRecyclerView implements ViewPag
     @Override
     public void onDataSetChangeChangedPosition() {
         notifyCurrentItemChanged();
+    }
+
+    private void notifyCurrentItemChanged() {
+        ViewPagerLayoutManager layoutManager = getLayoutManager();
+        if (layoutManager == null) return;
+
+        int current = layoutManager.getCurrentPosition();
+        ViewHolder currentHolder = getViewHolder(current);
+        notifyCurrentItemChanged(currentHolder, current);
     }
 
     public interface ScrollStateChangeListener<T extends ViewHolder> {

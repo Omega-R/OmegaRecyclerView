@@ -201,7 +201,7 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
         return view;
     }
 
-    public int calculateRealPosition(int position) {
+    private int calculateRealPosition(int position) {
         if (mIsInfinite) {
             int itemCount = super.getItemCount();
             return itemCount == 0 ? position : (position % itemCount);
@@ -308,7 +308,8 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
             newPosition = Math.min(mCurrentPosition + itemCount, getItemCount() - 1);
         }
         if (newPosition == 0 && mIsInfinite && getItemCount() != 0) {
-            newPosition = Integer.MAX_VALUE / 2;
+            int middle = Integer.MAX_VALUE / 2;
+            newPosition = middle - calculateRealPosition(middle);
         }
         onNewPosition(newPosition);
     }
@@ -332,7 +333,8 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
     public void onItemsChanged(RecyclerView recyclerView) {
         //notifyDataSetChanged() was called. We need to ensure that mCurrentPosition is not out of bounds
         if (mIsInfinite && getItemCount() != 0) {
-            mCurrentPosition = Integer.MAX_VALUE / 2;
+            int middle = Integer.MAX_VALUE / 2;
+            mCurrentPosition = middle - calculateRealPosition(middle);
         } else {
             mCurrentPosition = Math.min(Math.max(0, mCurrentPosition), getItemCount() - 1);
         }
@@ -399,20 +401,46 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
 
     @Override
     public void scrollToPosition(int position) {
-        if (mCurrentPosition == position) {
+        int scrollPosition = calculateScrollPosition(position);
+        if (mCurrentPosition == scrollPosition) {
             return;
         }
 
-        mCurrentPosition = position;
+        mCurrentPosition = calculateScrollPosition(position);
         requestLayout();
+    }
+
+    private int calculateScrollPosition(int position) {
+        int itemCount = super.getItemCount();
+        if (position >= itemCount) {
+            throw new IllegalStateException("Position can't be > items size " + itemCount);
+        }
+        if (mIsInfinite) {
+            int currentPosition = calculateRealPosition(mCurrentPosition);
+
+            if (currentPosition == position) {
+                return mCurrentPosition;
+            }
+
+            int startPosition = mCurrentPosition - calculateRealPosition(mCurrentPosition);
+            int endPosition = startPosition + itemCount;
+
+            for (int i = startPosition; i < endPosition; i++) {
+                if (calculateRealPosition(i) == position) {
+                    return i;
+                }
+            }
+        }
+        return position;
     }
 
     @Override
     public void smoothScrollToPosition(RecyclerView recyclerView, RecyclerView.State state, int position) {
-        if (mCurrentPosition == position || mPendingPosition != NO_POSITION) {
+        int scrollPosition = calculateScrollPosition(position);
+        if (mCurrentPosition == scrollPosition || mPendingPosition != NO_POSITION) {
             return;
         }
-        startSmoothPendingScroll(position);
+        startSmoothPendingScroll(scrollPosition);
     }
 
     @Override
@@ -645,9 +673,9 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
         if (mScrolled == 0) {
             return mCurrentPosition;
         } else if (mPendingPosition != NO_POSITION) {
-            return mPendingPosition;
+            return calculateRealPosition(mPendingPosition);
         } else {
-            return mCurrentPosition + Direction.fromDelta(mScrolled).applyTo(1);
+            return calculateRealPosition(mCurrentPosition + Direction.fromDelta(mScrolled).applyTo(1));
         }
     }
 
@@ -715,7 +743,7 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
     }
 
     public int getCurrentPosition() {
-        return mCurrentPosition;
+        return calculateRealPosition(mCurrentPosition);
     }
 
     @Override
