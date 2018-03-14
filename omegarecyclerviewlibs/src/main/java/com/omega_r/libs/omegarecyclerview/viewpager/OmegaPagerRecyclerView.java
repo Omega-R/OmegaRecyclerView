@@ -153,9 +153,9 @@ public class OmegaPagerRecyclerView extends OmegaRecyclerView implements ViewPag
         setOverScrollMode(OVER_SCROLL_NEVER);
     }
 
-    public void setItemsSize(@FloatRange(from = 0f, to = 1f) float itemsSize) {
+    public void setPageSize(@FloatRange(from = 0f, to = 1f) float itemsSize) {
         if (getLayoutManager() != null) {
-            getLayoutManager().setItemsSize(itemsSize);
+            getLayoutManager().setPageSize(itemsSize);
         }
     }
 

@@ -30,7 +30,7 @@
     <declare-styleable name="OmegaPagerRecyclerView">
         <attr name="slideOnFling" format="boolean"/>
         <attr name="android:orientation"/>
-        <attr name="elementSize" format="float"/>
+        <attr name="pageSize" format="float"/>
         <attr name="transitionTime" format="integer"/>
         <attr name="slideOnFlingThreshold" format="integer"/>
         <attr name="infinite" format="boolean"/>

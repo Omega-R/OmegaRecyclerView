@@ -38,7 +38,7 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
     private static final int DEFAULT_TIME_FOR_ITEM_SETTLE = 300;
     private static final int DEFAULT_FLING_THRESHOLD = 2100; //Decrease to increase sensitivity.
     private static final int DEFAULT_TRANSFORM_CLAMP_ITEM_COUNT = 1;
-    private static final float DEFAULT_VIEW_SIZE = 1f;
+    private static final float DEFAULT_PAGE_SIZE = 1f;
     private static final float SCROLL_TO_SNAP_TO_ANOTHER_ITEM = 0.6f;
     private static final int INFINITE_MIDDLE = Integer.MAX_VALUE / 2;
 
@@ -76,7 +76,7 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
     private int mFlingThreshold = DEFAULT_FLING_THRESHOLD;
     private boolean mShouldSlideOnFling;
 
-    private float mItemSizePercent = DEFAULT_VIEW_SIZE;
+    private float mPageSize = DEFAULT_PAGE_SIZE;
 
     @NonNull
     private final ScrollStateListener mScrollStateListener;
@@ -102,7 +102,7 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
             TypedArray typedArray = mContext.obtainStyledAttributes(attrs, R.styleable.OmegaPagerRecyclerView, defStyleAttr, 0);
             setShouldSlideOnFling(typedArray.getBoolean(R.styleable.OmegaPagerRecyclerView_slideOnFling, false));
             setOrientation(typedArray.getInt(R.styleable.OmegaPagerRecyclerView_android_orientation, HORIZONTAL));
-            setItemsSize(typedArray.getFloat(R.styleable.OmegaPagerRecyclerView_elementSize, DEFAULT_VIEW_SIZE));
+            setPageSize(typedArray.getFloat(R.styleable.OmegaPagerRecyclerView_pageSize, DEFAULT_PAGE_SIZE));
             setItemTransitionTimeMillis(typedArray.getInteger(R.styleable.OmegaPagerRecyclerView_transitionTime, DEFAULT_TIME_FOR_ITEM_SETTLE));
             setSlideOnFlingThreshold(typedArray.getInteger(R.styleable.OmegaPagerRecyclerView_slideOnFlingThreshold, DEFAULT_FLING_THRESHOLD));
             mIsInfinite = typedArray.getBoolean(R.styleable.OmegaPagerRecyclerView_infinite, false);
@@ -192,10 +192,10 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
         int height = getHeight();
         switch (mOrientation) {
             case HORIZONTAL:
-                width *= mItemSizePercent;
+                width *= mPageSize;
                 break;
             case VERTICAL:
-                height *= mItemSizePercent;
+                height *= mPageSize;
                 break;
         }
 
@@ -693,11 +693,11 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
         applyItemTransformToChildren();
     }
 
-    public void setItemsSize(@FloatRange(from = 0f, to = 1f) float itemsSize) {
-        if (itemsSize < 0.f || 1.f < itemsSize) {
-            throw new IllegalStateException("Item size should be from 0f to 1f. Your value = " + itemsSize);
+    public void setPageSize(@FloatRange(from = 0f, to = 1f) float pageSize) {
+        if (pageSize < 0.f || 1.f < pageSize) {
+            throw new IllegalStateException("Item size should be from 0f to 1f. Your value = " + pageSize);
         }
-        mItemSizePercent = itemsSize;
+        mPageSize = pageSize;
         removeAllViews();
         requestLayout();
     }
