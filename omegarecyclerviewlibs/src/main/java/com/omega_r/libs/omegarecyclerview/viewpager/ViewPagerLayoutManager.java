@@ -20,6 +20,7 @@ import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityEvent;
+import android.view.animation.Interpolator;
 
 import com.omega_r.libs.omegarecyclerview.R;
 import com.omega_r.libs.omegarecyclerview.viewpager.orientation.HorizontalHelper;
@@ -39,6 +40,7 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
     private static final int DEFAULT_TRANSFORM_CLAMP_ITEM_COUNT = 1;
     private static final float DEFAULT_VIEW_SIZE = 1f;
     private static final float SCROLL_TO_SNAP_TO_ANOTHER_ITEM = 0.6f;
+    private static final int INFINITE_MIDDLE = Integer.MAX_VALUE / 2;
 
     //This field will take value of all visible view's center points during the fill phase
     private final Point mViewCenterIteratorPoint = new Point();
@@ -80,6 +82,8 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
     private final ScrollStateListener mScrollStateListener;
     @Nullable
     private ItemTransformer mItemTransformer;
+    @Nullable
+    private Interpolator mInterpolator;
     private int mOrientation;
     private boolean mIsInfinite;
 
@@ -115,7 +119,7 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
             return;
         }
         if (mCurrentPosition == NO_POSITION) {
-            mCurrentPosition = 0;
+            mCurrentPosition = calculateFirstPosition();
         }
         if (!mIsFirstOrEmptyLayout) {
             mIsFirstOrEmptyLayout = getChildCount() == 0;
@@ -207,6 +211,15 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
             return itemCount == 0 ? position : (position % itemCount);
         } else {
             return position;
+        }
+    }
+
+    private int calculateFirstPosition() {
+        if (mIsInfinite) {
+            int itemCount = super.getItemCount();
+            return itemCount == 0 ? 0 : (INFINITE_MIDDLE / itemCount) * itemCount;
+        } else {
+            return 0;
         }
     }
 
@@ -307,10 +320,6 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
         } else if (mCurrentPosition >= positionStart) {
             newPosition = Math.min(mCurrentPosition + itemCount, getItemCount() - 1);
         }
-        if (newPosition == 0 && mIsInfinite && getItemCount() != 0) {
-            int middle = Integer.MAX_VALUE / 2;
-            newPosition = middle - calculateRealPosition(middle);
-        }
         onNewPosition(newPosition);
     }
 
@@ -332,10 +341,7 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
     @Override
     public void onItemsChanged(RecyclerView recyclerView) {
         //notifyDataSetChanged() was called. We need to ensure that mCurrentPosition is not out of bounds
-        if (mIsInfinite && getItemCount() != 0) {
-            int middle = Integer.MAX_VALUE / 2;
-            mCurrentPosition = middle - calculateRealPosition(middle);
-        } else {
+        if (mCurrentPosition != NO_POSITION) {
             mCurrentPosition = Math.min(Math.max(0, mCurrentPosition), getItemCount() - 1);
         }
         mDataSetChangeShiftedPosition = true;
@@ -412,24 +418,9 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
 
     private int calculateScrollPosition(int position) {
         int itemCount = super.getItemCount();
-        if (position >= itemCount) {
-            throw new IllegalStateException("Position can't be > items size " + itemCount);
-        }
         if (mIsInfinite) {
-            int currentPosition = calculateRealPosition(mCurrentPosition);
-
-            if (currentPosition == position) {
-                return mCurrentPosition;
-            }
-
-            int startPosition = mCurrentPosition - calculateRealPosition(mCurrentPosition);
-            int endPosition = startPosition + itemCount;
-
-            for (int i = startPosition; i < endPosition; i++) {
-                if (calculateRealPosition(i) == position) {
-                    return i;
-                }
-            }
+            int currentWindowPosition = mCurrentPosition / itemCount;
+            return currentWindowPosition * itemCount + position;
         }
         return position;
     }
@@ -633,16 +624,13 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
     @Override
     public void onAdapterChanged(RecyclerView.Adapter oldAdapter, RecyclerView.Adapter newAdapter) {
         clearState();
-        if (mIsInfinite && newAdapter.getItemCount() != 0) {
-            scrollToPosition(Integer.MAX_VALUE / 2);
-        }
     }
 
     private void clearState() {
         mViewCacheArray.clear();
         mPendingPosition = NO_POSITION;
         mScrolled = mPendingScroll = 0;
-        mCurrentPosition = 0;
+        mCurrentPosition = NO_POSITION;
         removeAllViews();
     }
 
@@ -683,6 +671,10 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
         mItemTransformer = itemTransformer;
     }
 
+    public void setInterpolator(@Nullable Interpolator interpolator) {
+        mInterpolator = interpolator;
+    }
+
     public void setItemTransitionTimeMillis(@IntRange(from = 10) int millis) {
         if (millis < 10) {
             throw new IllegalStateException("Transition time should be more then 10 millis. Your value = " + millis);
@@ -713,9 +705,6 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
     public void setInfinite(boolean infinite) {
         mIsInfinite = infinite;
         clearState();
-        if (mIsInfinite && getItemCount() != 0) {
-            scrollToPosition(Integer.MAX_VALUE / 2);
-        }
     }
 
     public void setOrientation(int orientation) {
@@ -853,6 +842,14 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
         public PointF computeScrollVectorForPosition(int targetPosition) {
             return new PointF(mOrientationHelper.getPendingDx(mPendingScroll),
                     mOrientationHelper.getPendingDy(mPendingScroll));
+        }
+
+        @Override
+        protected void onTargetFound(View targetView, RecyclerView.State state, Action action) {
+            super.onTargetFound(targetView, state, action);
+            if (mInterpolator != null) {
+                action.setInterpolator(mInterpolator);
+            }
         }
     }
 

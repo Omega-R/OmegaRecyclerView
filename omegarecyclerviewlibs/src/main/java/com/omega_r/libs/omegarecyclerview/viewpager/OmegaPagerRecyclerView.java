@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.animation.Interpolator;
 
 
 import com.omega_r.libs.omegarecyclerview.OmegaRecyclerView;
@@ -63,8 +64,7 @@ public class OmegaPagerRecyclerView extends OmegaRecyclerView implements ViewPag
     @Nullable
     @Override
     public ViewPagerLayoutManager getLayoutManager() {
-        LayoutManager layoutManager = super.getLayoutManager();
-        return layoutManager == null ? null : (ViewPagerLayoutManager) super.getLayoutManager();
+        return (ViewPagerLayoutManager) super.getLayoutManager();
     }
 
     @Override
@@ -162,6 +162,12 @@ public class OmegaPagerRecyclerView extends OmegaRecyclerView implements ViewPag
     public void setInfinite(boolean infinite) {
         if (getLayoutManager() != null) {
             getLayoutManager().setInfinite(infinite);
+        }
+    }
+
+    public void setInterpolator(@Nullable Interpolator interpolator) {
+        if (getLayoutManager() != null) {
+            getLayoutManager().setInterpolator(interpolator);
         }
     }
 
