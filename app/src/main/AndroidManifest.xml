@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.omega_r.omegarecyclerview">
+    package="com.omega_r.omegarecyclerview">
 
     <application
         android:allowBackup="true"
@@ -21,6 +21,8 @@
         <activity android:name=".swipe_menu_example.SwipeMenuActivity"/>
         <activity android:name=".pagination_example.PaginationActivity"/>
         <activity android:name=".sections_example.SectionsActivity"/>
+        <activity android:name=".viewpager.ViewPagerActivity"/>
+
     </application>
 
 </manifest>

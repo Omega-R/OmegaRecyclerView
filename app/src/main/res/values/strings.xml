@@ -12,4 +12,5 @@
     <string name="sections_example">Sections Example</string>
     <string name="header">Header</string>
     <string name="footer">Mail us (Footer)</string>
+    <string name="viewpager_example">ViewPager Example</string>
 </resources>

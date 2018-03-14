@@ -78,7 +78,7 @@ public class OmegaRecyclerView extends RecyclerView implements SwipeMenuHelper.C
         mPageRequester.attach(this);
     }
 
-    private void initDefaultLayoutManager(@Nullable AttributeSet attrs, int defStyleAttr) {
+    protected void initDefaultLayoutManager(@Nullable AttributeSet attrs, int defStyleAttr) {
         if (getLayoutManager() == null) {
             setLayoutManager(new LinearLayoutManager(getContext(), attrs, defStyleAttr, 0));
         }
