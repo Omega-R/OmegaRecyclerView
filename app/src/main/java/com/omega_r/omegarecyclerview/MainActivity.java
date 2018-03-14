@@ -17,6 +17,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.button_sticky_header).setOnClickListener(this);
         findViewById(R.id.button_pagination).setOnClickListener(this);
         findViewById(R.id.button_sections).setOnClickListener(this);
+        findViewById(R.id.button_viewpager).setOnClickListener(this);
     }
 
     /**
@@ -51,6 +52,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 AppOmegaIntentBuilder.from(this)
                         .appActivity()
                         .sectionsActivity()
+                        .createIntentHandler()
+                        .startActivity();
+                break;
+            case R.id.button_viewpager:
+                AppOmegaIntentBuilder.from(this)
+                        .appActivity()
+                        .viewPagerActivity()
                         .createIntentHandler()
                         .startActivity();
                 break;

@@ -213,6 +213,32 @@ OmegaRecyclerView.setHeadersVisibility(true);
 OmegaRecyclerView.setFootersVisibility(false);
 ```
 
+## ViewPager
+<img src="/images/viewpager_scale.gif?raw=true" width="300" height="533" />    <img src="/images/viewpager_vertical.gif?raw=true" width="300" height="533" />
+
+For usage just add ViewPagerOmegaRecyclerView
+```
+<?xml version="1.0" encoding="utf-8"?>
+    <com.omega_r.libs.omegarecyclerview.viewpager.ViewPagerOmegaRecyclerView
+        android:id="@+id/recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+
+        // Supported features
+        app:infinite="true"   // Infinite scroll
+        app:elementSize="0.8" // set element size 80% of screen
+        app:transitionTime="2100"/>
+```
+
+You could use your owner transformation.
+```
+        recyclerView.setItemTransformer(new ScaleTransformer.Builder()
+                                                            .setMaxScale(1.1f)
+                                                            .setMinScale(0.8f)
+                                                            .build());
+```
+
 # License
 ```
 The MIT License
