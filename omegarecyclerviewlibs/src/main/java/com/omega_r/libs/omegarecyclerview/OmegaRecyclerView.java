@@ -21,6 +21,8 @@ import com.omega_r.libs.omegarecyclerview.header.HeaderFooterWrapperAdapter;
 import com.omega_r.libs.omegarecyclerview.pagination.PaginationAdapter;
 import com.omega_r.libs.omegarecyclerview.pagination.OnPageRequestListener;
 import com.omega_r.libs.omegarecyclerview.pagination.PageRequester;
+import com.omega_r.libs.omegarecyclerview.sticky_header.StickyHeaderAdapter;
+import com.omega_r.libs.omegarecyclerview.sticky_header.StickyHeaderDecoration;
 import com.omega_r.libs.omegarecyclerview.swipe_menu.SwipeMenuHelper;
 
 import java.util.ArrayList;
@@ -38,6 +40,7 @@ public class OmegaRecyclerView extends RecyclerView implements SwipeMenuHelper.C
 
     private SwipeMenuHelper mSwipeMenuHelper;
     private PageRequester mPageRequester = new PageRequester();
+    private StickyHeaderDecoration mStickyHeaderDecoration;
     @LayoutRes
     private int mPaginationLayout = R.layout.pagination_omega_layout;
     @LayoutRes
@@ -146,6 +149,10 @@ public class OmegaRecyclerView extends RecyclerView implements SwipeMenuHelper.C
             return;
         }
 
+        if (adapter instanceof StickyHeaderAdapter) {
+            updateStickyHeader((StickyHeaderAdapter) adapter);
+        }
+
         if (adapter instanceof OnPageRequestListener) {
             setPaginationCallback((OnPageRequestListener) adapter);
         }
@@ -170,6 +177,16 @@ public class OmegaRecyclerView extends RecyclerView implements SwipeMenuHelper.C
                 ((HeaderFooterWrapperAdapter) newAdapter).getWrappedAdapter().registerAdapterDataObserver(mHeaderObserver);
             }
             newAdapter.registerAdapterDataObserver(mEmptyObserver);
+        }
+    }
+
+    private void updateStickyHeader(StickyHeaderAdapter adapter) {
+        if (mStickyHeaderDecoration == null) {
+            mStickyHeaderDecoration = new StickyHeaderDecoration(adapter);
+            addItemDecoration(mStickyHeaderDecoration);
+        } else {
+            mStickyHeaderDecoration.setAdapter(adapter);
+            invalidateItemDecorations();
         }
     }
 
@@ -321,6 +338,9 @@ public class OmegaRecyclerView extends RecyclerView implements SwipeMenuHelper.C
         RecyclerView.Adapter adapter = getAdapter();
         if (adapter instanceof HeaderFooterWrapperAdapter) {
             adapter = ((HeaderFooterWrapperAdapter) adapter).getWrappedAdapter();
+        }
+        if (adapter instanceof StickyHeaderAdapter) {
+            updateStickyHeader((StickyHeaderAdapter) adapter);
         }
         if (adapter != null && mPageRequester.getCallback() != null && !(adapter instanceof PaginationAdapter)) {
             setAdapter(new PaginationAdapter(adapter, mPaginationLayout, mPaginationErrorLayout));

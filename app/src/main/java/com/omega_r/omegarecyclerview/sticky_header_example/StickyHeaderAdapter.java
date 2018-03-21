@@ -7,26 +7,25 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.omega_r.libs.omegarecyclerview.OmegaRecyclerView;
-import com.omega_r.libs.omegarecyclerview.sticky_header.StickyHeaderAdapter;
 import com.omega_r.omegarecyclerview.R;
 
-public class StickyHeaderTestAdapter extends OmegaRecyclerView.Adapter<StickyHeaderTestAdapter.ViewHolder>
-        implements StickyHeaderAdapter<StickyHeaderTestAdapter.HeaderHolder> {
+public class StickyHeaderAdapter extends OmegaRecyclerView.Adapter<StickyHeaderAdapter.ViewHolder>
+        implements com.omega_r.libs.omegarecyclerview.sticky_header.StickyHeaderAdapter {
 
     private LayoutInflater mInflater;
 
-    public StickyHeaderTestAdapter(Context context) {
+    public StickyHeaderAdapter(Context context) {
         mInflater = LayoutInflater.from(context);
     }
 
     @Override
-    public StickyHeaderTestAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public StickyHeaderAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = mInflater.inflate(R.layout.item_test, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(StickyHeaderTestAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(StickyHeaderAdapter.ViewHolder holder, int position) {
         holder.item.setText("Item " + position);
     }
 
