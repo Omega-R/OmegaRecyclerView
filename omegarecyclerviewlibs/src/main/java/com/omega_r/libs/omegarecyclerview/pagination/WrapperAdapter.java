@@ -42,6 +42,14 @@ public class WrapperAdapter<T extends RecyclerView.ViewHolder> extends OmegaRecy
         return mChildAdapter;
     }
 
+    public RecyclerView.Adapter getLastWrappedAdapter() {
+        RecyclerView.Adapter childAdapter = mChildAdapter;
+        while (childAdapter instanceof WrapperAdapter) {
+            childAdapter = ((WrapperAdapter) childAdapter).mChildAdapter;
+        }
+        return childAdapter;
+    }
+
     @Override
     public int getItemViewType(int position) {
         return mChildAdapter.getItemViewType(position);
@@ -128,4 +136,7 @@ public class WrapperAdapter<T extends RecyclerView.ViewHolder> extends OmegaRecy
             tryNotifyDataSetChanged();
         }
     }
+
+
+
 }
