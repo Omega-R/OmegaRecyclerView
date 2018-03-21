@@ -24,6 +24,10 @@ public class StickyHeaderDecoration extends RecyclerView.ItemDecoration {
         mRenderInline = renderInline;
     }
 
+    public void setAdapter(StickyHeaderAdapter adapter) {
+        mAdapter = adapter;
+    }
+
     @Override
     public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
         int position = parent.getChildAdapterPosition(view);
