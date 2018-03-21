@@ -21,6 +21,9 @@ import com.omega_r.libs.omegarecyclerview.header.HeaderFooterWrapperAdapter;
 import com.omega_r.libs.omegarecyclerview.pagination.PaginationAdapter;
 import com.omega_r.libs.omegarecyclerview.pagination.OnPageRequestListener;
 import com.omega_r.libs.omegarecyclerview.pagination.PageRequester;
+import com.omega_r.libs.omegarecyclerview.pagination.WrapperAdapter;
+import com.omega_r.libs.omegarecyclerview.sticky_header.StickyHeaderAdapter;
+import com.omega_r.libs.omegarecyclerview.sticky_header.StickyHeaderDecoration;
 import com.omega_r.libs.omegarecyclerview.swipe_menu.SwipeMenuHelper;
 
 import java.util.ArrayList;
@@ -38,6 +41,7 @@ public class OmegaRecyclerView extends RecyclerView implements SwipeMenuHelper.C
 
     private SwipeMenuHelper mSwipeMenuHelper;
     private PageRequester mPageRequester = new PageRequester();
+    private StickyHeaderDecoration mStickyHeaderDecoration;
     @LayoutRes
     private int mPaginationLayout = R.layout.pagination_omega_layout;
     @LayoutRes
@@ -131,18 +135,11 @@ public class OmegaRecyclerView extends RecyclerView implements SwipeMenuHelper.C
     @Override
     @SuppressWarnings("unchecked")
     public void setAdapter(RecyclerView.Adapter adapter) {
-        RecyclerView.Adapter currentAdapter = getAdapter();
-        if (currentAdapter != null) {
-            currentAdapter.unregisterAdapterDataObserver(mEmptyObserver);
-            if (currentAdapter instanceof HeaderFooterWrapperAdapter) {
-                currentAdapter.unregisterAdapterDataObserver(mHeaderObserver);
-            }
-        }
-        mEmptyObserver.onChanged();
-        mHeaderObserver.onChanged();
+        unregisterObservers();
 
         if (adapter == null) {
             super.setAdapter(null);
+            updateStickyHeader(null);
             return;
         }
 
@@ -164,12 +161,46 @@ public class OmegaRecyclerView extends RecyclerView implements SwipeMenuHelper.C
         super.setAdapter(shellAdapter);
         mPageRequester.reset();
 
-        RecyclerView.Adapter newAdapter = getAdapter();
-        if (newAdapter != null) {
-            if (newAdapter instanceof HeaderFooterWrapperAdapter) {
-                ((HeaderFooterWrapperAdapter) newAdapter).getWrappedAdapter().registerAdapterDataObserver(mHeaderObserver);
+        registerObservers(shellAdapter);
+        updateStickyHeader(shellAdapter);
+    }
+
+    private void unregisterObservers() {
+        RecyclerView.Adapter currentAdapter = super.getAdapter();
+        if (currentAdapter != null) {
+            currentAdapter.unregisterAdapterDataObserver(mEmptyObserver);
+            if (currentAdapter instanceof HeaderFooterWrapperAdapter) {
+                currentAdapter.unregisterAdapterDataObserver(mHeaderObserver);
             }
-            newAdapter.registerAdapterDataObserver(mEmptyObserver);
+        }
+        mEmptyObserver.onChanged();
+        mHeaderObserver.onChanged();
+    }
+
+    private void registerObservers(RecyclerView.Adapter adapter) {
+        if (adapter instanceof HeaderFooterWrapperAdapter) {
+            ((HeaderFooterWrapperAdapter) adapter).getWrappedAdapter().registerAdapterDataObserver(mHeaderObserver);
+        }
+        adapter.registerAdapterDataObserver(mEmptyObserver);
+    }
+
+    private void updateStickyHeader(@Nullable RecyclerView.Adapter adapter) {
+        if (adapter == null) {
+            if (mStickyHeaderDecoration != null) removeItemDecoration(mStickyHeaderDecoration);
+        } else {
+            RecyclerView.Adapter realAdapter = adapter;
+            if (adapter instanceof WrapperAdapter) {
+                realAdapter = ((WrapperAdapter) adapter).getLastWrappedAdapter();
+            }
+            if (realAdapter instanceof StickyHeaderAdapter) {
+                if (mStickyHeaderDecoration == null) {
+                    mStickyHeaderDecoration = new StickyHeaderDecoration((StickyHeaderAdapter) realAdapter);
+                    addItemDecoration(mStickyHeaderDecoration);
+                } else {
+                    mStickyHeaderDecoration.setAdapter((StickyHeaderAdapter) realAdapter);
+                    invalidateItemDecorations();
+                }
+            }
         }
     }
 
