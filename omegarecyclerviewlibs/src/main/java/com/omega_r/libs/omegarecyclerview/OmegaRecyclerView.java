@@ -146,11 +146,8 @@ public class OmegaRecyclerView extends RecyclerView implements SwipeMenuHelper.C
 
         if (adapter == null) {
             super.setAdapter(null);
+            updateStickyHeader(adapter);
             return;
-        }
-
-        if (adapter instanceof StickyHeaderAdapter) {
-            updateStickyHeader((StickyHeaderAdapter) adapter);
         }
 
         if (adapter instanceof OnPageRequestListener) {
@@ -178,15 +175,38 @@ public class OmegaRecyclerView extends RecyclerView implements SwipeMenuHelper.C
             }
             newAdapter.registerAdapterDataObserver(mEmptyObserver);
         }
+
+        updateStickyHeader(newAdapter);
     }
 
-    private void updateStickyHeader(StickyHeaderAdapter adapter) {
-        if (mStickyHeaderDecoration == null) {
-            mStickyHeaderDecoration = new StickyHeaderDecoration(adapter);
-            addItemDecoration(mStickyHeaderDecoration);
+    private void updateStickyHeader(@Nullable RecyclerView.Adapter adapter) {
+        if (adapter == null) {
+            if (mStickyHeaderDecoration != null) removeItemDecoration(mStickyHeaderDecoration);
         } else {
-            mStickyHeaderDecoration.setAdapter(adapter);
-            invalidateItemDecorations();
+            StickyHeaderAdapter stickyHeaderAdapter = null;
+            if (adapter instanceof StickyHeaderAdapter) {
+                stickyHeaderAdapter = (StickyHeaderAdapter) adapter;
+            } else if (adapter instanceof HeaderFooterWrapperAdapter) {
+                RecyclerView.Adapter wrappedAdapter = ((HeaderFooterWrapperAdapter) adapter).getWrappedAdapter();
+                if (wrappedAdapter instanceof StickyHeaderAdapter) {
+                    stickyHeaderAdapter = (StickyHeaderAdapter) wrappedAdapter;
+                }
+            } else if (adapter instanceof PaginationAdapter) {
+                RecyclerView.Adapter wrappedAdapter = ((PaginationAdapter) adapter).getWrappedAdapter();
+                if (wrappedAdapter instanceof StickyHeaderAdapter) {
+                    stickyHeaderAdapter = (StickyHeaderAdapter) wrappedAdapter;
+                }
+            }
+
+            if (stickyHeaderAdapter != null) {
+                if (mStickyHeaderDecoration == null) {
+                    mStickyHeaderDecoration = new StickyHeaderDecoration(stickyHeaderAdapter);
+                    addItemDecoration(mStickyHeaderDecoration);
+                } else {
+                    mStickyHeaderDecoration.setAdapter(stickyHeaderAdapter);
+                    invalidateItemDecorations();
+                }
+            }
         }
     }
 
@@ -338,9 +358,6 @@ public class OmegaRecyclerView extends RecyclerView implements SwipeMenuHelper.C
         RecyclerView.Adapter adapter = getAdapter();
         if (adapter instanceof HeaderFooterWrapperAdapter) {
             adapter = ((HeaderFooterWrapperAdapter) adapter).getWrappedAdapter();
-        }
-        if (adapter instanceof StickyHeaderAdapter) {
-            updateStickyHeader((StickyHeaderAdapter) adapter);
         }
         if (adapter != null && mPageRequester.getCallback() != null && !(adapter instanceof PaginationAdapter)) {
             setAdapter(new PaginationAdapter(adapter, mPaginationLayout, mPaginationErrorLayout));

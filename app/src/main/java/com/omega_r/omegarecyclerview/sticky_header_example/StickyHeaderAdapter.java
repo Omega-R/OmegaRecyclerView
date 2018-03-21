@@ -10,7 +10,7 @@ import com.omega_r.libs.omegarecyclerview.OmegaRecyclerView;
 import com.omega_r.omegarecyclerview.R;
 
 public class StickyHeaderAdapter extends OmegaRecyclerView.Adapter<StickyHeaderAdapter.ViewHolder>
-        implements com.omega_r.libs.omegarecyclerview.sticky_header.StickyHeaderAdapter {
+        implements com.omega_r.libs.omegarecyclerview.sticky_header.StickyHeaderAdapter<StickyHeaderAdapter.HeaderHolder> {
 
     private LayoutInflater mInflater;
 

@@ -38,6 +38,10 @@ public class WrapperAdapter<T extends RecyclerView.ViewHolder> extends OmegaRecy
         mChildAdapter.onBindViewHolder(holder, position, payloads);
     }
 
+    public RecyclerView.Adapter getWrappedAdapter() {
+        return mChildAdapter;
+    }
+
     @Override
     public int getItemViewType(int position) {
         return mChildAdapter.getItemViewType(position);
