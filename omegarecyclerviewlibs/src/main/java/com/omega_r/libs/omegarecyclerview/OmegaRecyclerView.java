@@ -195,6 +195,7 @@ public class OmegaRecyclerView extends RecyclerView implements SwipeMenuHelper.C
             if (realAdapter instanceof StickyHeaderAdapter) {
                 if (mStickyHeaderDecoration == null) {
                     mStickyHeaderDecoration = new StickyHeaderDecoration((StickyHeaderAdapter) realAdapter);
+                    mStickyHeaderDecoration.setItemSpace(getItemSpace());
                     addItemDecoration(mStickyHeaderDecoration);
                 } else {
                     mStickyHeaderDecoration.setAdapter((StickyHeaderAdapter) realAdapter);

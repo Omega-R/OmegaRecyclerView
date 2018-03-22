@@ -2,6 +2,7 @@ package com.omega_r.libs.omegarecyclerview.sticky_header;
 
 import android.graphics.Canvas;
 import android.graphics.Rect;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,7 +36,7 @@ public class StickyHeaderDecoration extends RecyclerView.ItemDecoration {
 
         if (position != RecyclerView.NO_POSITION
                 && hasHeader(position)
-                && showHeaderAboveItem(position)) {
+                && showHeaderAboveItem(parent, position)) {
 
             View header = getHeader(parent, position).itemView;
             headerHeight = getHeaderHeightForLayout(header) - mItemSpace;
@@ -44,10 +45,15 @@ public class StickyHeaderDecoration extends RecyclerView.ItemDecoration {
         outRect.set(0, headerHeight, 0, 0);
     }
 
-    private boolean showHeaderAboveItem(int itemAdapterPosition) {
-        return itemAdapterPosition == 0
-                || mAdapter.getHeaderId(itemAdapterPosition - 1)
-                != mAdapter.getHeaderId(itemAdapterPosition);
+    private boolean showHeaderAboveItem(RecyclerView parent, int itemAdapterPosition) {
+        if (isReverseLayout(parent)) {
+            int itemCount = parent.getLayoutManager().getItemCount();
+            return itemAdapterPosition == (itemCount - 1) || mAdapter.getHeaderId(itemAdapterPosition + 1)
+                    != mAdapter.getHeaderId(itemAdapterPosition);
+        } else {
+            return itemAdapterPosition == 0 || mAdapter.getHeaderId(itemAdapterPosition - 1)
+                    != mAdapter.getHeaderId(itemAdapterPosition);
+        }
     }
 
     private boolean hasHeader(int position) {
@@ -80,56 +86,80 @@ public class StickyHeaderDecoration extends RecyclerView.ItemDecoration {
         int count = parent.getChildCount();
         long previousHeaderId = -1;
 
-        for (int layoutPos = 0; layoutPos < count; layoutPos++) {
-            View child = parent.getChildAt(layoutPos);
-            int adapterPos = parent.getChildAdapterPosition(child);
-
-            if (adapterPos != RecyclerView.NO_POSITION && hasHeader(adapterPos)) {
-                long headerId = mAdapter.getHeaderId(adapterPos);
-
-                if (headerId != previousHeaderId) {
-                    previousHeaderId = headerId;
-                    View header = getHeader(parent, adapterPos).itemView;
-                    canvas.save();
-
-                    int left = child.getLeft();
-                    int top = getHeaderTop(parent, child, header, adapterPos, layoutPos);
-                    canvas.translate(left, top);
-
-                    header.setTranslationX(left);
-                    header.setTranslationY(top);
-                    header.draw(canvas);
-                    canvas.restore();
-                }
+        if (isReverseLayout(parent)) {
+            for (int layoutPos = count - 1; layoutPos >= 0; layoutPos--) {
+                previousHeaderId = calculateHeaderIdAndDrawHeader(canvas, parent, true, layoutPos, previousHeaderId);
+            }
+        } else {
+            for (int layoutPos = 0; layoutPos < count; layoutPos++) {
+                previousHeaderId = calculateHeaderIdAndDrawHeader(canvas, parent, false, layoutPos, previousHeaderId);
             }
         }
     }
 
-    private int getHeaderTop(RecyclerView parent, View child, View header, int adapterPos, int layoutPos) {
+    private long calculateHeaderIdAndDrawHeader(Canvas canvas, RecyclerView parent,
+                                                boolean isReverseLayout,
+                                                int layoutPos, long previousHeaderId) {
+        View child = parent.getChildAt(layoutPos);
+        int adapterPos = parent.getChildAdapterPosition(child);
+
+        if (adapterPos != RecyclerView.NO_POSITION && hasHeader(adapterPos)) {
+            long headerId = mAdapter.getHeaderId(adapterPos);
+
+            if (headerId != previousHeaderId) {
+                previousHeaderId = headerId;
+                View header = getHeader(parent, adapterPos).itemView;
+                canvas.save();
+
+                int left = child.getLeft();
+                int top = getHeaderTop(parent, isReverseLayout, child, header, adapterPos, layoutPos);
+                canvas.translate(left, top);
+
+                header.setTranslationX(left);
+                header.setTranslationY(top);
+                header.draw(canvas);
+                canvas.restore();
+            }
+        }
+
+        return previousHeaderId;
+    }
+
+    private int getHeaderTop(RecyclerView parent, boolean isReverseLayout, View child, View header, int adapterPos, int layoutPos) {
+        int childCount = parent.getChildCount();
         int headerHeight = getHeaderHeightForLayout(header);
         int top = ((int) child.getY()) - headerHeight;
-        if (layoutPos == 0) {
-            int count = parent.getChildCount();
-            long currentId = mAdapter.getHeaderId(adapterPos);
+        long currentHeaderId = mAdapter.getHeaderId(adapterPos);
 
-            for (int i = 1; i < count; i++) {
-                int adapterPosHere = parent.getChildAdapterPosition(parent.getChildAt(i));
-                if (adapterPosHere != RecyclerView.NO_POSITION) {
-                    long nextId = mAdapter.getHeaderId(adapterPosHere);
-                    if (nextId != currentId) {
-                        View next = parent.getChildAt(i);
-                        int offset = ((int) next.getY()) - (headerHeight + getHeader(parent, adapterPosHere).itemView.getHeight());
-                        if (offset < 0) {
-                            return offset;
-                        } else {
-                            break;
-                        }
-                    }
+        if (isReverseLayout && layoutPos == childCount - 1) {
+            for (int i = childCount - 1; i >= 1; i--) {
+                int offset = calculateOffset(parent, headerHeight, currentHeaderId, i);
+                if (offset < 0) {
+                    return offset;
                 }
             }
-            top = Math.max(0, top);
+        } else if (!isReverseLayout && layoutPos == 0) {
+            for (int i = 1; i < childCount; i++) {
+                int offset = calculateOffset(parent, headerHeight, currentHeaderId, i);
+                if (offset < 0) {
+                    return offset;
+                }
+            }
         }
-        return top;
+        return Math.max(0, top);
+    }
+
+    private int calculateOffset(RecyclerView parent, int headerHeight,
+                                long currentHeaderId, int nextPosition) {
+        int adapterPosHere = parent.getChildAdapterPosition(parent.getChildAt(nextPosition));
+        if (adapterPosHere != RecyclerView.NO_POSITION) {
+            long nextId = mAdapter.getHeaderId(adapterPosHere);
+            if (nextId != currentHeaderId) {
+                View next = parent.getChildAt(nextPosition);
+                return ((int) next.getY()) - (headerHeight + getHeader(parent, adapterPosHere).itemView.getHeight());
+            }
+        }
+        return 0;
     }
 
     public void setItemSpace(int itemSpace) {
@@ -138,5 +168,13 @@ public class StickyHeaderDecoration extends RecyclerView.ItemDecoration {
 
     private int getHeaderHeightForLayout(View header) {
         return mRenderInline ? 0 : header.getHeight();
+    }
+
+    private boolean isReverseLayout(RecyclerView parent) {
+        RecyclerView.LayoutManager layoutManager = parent.getLayoutManager();
+        if (layoutManager instanceof LinearLayoutManager) {
+            return ((LinearLayoutManager) layoutManager).getReverseLayout();
+        }
+        return false;
     }
 }
