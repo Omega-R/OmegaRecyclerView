@@ -1,6 +1,7 @@
 package com.omega_r.libs.omegarecyclerview.header;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseArray;
 import android.view.View;
@@ -8,10 +9,12 @@ import android.view.ViewGroup;
 
 import com.omega_r.libs.omegarecyclerview.OmegaRecyclerView;
 import com.omega_r.libs.omegarecyclerview.pagination.WrapperAdapter;
+import com.omega_r.libs.omegarecyclerview.sticky_header.StickyHeaderAdapter;
+import com.omega_r.libs.omegarecyclerview.sticky_header.StickyHeaderDecoration;
 
 import java.util.List;
 
-public class HeaderFooterWrapperAdapter<T extends RecyclerView.Adapter> extends OmegaRecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class HeaderFooterWrapperAdapter<T extends RecyclerView.Adapter> extends OmegaRecyclerView.Adapter<RecyclerView.ViewHolder> implements StickyHeaderAdapter {
 
     // Defines available view type integers for headers and footers.
     private static final int BASE_HEADER_VIEW_TYPE = -1 << 10;
@@ -89,11 +92,11 @@ public class HeaderFooterWrapperAdapter<T extends RecyclerView.Adapter> extends 
         return viewType >= BASE_FOOTER_VIEW_TYPE && viewType < (BASE_FOOTER_VIEW_TYPE + mFooterArray.size());
     }
 
-    public boolean isHeaderPosition(int position) {
+    private boolean isHeaderPosition(int position) {
         return position < mHeaderArray.size();
     }
 
-    public boolean isFooterPosition(int position) {
+    private boolean isFooterPosition(int position) {
         return position >= mRealAdapter.getItemCount() + mHeaderArray.size();
     }
 
@@ -151,4 +154,35 @@ public class HeaderFooterWrapperAdapter<T extends RecyclerView.Adapter> extends 
         }
     }
 
+    @Override
+    public long getHeaderId(int position) {
+        StickyHeaderAdapter stickyHeaderAdapter = getStickyHeaderAdapter();
+        if (stickyHeaderAdapter == null || isHeaderPosition(position) || isFooterPosition(position)) {
+            return StickyHeaderDecoration.NO_HEADER_ID;
+        }
+        return stickyHeaderAdapter.getHeaderId(position);
+    }
+
+    @Nullable
+    public StickyHeaderAdapter getStickyHeaderAdapter() {
+        if (mRealAdapter instanceof StickyHeaderAdapter) {
+            return (StickyHeaderAdapter) mRealAdapter;
+        }
+        return null;
+    }
+
+    @Override
+    public RecyclerView.ViewHolder onCreateHeaderViewHolder(ViewGroup parent) {
+        StickyHeaderAdapter stickyHeaderAdapter = getStickyHeaderAdapter();
+        assert stickyHeaderAdapter != null;
+        return stickyHeaderAdapter.onCreateHeaderViewHolder(parent);
+    }
+
+    @Override
+    public void onBindHeaderViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
+        StickyHeaderAdapter stickyHeaderAdapter = getStickyHeaderAdapter();
+        assert stickyHeaderAdapter != null;
+        //noinspection unchecked
+        stickyHeaderAdapter.onBindHeaderViewHolder(viewHolder, position);
+    }
 }
