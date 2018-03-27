@@ -24,7 +24,7 @@ allprojects {
 **Step 2.** Add the dependency
 ```
 dependencies {
-    compile 'com.github.Omega-R:OmegaRecyclerView:1.6.5@aar'
+    compile 'com.github.Omega-R:OmegaRecyclerView:1.6.6@aar'
 }
 ```
 
