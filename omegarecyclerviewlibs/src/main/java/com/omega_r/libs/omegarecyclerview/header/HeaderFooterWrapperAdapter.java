@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.omega_r.libs.omegarecyclerview.OmegaRecyclerView;
+import com.omega_r.libs.omegarecyclerview.pagination.WrapperAdapter;
 
 import java.util.List;
 
@@ -70,6 +71,14 @@ public class HeaderFooterWrapperAdapter<T extends RecyclerView.Adapter> extends 
 
     public T getWrappedAdapter() {
         return mRealAdapter;
+    }
+
+    public RecyclerView.Adapter getLastWrappedAdapter() {
+        RecyclerView.Adapter childAdapter = mRealAdapter;
+        while (childAdapter instanceof WrapperAdapter) {
+            childAdapter = ((HeaderFooterWrapperAdapter) childAdapter).mRealAdapter;
+        }
+        return childAdapter;
     }
 
     private boolean isHeader(int viewType) {
