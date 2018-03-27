@@ -191,6 +191,8 @@ public class OmegaRecyclerView extends RecyclerView implements SwipeMenuHelper.C
             RecyclerView.Adapter realAdapter = adapter;
             if (adapter instanceof WrapperAdapter) {
                 realAdapter = ((WrapperAdapter) adapter).getLastWrappedAdapter();
+            } else if (adapter instanceof HeaderFooterWrapperAdapter) {
+                realAdapter = ((HeaderFooterWrapperAdapter) adapter).getLastWrappedAdapter();
             }
             if (realAdapter instanceof StickyHeaderAdapter) {
                 if (mStickyHeaderDecoration == null) {

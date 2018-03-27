@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.omega_r.libs.omegarecyclerview.OmegaRecyclerView;
+import com.omega_r.libs.omegarecyclerview.pagination.WrapperAdapter;
 
 import java.util.List;
 
@@ -72,6 +73,14 @@ public class HeaderFooterWrapperAdapter<T extends RecyclerView.Adapter> extends 
         return mRealAdapter;
     }
 
+    public RecyclerView.Adapter getLastWrappedAdapter() {
+        RecyclerView.Adapter childAdapter = mRealAdapter;
+        while (childAdapter instanceof WrapperAdapter) {
+            childAdapter = ((HeaderFooterWrapperAdapter) childAdapter).mRealAdapter;
+        }
+        return childAdapter;
+    }
+
     private boolean isHeader(int viewType) {
         return viewType >= BASE_HEADER_VIEW_TYPE && viewType < (BASE_HEADER_VIEW_TYPE + mHeaderArray.size());
     }
@@ -80,11 +89,11 @@ public class HeaderFooterWrapperAdapter<T extends RecyclerView.Adapter> extends 
         return viewType >= BASE_FOOTER_VIEW_TYPE && viewType < (BASE_FOOTER_VIEW_TYPE + mFooterArray.size());
     }
 
-    private boolean isHeaderPosition(int position) {
+    public boolean isHeaderPosition(int position) {
         return position < mHeaderArray.size();
     }
 
-    private boolean isFooterPosition(int position) {
+    public boolean isFooterPosition(int position) {
         return position >= mRealAdapter.getItemCount() + mHeaderArray.size();
     }
 
