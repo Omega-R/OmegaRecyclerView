@@ -188,19 +188,24 @@ public class OmegaRecyclerView extends RecyclerView implements SwipeMenuHelper.C
         if (adapter == null) {
             if (mStickyHeaderDecoration != null) removeItemDecoration(mStickyHeaderDecoration);
         } else {
-            RecyclerView.Adapter realAdapter = adapter;
+            StickyHeaderAdapter stickyHeaderAdapter = null;
             if (adapter instanceof WrapperAdapter) {
-                realAdapter = ((WrapperAdapter) adapter).getLastWrappedAdapter();
+                RecyclerView.Adapter wrappedAdapter = ((WrapperAdapter) adapter).getLastWrappedAdapter();
+                if (wrappedAdapter instanceof StickyHeaderAdapter) {
+                    stickyHeaderAdapter = (StickyHeaderAdapter) wrappedAdapter;
+                }
             } else if (adapter instanceof HeaderFooterWrapperAdapter) {
-                realAdapter = ((HeaderFooterWrapperAdapter) adapter).getLastWrappedAdapter();
+                if (((HeaderFooterWrapperAdapter) adapter).getStickyHeaderAdapter() != null) {
+                    stickyHeaderAdapter = (StickyHeaderAdapter) adapter;
+                }
             }
-            if (realAdapter instanceof StickyHeaderAdapter) {
+            if (stickyHeaderAdapter != null) {
                 if (mStickyHeaderDecoration == null) {
-                    mStickyHeaderDecoration = new StickyHeaderDecoration((StickyHeaderAdapter) realAdapter);
+                    mStickyHeaderDecoration = new StickyHeaderDecoration(stickyHeaderAdapter);
                     mStickyHeaderDecoration.setItemSpace(getItemSpace());
                     addItemDecoration(mStickyHeaderDecoration);
                 } else {
-                    mStickyHeaderDecoration.setAdapter((StickyHeaderAdapter) realAdapter);
+                    mStickyHeaderDecoration.setAdapter(stickyHeaderAdapter);
                     invalidateItemDecorations();
                 }
             }
