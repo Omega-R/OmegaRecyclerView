@@ -7,6 +7,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.omega_r.libs.omegarecyclerview.header.HeaderFooterWrapperAdapter;
+
 public class StickyHeaderDecoration extends RecyclerView.ItemDecoration {
 
     public static final long NO_HEADER_ID = -1L;
@@ -45,19 +47,30 @@ public class StickyHeaderDecoration extends RecyclerView.ItemDecoration {
         outRect.set(0, headerHeight, 0, 0);
     }
 
-    private boolean showHeaderAboveItem(RecyclerView parent, int itemAdapterPosition) {
+    private boolean showHeaderAboveItem(RecyclerView parent, int position) {
+        if (isHeaderFooterPosition(position)) return false;
+
         if (isReverseLayout(parent)) {
             int itemCount = parent.getLayoutManager().getItemCount();
-            return itemAdapterPosition == (itemCount - 1) || mAdapter.getHeaderId(itemAdapterPosition + 1)
-                    != mAdapter.getHeaderId(itemAdapterPosition);
+            return position == (itemCount - 1) || mAdapter.getHeaderId(position + 1)
+                    != mAdapter.getHeaderId(position);
         } else {
-            return itemAdapterPosition == 0 || mAdapter.getHeaderId(itemAdapterPosition - 1)
-                    != mAdapter.getHeaderId(itemAdapterPosition);
+            return position == 0 || mAdapter.getHeaderId(position - 1)
+                    != mAdapter.getHeaderId(position);
         }
     }
 
+    private boolean isHeaderFooterPosition(int position) {
+        boolean isHeaderFooter = false;
+        if (mAdapter instanceof HeaderFooterWrapperAdapter) {
+            HeaderFooterWrapperAdapter adapter = (HeaderFooterWrapperAdapter) mAdapter;
+            isHeaderFooter = adapter.isHeaderPosition(position) || adapter.isFooterPosition(position);
+        }
+        return isHeaderFooter;
+    }
+
     private boolean hasHeader(int position) {
-        return mAdapter.getHeaderId(position) != NO_HEADER_ID;
+        return !isHeaderFooterPosition(position) && mAdapter.getHeaderId(position) != NO_HEADER_ID;
     }
 
     private RecyclerView.ViewHolder getHeader(RecyclerView parent, int position) {
