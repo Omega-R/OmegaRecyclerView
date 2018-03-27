@@ -160,7 +160,7 @@ public class HeaderFooterWrapperAdapter<T extends RecyclerView.Adapter> extends 
         if (stickyHeaderAdapter == null || isHeaderPosition(position) || isFooterPosition(position)) {
             return StickyHeaderDecoration.NO_HEADER_ID;
         }
-        return stickyHeaderAdapter.getHeaderId(position);
+        return stickyHeaderAdapter.getHeaderId(position - mHeaderArray.size());
     }
 
     @Nullable
@@ -183,6 +183,6 @@ public class HeaderFooterWrapperAdapter<T extends RecyclerView.Adapter> extends 
         StickyHeaderAdapter stickyHeaderAdapter = getStickyHeaderAdapter();
         assert stickyHeaderAdapter != null;
         //noinspection unchecked
-        stickyHeaderAdapter.onBindHeaderViewHolder(viewHolder, position);
+        stickyHeaderAdapter.onBindHeaderViewHolder(viewHolder, position - mHeaderArray.size());
     }
 }
