@@ -89,11 +89,11 @@ public class HeaderFooterWrapperAdapter<T extends RecyclerView.Adapter> extends 
         return viewType >= BASE_FOOTER_VIEW_TYPE && viewType < (BASE_FOOTER_VIEW_TYPE + mFooterArray.size());
     }
 
-    private boolean isHeaderPosition(int position) {
+    public boolean isHeaderPosition(int position) {
         return position < mHeaderArray.size();
     }
 
-    private boolean isFooterPosition(int position) {
+    public boolean isFooterPosition(int position) {
         return position >= mRealAdapter.getItemCount() + mHeaderArray.size();
     }
 
