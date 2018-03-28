@@ -19,6 +19,7 @@ public class SwipeHorizontalMenuLayout extends SwipeMenuLayout {
     protected int mPreScrollX;
     protected float mPreLeftMenuFraction = -1;
     protected float mPreRightMenuFraction = -1;
+    private boolean mDownMenuOpen;
 
     public SwipeHorizontalMenuLayout(Context context) {
         super(context);
@@ -38,6 +39,7 @@ public class SwipeHorizontalMenuLayout extends SwipeMenuLayout {
         int action = ev.getActionMasked();
         switch (action) {
             case MotionEvent.ACTION_DOWN:
+                mDownMenuOpen = isMenuOpen();
                 mDownX = mLastX = (int) ev.getX();
                 mDownY = (int) ev.getY();
                 isIntercepted = false;
@@ -51,7 +53,7 @@ public class SwipeHorizontalMenuLayout extends SwipeMenuLayout {
                 isIntercepted = false;
                 // menu view opened and click on content view,
                 // we just close the menu view and intercept the up event
-                if (mCurrentSwiper != null && isMenuOpen()
+                if (mCurrentSwiper != null && mDownMenuOpen && isMenuOpen()
                         && mCurrentSwiper.isClickOnContentView(this, ev.getX())) {
                     smoothCloseMenu();
                     isIntercepted = true;
