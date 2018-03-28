@@ -16,6 +16,9 @@ import com.omega_r.libs.omegarecyclerview.swipe_menu.listener.SwipeSwitchListene
 public class SwipeViewHolder extends OmegaRecyclerView.ViewHolder {
 
     public static final int NO_ID = 0;
+
+    public final View contentView;
+
     private SwipeHorizontalMenuLayout mSwipeMenuLayout;
 
     public SwipeViewHolder(ViewGroup parent, @LayoutRes int contentRes,
@@ -52,6 +55,7 @@ public class SwipeViewHolder extends OmegaRecyclerView.ViewHolder {
     private SwipeViewHolder(SwipeHorizontalMenuLayout swipeMenuLayout,
                             View contentView, @Nullable View swipeLeftMenuView, @Nullable View swipeRightMenuView) {
         super(swipeMenuLayout);
+        this.contentView = contentView;
         mSwipeMenuLayout = swipeMenuLayout;
         mSwipeMenuLayout.setClickable(true);
         mSwipeMenuLayout.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
