@@ -428,42 +428,42 @@ public class OmegaRecyclerView extends RecyclerView implements SwipeMenuHelper.C
         @Override
         public void onChanged() {
             if (getAdapter() instanceof HeaderFooterWrapperAdapter) {
-                getAdapter().notifyDataSetChanged();
+                ((Adapter) getAdapter()).tryNotifyDataSetChanged();
             }
         }
 
         @Override
         public void onItemRangeChanged(int positionStart, int itemCount) {
             if (getAdapter() instanceof HeaderFooterWrapperAdapter) {
-                getAdapter().notifyItemRangeInserted(positionStart, itemCount);
+                ((Adapter) getAdapter()).tryNotifyItemRangeInserted(positionStart, itemCount);
             }
         }
 
         @Override
         public void onItemRangeChanged(int positionStart, int itemCount, Object payload) {
             if (getAdapter() instanceof HeaderFooterWrapperAdapter) {
-                getAdapter().notifyItemRangeChanged(positionStart, itemCount, payload);
+                ((Adapter) getAdapter()).tryNotifyItemRangeChanged(positionStart, itemCount, payload);
             }
         }
 
         @Override
         public void onItemRangeInserted(int positionStart, int itemCount) {
             if (getAdapter() instanceof HeaderFooterWrapperAdapter) {
-                getAdapter().notifyItemRangeInserted(positionStart, itemCount);
+                ((Adapter) getAdapter()).tryNotifyItemRangeInserted(positionStart, itemCount);
             }
         }
 
         @Override
         public void onItemRangeRemoved(int positionStart, int itemCount) {
             if (getAdapter() instanceof HeaderFooterWrapperAdapter) {
-                getAdapter().notifyItemRangeRemoved(positionStart, itemCount);
+                ((Adapter) getAdapter()).tryNotifyItemRangeRemoved(positionStart, itemCount);
             }
         }
 
         @Override
         public void onItemRangeMoved(int fromPosition, int toPosition, int itemCount) {
             if (getAdapter() instanceof HeaderFooterWrapperAdapter) {
-                getAdapter().notifyItemMoved(fromPosition, toPosition);
+                ((Adapter) getAdapter()).tryNotifyItemMoved(fromPosition, toPosition);
             }
         }
     };
@@ -537,6 +537,36 @@ public class OmegaRecyclerView extends RecyclerView implements SwipeMenuHelper.C
                     @Override
                     public void run() {
                         tryNotifyItemRangeChanged(positionStart, itemCount, payload);
+                    }
+                });
+            }
+        }
+
+        protected void tryNotifyItemRangeRemoved(final int positionStart, final int itemCount) {
+            if (recyclerView == null) return;
+
+            if (!recyclerView.isComputingLayout()) {
+                notifyItemRangeRemoved(positionStart, itemCount);
+            } else {
+                recyclerView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        tryNotifyItemRangeRemoved(positionStart, itemCount);
+                    }
+                });
+            }
+        }
+
+        protected void tryNotifyItemMoved(final int fromPosition, final int toPosition) {
+            if (recyclerView == null) return;
+
+            if (!recyclerView.isComputingLayout()) {
+                notifyItemMoved(fromPosition, toPosition);
+            } else {
+                recyclerView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        tryNotifyItemRangeRemoved(fromPosition, toPosition);
                     }
                 });
             }

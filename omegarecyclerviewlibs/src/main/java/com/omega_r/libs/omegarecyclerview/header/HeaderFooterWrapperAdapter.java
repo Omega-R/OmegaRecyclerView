@@ -36,14 +36,10 @@ public class HeaderFooterWrapperAdapter<T extends RecyclerView.Adapter> extends 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (isHeader(viewType)) {
-            return new RecyclerView.ViewHolder(mHeaderArray.get(viewType)) {
-                // nothing
-            };
+            return new ViewHolder(mHeaderArray.get(viewType));
         }
         if (isFooter(viewType)) {
-            return new RecyclerView.ViewHolder(mFooterArray.get(viewType)) {
-                // nothing
-            };
+            return new ViewHolder(mFooterArray.get(viewType));
         }
         return mRealAdapter.onCreateViewHolder(parent, viewType);
     }
@@ -74,14 +70,6 @@ public class HeaderFooterWrapperAdapter<T extends RecyclerView.Adapter> extends 
 
     public T getWrappedAdapter() {
         return mRealAdapter;
-    }
-
-    public RecyclerView.Adapter getLastWrappedAdapter() {
-        RecyclerView.Adapter childAdapter = mRealAdapter;
-        while (childAdapter instanceof WrapperAdapter) {
-            childAdapter = ((HeaderFooterWrapperAdapter) childAdapter).mRealAdapter;
-        }
-        return childAdapter;
     }
 
     private boolean isHeader(int viewType) {
@@ -184,5 +172,37 @@ public class HeaderFooterWrapperAdapter<T extends RecyclerView.Adapter> extends 
         assert stickyHeaderAdapter != null;
         //noinspection unchecked
         stickyHeaderAdapter.onBindHeaderViewHolder(viewHolder, position - mHeaderArray.size());
+    }
+
+    @Override
+    protected void tryNotifyItemRangeChanged(int positionStart, int itemCount, Object payload) {
+        super.tryNotifyItemRangeChanged(positionStart + mHeaderArray.size(), itemCount, payload);
+    }
+
+    @Override
+    protected void tryNotifyItemRangeInserted(int positionStart, int itemCount) {
+        super.tryNotifyItemRangeInserted(positionStart + mHeaderArray.size(), itemCount);
+    }
+
+    @Override
+    protected void tryNotifyItemRemoved(int positionStart, int itemCount) {
+        super.tryNotifyItemRemoved(positionStart + mHeaderArray.size(), itemCount);
+    }
+
+    @Override
+    protected void tryNotifyItemMoved(int fromPosition, int toPosition) {
+        super.tryNotifyItemMoved(fromPosition + mHeaderArray.size(), toPosition + mHeaderArray.size());
+    }
+
+    @Override
+    protected void tryNotifyItemRangeRemoved(int positionStart, int itemCount) {
+        super.tryNotifyItemRangeRemoved(positionStart + mHeaderArray.size(), itemCount);
+    }
+
+    class ViewHolder extends RecyclerView.ViewHolder {
+
+        public ViewHolder(View itemView) {
+            super(itemView);
+        }
     }
 }
