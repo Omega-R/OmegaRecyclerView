@@ -170,7 +170,7 @@ public class OmegaRecyclerView extends RecyclerView implements SwipeMenuHelper.C
         if (currentAdapter != null) {
             currentAdapter.unregisterAdapterDataObserver(mEmptyObserver);
             if (currentAdapter instanceof HeaderFooterWrapperAdapter) {
-                currentAdapter.unregisterAdapterDataObserver(mHeaderObserver);
+               ((HeaderFooterWrapperAdapter) currentAdapter).getWrappedAdapter().unregisterAdapterDataObserver(mHeaderObserver);
             }
         }
         mEmptyObserver.onChanged();
