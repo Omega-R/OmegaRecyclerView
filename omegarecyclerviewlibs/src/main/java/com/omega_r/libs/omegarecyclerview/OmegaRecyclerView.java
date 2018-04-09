@@ -170,7 +170,7 @@ public class OmegaRecyclerView extends RecyclerView implements SwipeMenuHelper.C
         if (currentAdapter != null) {
             currentAdapter.unregisterAdapterDataObserver(mEmptyObserver);
             if (currentAdapter instanceof HeaderFooterWrapperAdapter) {
-                currentAdapter.unregisterAdapterDataObserver(mHeaderObserver);
+               ((HeaderFooterWrapperAdapter) currentAdapter).getWrappedAdapter().unregisterAdapterDataObserver(mHeaderObserver);
             }
         }
         mEmptyObserver.onChanged();
@@ -198,6 +198,8 @@ public class OmegaRecyclerView extends RecyclerView implements SwipeMenuHelper.C
                 if (((HeaderFooterWrapperAdapter) adapter).getStickyHeaderAdapter() != null) {
                     stickyHeaderAdapter = (StickyHeaderAdapter) adapter;
                 }
+            } else if (adapter instanceof StickyHeaderAdapter) {
+                stickyHeaderAdapter = (StickyHeaderAdapter) adapter;
             }
             if (stickyHeaderAdapter != null) {
                 if (mStickyHeaderDecoration == null) {

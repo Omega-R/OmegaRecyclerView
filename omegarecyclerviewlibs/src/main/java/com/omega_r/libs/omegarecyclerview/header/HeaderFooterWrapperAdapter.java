@@ -58,6 +58,19 @@ public class HeaderFooterWrapperAdapter<T extends RecyclerView.Adapter> extends 
     }
 
     @Override
+    public boolean isShowDivided(int position) {
+        if (isHeaderPosition(position) || isFooterPosition(position)) {
+            return super.isShowDivided(position);
+        }
+
+        if (mRealAdapter instanceof OmegaRecyclerView.Adapter) {
+            return ((OmegaRecyclerView.Adapter) mRealAdapter).isShowDivided(position - mHeaderArray.size());
+        }
+
+        return super.isShowDivided(position);
+    }
+
+    @Override
     public int getItemViewType(int position) {
         if (isHeaderPosition(position)) {
             return mHeaderArray.keyAt(position);
