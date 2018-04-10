@@ -9,6 +9,7 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.ExpandedRecyclerView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
@@ -30,7 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.WeakHashMap;
 
-public class OmegaRecyclerView extends RecyclerView implements SwipeMenuHelper.Callback {
+public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenuHelper.Callback {
 
     private static final int[] DEFAULT_DIVIDER_ATTRS = new int[]{android.R.attr.listDivider};
 
@@ -367,6 +368,18 @@ public class OmegaRecyclerView extends RecyclerView implements SwipeMenuHelper.C
             setAdapter(new PaginationAdapter(adapter, mPaginationLayout, mPaginationErrorLayout));
         }
         mPageRequester.setPaginationCallback(callback);
+    }
+
+    @Override
+    protected int getAdapterPositionFor(RecyclerView.ViewHolder viewHolder) {
+        RecyclerView.Adapter adapter = getAdapter();
+        int realPosition = super.getAdapterPositionFor(viewHolder);
+
+        if (adapter == null) return realPosition;
+        if (adapter instanceof HeaderFooterWrapperAdapter) {
+            return ((HeaderFooterWrapperAdapter) adapter).applyRealPositionToChildPosition(realPosition);
+        }
+        return realPosition;
     }
 
     public void showProgressPagination() {
