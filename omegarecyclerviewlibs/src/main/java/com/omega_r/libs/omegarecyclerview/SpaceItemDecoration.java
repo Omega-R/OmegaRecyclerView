@@ -10,7 +10,7 @@ import android.view.View;
  */
 
 
-public class SpaceItemDecoration extends RecyclerView.ItemDecoration {
+public class SpaceItemDecoration extends OmegaRecyclerView.ItemDecoration {
     private static final boolean DEFAULT_ADD_SPACE_ABOVE_FIRST_ITEM = false;
     private static final boolean DEFAULT_ADD_SPACE_BELOW_LAST_ITEM = false;
 
@@ -47,7 +47,7 @@ public class SpaceItemDecoration extends RecyclerView.ItemDecoration {
         }
 
         if (addSpaceBelowLastItem
-                && parent.getChildAdapterPosition(view) == getTotalItemCount(parent) - 1) {
+                && getAdapterPosition(parent, view) == getTotalItemCount(parent) - 1) {
             if (getOrientation(parent) == LinearLayoutManager.VERTICAL) {
                 outRect.bottom = space;
             } else {

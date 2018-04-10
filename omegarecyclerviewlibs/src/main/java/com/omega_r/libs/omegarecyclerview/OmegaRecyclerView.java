@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.IdRes;
@@ -50,7 +51,7 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
     private boolean mFinishedInflate = false;
     private List<View> mHeadersList = new ArrayList<>();
     private List<View> mFooterList = new ArrayList<>();
-    private WeakHashMap<ViewGroup.LayoutParams, Integer> mLayoutParamCache = new WeakHashMap<>();
+    private WeakHashMap<ViewGroup.LayoutParams, SectionState> mLayoutParamCache = new WeakHashMap<>();
     private int mShowDivider;
 
     public OmegaRecyclerView(Context context) {
@@ -221,7 +222,10 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
             super.addView(view, index, params);
         } else {
             view.setLayoutParams(params);
-            Integer integer = mLayoutParamCache.get(params);
+            SectionState sectionState = mLayoutParamCache.get(params);
+            Integer integer = sectionState.position;
+            view.setTag(R.id.section_show_divider, sectionState.showDivider);
+
             if (integer == null || integer == 0) {
                 mHeadersList.add(view);
             } else {
@@ -276,8 +280,9 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
         if (!mFinishedInflate) {
             final TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.OmegaRecyclerView_Layout);
             int section = typedArray.getInt(R.styleable.OmegaRecyclerView_Layout_layout_section, 0);
+            boolean showDivider = typedArray.getBoolean(R.styleable.OmegaRecyclerView_Layout_layout_showDivider, true);
             typedArray.recycle();
-            mLayoutParamCache.put(layoutParams, section);
+            mLayoutParamCache.put(layoutParams, new SectionState(section, showDivider));
         }
         return layoutParams;
     }
@@ -438,6 +443,17 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
             }
         }
     };
+
+    private class SectionState {
+
+        int position;
+        boolean showDivider;
+
+        public SectionState(int position, boolean showDivider) {
+            this.position = position;
+            this.showDivider = showDivider;
+        }
+    }
 
     private final AdapterDataObserver mHeaderObserver = new AdapterDataObserver() {
         @Override
@@ -607,4 +623,21 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
             return (T) itemView.findViewById(id);
         }
     }
+
+    public static class ItemDecoration extends RecyclerView.ItemDecoration {
+
+        protected int getAdapterPosition(RecyclerView parent, View view) {
+            int childPosition = parent.getChildAdapterPosition(view);
+
+            if (parent instanceof OmegaRecyclerView) {
+                RecyclerView.Adapter adapter = parent.getAdapter();
+                if (adapter instanceof HeaderFooterWrapperAdapter) {
+                    return  ((HeaderFooterWrapperAdapter) adapter).applyChildPositionToRealPosition(childPosition);
+                }
+            }
+
+            return childPosition;
+        }
+    }
+
 }
