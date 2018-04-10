@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.omega_r.libs.omegarecyclerview.OmegaRecyclerView;
-import com.omega_r.libs.omegarecyclerview.pagination.WrapperAdapter;
 import com.omega_r.libs.omegarecyclerview.sticky_header.StickyHeaderAdapter;
 import com.omega_r.libs.omegarecyclerview.sticky_header.StickyHeaderDecoration;
 
@@ -36,10 +35,10 @@ public class HeaderFooterWrapperAdapter<T extends RecyclerView.Adapter> extends 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (isHeader(viewType)) {
-            return new ViewHolder(mHeaderArray.get(viewType));
+            return new SectionViewHolder(mHeaderArray.get(viewType));
         }
         if (isFooter(viewType)) {
-            return new ViewHolder(mFooterArray.get(viewType));
+            return new SectionViewHolder(mFooterArray.get(viewType));
         }
         return mRealAdapter.onCreateViewHolder(parent, viewType);
     }
@@ -164,6 +163,10 @@ public class HeaderFooterWrapperAdapter<T extends RecyclerView.Adapter> extends 
         return stickyHeaderAdapter.getHeaderId(position - mHeaderArray.size());
     }
 
+    public int applyRealPositionToChildPosition(int realPosition) {
+        return realPosition - mHeaderArray.size();
+    }
+
     @Nullable
     public StickyHeaderAdapter getStickyHeaderAdapter() {
         if (mRealAdapter instanceof StickyHeaderAdapter) {
@@ -212,9 +215,9 @@ public class HeaderFooterWrapperAdapter<T extends RecyclerView.Adapter> extends 
         super.tryNotifyItemRangeRemoved(positionStart + mHeaderArray.size(), itemCount);
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+    public class SectionViewHolder extends RecyclerView.ViewHolder {
 
-        public ViewHolder(View itemView) {
+        public SectionViewHolder(View itemView) {
             super(itemView);
         }
     }
