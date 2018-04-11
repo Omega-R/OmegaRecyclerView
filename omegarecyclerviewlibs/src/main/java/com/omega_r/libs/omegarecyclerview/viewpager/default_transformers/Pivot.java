@@ -1,4 +1,4 @@
-package com.omega_r.libs.omegarecyclerview.viewpager.transform;
+package com.omega_r.libs.omegarecyclerview.viewpager.default_transformers;
 
 import android.support.annotation.IntDef;
 import android.view.View;
