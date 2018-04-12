@@ -22,20 +22,20 @@ android {
 
 dependencies {
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:' + rootProject.supportLibVersion
-    compile 'com.android.support:support-v4:' + rootProject.supportLibVersion
-    compile 'com.android.support:design:' + rootProject.supportLibVersion
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.support:appcompat-v7:' + rootProject.supportLibVersion
+    implementation 'com.android.support:support-v4:' + rootProject.supportLibVersion
+    implementation 'com.android.support:design:' + rootProject.supportLibVersion
 
-    compile 'com.github.Omega-R.OmegaIntentBuilder:core:' + rootProject.omegaIntentBuilder
-    compile 'com.github.Omega-R.OmegaIntentBuilder:annotations:' + rootProject.omegaIntentBuilder
+    implementation 'com.github.Omega-R.OmegaIntentBuilder:core:' + rootProject.omegaIntentBuilder
+    implementation 'com.github.Omega-R.OmegaIntentBuilder:annotations:' + rootProject.omegaIntentBuilder
     annotationProcessor 'com.github.Omega-R.OmegaIntentBuilder:processor:' + rootProject.omegaIntentBuilder
 
-    compile project(':omegarecyclerviewlibs')
+    api project(':omegarecyclerviewlibs')
 
-    androidTestCompile('com.android.support.test.espresso:espresso-core:' + rootProject.espressoVersion, {
+    androidTestImplementation('com.android.support.test.espresso:espresso-core:' + rootProject.espressoVersion, {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
-    testCompile 'junit:junit:' + rootProject.junitVersion
+    testImplementation 'junit:junit:' + rootProject.junitVersion
 }

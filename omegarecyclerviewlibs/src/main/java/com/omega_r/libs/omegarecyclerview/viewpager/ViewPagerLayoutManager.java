@@ -56,7 +56,7 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
 
     private int mScrolled;
     private int mPendingScroll;
-    private int mCurrentPosition = NO_POSITION;
+    public int mCurrentPosition = NO_POSITION;
     private int mPendingPosition = NO_POSITION;
 
     private final SparseArray<View> mViewCacheArray = new SparseArray<>();
@@ -244,16 +244,21 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
 
         final int endBound = mOrientationHelper.getViewEnd(getWidth(), getHeight());
 
-        //Layout current
-        if (isViewVisible(mCurrentViewCenterPoint, endBound)) {
-            layoutView(recycler, mCurrentPosition, mCurrentViewCenterPoint);
+        if (mScrolled >= 0) {
+            layoutViews(recycler, Direction.START, endBound); //Layout items before the current item
+            layoutViews(recycler, Direction.END, endBound); //Layout items after the current item
+            if (isViewVisible(mCurrentViewCenterPoint, endBound)) {
+                //Layout current
+                layoutView(recycler, mCurrentPosition, mCurrentViewCenterPoint);
+            }
+        } else {
+            if (isViewVisible(mCurrentViewCenterPoint, endBound)) {
+                //Layout current
+                layoutView(recycler, mCurrentPosition, mCurrentViewCenterPoint);
+            }
+            layoutViews(recycler, Direction.START, endBound); //Layout items before the current item
+            layoutViews(recycler, Direction.END, endBound); //Layout items after the current item
         }
-
-        //Layout items before the current item
-        layoutViews(recycler, Direction.START, endBound);
-
-        //Layout items after the current item
-        layoutViews(recycler, Direction.END, endBound);
 
         recycleDetachedViewsAndClearCache(recycler);
     }
@@ -418,7 +423,7 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
 
     private int calculateScrollPosition(int position) {
         int itemCount = super.getItemCount();
-        if (mIsInfinite) {
+        if (mIsInfinite && itemCount != 0) {
             int currentWindowPosition = mCurrentPosition / itemCount;
             return currentWindowPosition * itemCount + position;
         }
@@ -667,7 +672,9 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
         }
     }
 
-    public void setItemTransformer(ItemTransformer itemTransformer) {
+    public void setItemTransformer(@Nullable ItemTransformer itemTransformer) {
+        mViewCacheArray.clear();
+        removeAllViews();
         mItemTransformer = itemTransformer;
     }
 
