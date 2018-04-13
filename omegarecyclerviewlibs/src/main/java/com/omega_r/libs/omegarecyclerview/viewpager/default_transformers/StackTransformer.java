@@ -7,9 +7,12 @@ import com.omega_r.libs.omegarecyclerview.viewpager.transform.ItemTransformer;
 public class StackTransformer implements ItemTransformer {
 
     @Override
-    public void transformItem(View view, float position) {
-        float coeff = (position < 0) ? 0f : -view.getWidth() * position;
-        view.setTranslationX(coeff);
+    public void transformItem(View view, float position, boolean isHorizontal) {
+        if (isHorizontal) {
+            view.setTranslationX((position < 0) ? 0f : -view.getWidth() * position);
+        } else {
+            view.setTranslationY((position < 0) ? 0f : -view.getHeight() * position);
+        }
     }
 
 }

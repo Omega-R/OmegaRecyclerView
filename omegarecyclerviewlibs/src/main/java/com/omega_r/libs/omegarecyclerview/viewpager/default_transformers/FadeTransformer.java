@@ -18,7 +18,7 @@ public class FadeTransformer implements ItemTransformer {
     }
 
     @Override
-    public void transformItem(View view, float position) {
+    public void transformItem(View view, float position, boolean isHorizontal) {
         if(position < -1 || position > 1) { // Page is not an immediate sibling, just make transparent
             view.setAlpha(mMinAlpha);
         } else if (position <= 0 || position <= 1) { // Page is sibling to left or right

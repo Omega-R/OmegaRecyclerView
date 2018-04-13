@@ -18,19 +18,26 @@ public class DepthPageTransformer implements ItemTransformer {
     }
 
     @Override
-    public void transformItem(View view, float position) {
+    public void transformItem(View view, float position, boolean isHorizontal) {
         if (position < 0f) {
             view.setTranslationX(0f);
+            view.setTranslationY(0f);
             view.setScaleX(1f);
             view.setScaleY(1f);
             view.setAlpha(1f);
-        } else {
-            float scaleFactor = mMinScale + (1 - mMinScale) * (1 - Math.abs(position));
-            view.setAlpha(1 - position);
+            return;
+        }
+
+        float scaleFactor = mMinScale + (1 - mMinScale) * (1 - Math.abs(position));
+        view.setAlpha(1 - position);
+        view.setScaleX(scaleFactor);
+        view.setScaleY(scaleFactor);
+        if (isHorizontal) {
             view.setPivotY(0.5f * view.getHeight());
             view.setTranslationX(view.getWidth() * -position);
-            view.setScaleX(scaleFactor);
-            view.setScaleY(scaleFactor);
+        } else {
+            view.setPivotX(0.5f * view.getWidth());
+            view.setTranslationY(view.getHeight() * -position);
         }
     }
 }

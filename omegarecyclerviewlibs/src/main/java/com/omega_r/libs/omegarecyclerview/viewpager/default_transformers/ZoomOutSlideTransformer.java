@@ -22,29 +22,30 @@ public class ZoomOutSlideTransformer implements ItemTransformer {
     }
 
     @Override
-    public void transformItem(View view, float position) {
-        if (position >= -1 || position <= 1) {
-            // Modify the default slide transition to shrink the page as well
-            final float height = view.getHeight();
-            final float scaleFactor = Math.max(mMinScale, 1 - Math.abs(position));
-            final float vertMargin = height * (1 - scaleFactor) / 2;
-            final float horzMargin = view.getWidth() * (1 - scaleFactor) / 2;
+    public void transformItem(View view, float position, boolean isHorizontal) {
+        float height = view.getHeight();
+        float scaleFactor = Math.max(mMinScale, 1 - Math.abs(position));
+        int width = view.getWidth();
+        float vertMargin = height * (1 - scaleFactor) / 2;
+        float horzMargin = width * (1 - scaleFactor) / 2;
 
-            // Center vertically
+        if (isHorizontal) {
             view.setPivotY(0.5f * height);
-
             if (position < 0) {
                 view.setTranslationX(horzMargin - vertMargin / 2);
             } else {
                 view.setTranslationX(-horzMargin + vertMargin / 2);
             }
-
-            // Scale the page down (between MIN_SCALE and 1)
-            view.setScaleX(scaleFactor);
-            view.setScaleY(scaleFactor);
-
-            // Fade the page relative to its size.
-            view.setAlpha(mMinScale + (scaleFactor - mMinScale) / (1 - mMinScale) * (1 - mMinScale));
+        } else {
+            view.setPivotX(0.5f * width);
+            if (position < 0) {
+                view.setTranslationY(vertMargin - horzMargin / 2);
+            } else {
+                view.setTranslationY(-vertMargin + horzMargin / 2);
+            }
         }
+        view.setScaleX(scaleFactor);
+        view.setScaleY(scaleFactor);
+        view.setAlpha(mMinAlpha + (scaleFactor - mMinScale) / (1 - mMinScale) * (1 - mMinAlpha));
     }
 }

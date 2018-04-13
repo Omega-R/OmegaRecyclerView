@@ -405,7 +405,7 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
             for (int i = 0; i < getChildCount(); i++) {
                 View child = getChildAt(i);
                 float position = getCenterRelativePositionOf(child, clampAfterDistance);
-                mItemTransformer.transformItem(child, position);
+                mItemTransformer.transformItem(child, position, mOrientation == HORIZONTAL);
             }
         }
     }
