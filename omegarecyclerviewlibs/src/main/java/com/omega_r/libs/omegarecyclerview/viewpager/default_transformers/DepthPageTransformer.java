@@ -21,6 +21,7 @@ public class DepthPageTransformer implements ItemTransformer {
     public void transformItem(View view, float position, boolean isHorizontal) {
         if (position < 0f) {
             view.setTranslationX(0f);
+            view.setTranslationY(0f);
             view.setScaleX(1f);
             view.setScaleY(1f);
             view.setAlpha(1f);
