@@ -4,6 +4,6 @@ import android.view.View;
 
 public interface ItemTransformer {
 
-    void transformItem(View item, float position);
+    void transformItem(View view, float position, boolean isHorizontal);
 
 }
