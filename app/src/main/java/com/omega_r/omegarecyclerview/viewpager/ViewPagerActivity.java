@@ -67,14 +67,17 @@ public class ViewPagerActivity extends AppCompatActivity implements AdapterView.
             case CubeIn:
                 itemTransformer = new CubeInTransformer();
                 break;
+            case CubeOut:
+                itemTransformer = new CubeOutTransformer();
+                break;
             case DepthPage:
                 itemTransformer = new DepthPageTransformer();
                 break;
             case Fade:
                 itemTransformer = new FadeTransformer();
                 break;
-            case FlipHorizontal:
-                itemTransformer = new FlipHorizontalTransformer();
+            case Flip:
+                itemTransformer = new FlipTransformer();
                 break;
             case ForegroundToBackground:
                 itemTransformer = new ForegroundToBackgroundTransformer();
@@ -142,9 +145,10 @@ public class ViewPagerActivity extends AppCompatActivity implements AdapterView.
         Accordion("AccordionTransformer"),
         BackgroundToForeground("BackgroundToForeground"),
         CubeIn("CubeIn"),
+        CubeOut("CubeOut"),
         DepthPage("DepthPage"),
         Fade("Fade"),
-        FlipHorizontal("FlipHorizontal"),
+        Flip("Flip"),
         ForegroundToBackground("ForegroundToBackground"),
         RotateDown("RotateDown"),
         RotateUp("RotateUp"),

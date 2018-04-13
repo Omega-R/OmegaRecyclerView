@@ -20,7 +20,7 @@ public class  ScaleTransformer implements ItemTransformer {
     }
 
     @Override
-    public void transformItem(View item, float position) {
+    public void transformItem(View item, float position, boolean isHorizontal) {
         pivotX.setOn(item);
         pivotY.setOn(item);
         float closenessToCenter = 1f - Math.abs(position);
