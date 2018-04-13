@@ -239,6 +239,9 @@ You could use your owner transformation.
                                                             .build());
 ```
 
+### [You could see our otransformations on wiki page.](https://github.com/Omega-R/OmegaRecyclerView/wiki/ViewPager)
+
+
 # License
 ```
 The MIT License
