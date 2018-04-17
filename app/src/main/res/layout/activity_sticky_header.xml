@@ -3,12 +3,18 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent" xmlns:tools="http://schemas.android.com/tools">
 
     <com.omega_r.libs.omegarecyclerview.OmegaRecyclerView
         android:id="@+id/recycler_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:itemSpace="8dp"
-        app:showDivider="middle"/>
+        app:itemSpace="16dp"
+        app:showDivider="middle"
+        app:heightDivider="1dp"
+        app:divider="@color/colorAccent"
+        app:paddingDivider="8dp"
+        tools:listitem="@layout/item_test"
+    />
+
 </RelativeLayout>

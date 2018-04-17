@@ -7,7 +7,7 @@
         
         <attr name="divider" format="reference"/>
         <attr name="heightDivider" format="dimension"/>
-        
+        <attr name="paddingDivider" format="dimension"/>
         <attr name="showDivider">
             <flag name="none" value="0" />
             <flag name="beginning" value="1" />
