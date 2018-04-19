@@ -39,8 +39,6 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
     private View mEmptyView;
     private int mEmptyViewId;
 
-    private int mItemSpace;
-
     private SwipeMenuHelper mSwipeMenuHelper;
     private PageRequester mPageRequester = new PageRequester();
     private StickyHeaderDecoration mStickyHeaderDecoration;
@@ -53,6 +51,7 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
     private List<View> mFooterList = new ArrayList<>();
     private WeakHashMap<ViewGroup.LayoutParams, SectionState> mLayoutParamCache = new WeakHashMap<>();
     private int mShowDivider;
+    private int mItemSpace;
 
     public OmegaRecyclerView(Context context) {
         super(context);
@@ -120,7 +119,18 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
                 float dividerHeight = a.getDimension(R.styleable.OmegaRecyclerView_heightDivider,
                         a.getDimension(R.styleable.OmegaRecyclerView_android_dividerHeight, -1));
                 float alpha = a.getFloat(R.styleable.OmegaRecyclerView_alphaDivider, 1);
-                addItemDecoration(new DividerItemDecoration(dividerDrawable, (int) dividerHeight, mShowDivider, mItemSpace / 2, alpha));
+                int itemSpace = (int) a.getDimension(R.styleable.OmegaRecyclerView_itemSpace, 0);
+
+                int paddingDivider = a.getDimensionPixelSize(R.styleable.OmegaRecyclerView_paddingDivider, 0);
+                DividerItemDecoration decoration = new DividerItemDecoration(
+                        dividerDrawable,
+                        (int) dividerHeight,
+                        mShowDivider,
+                        itemSpace / 2,
+                        alpha
+                );
+                decoration.setPadding(paddingDivider);
+                addItemDecoration(decoration);
             }
         }
     }
@@ -206,7 +216,7 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
             if (stickyHeaderAdapter != null) {
                 if (mStickyHeaderDecoration == null) {
                     mStickyHeaderDecoration = new StickyHeaderDecoration(stickyHeaderAdapter);
-                    mStickyHeaderDecoration.setItemSpace(getItemSpace());
+                    mStickyHeaderDecoration.setItemSpace(mItemSpace);
                     addItemDecoration(mStickyHeaderDecoration);
                 } else {
                     mStickyHeaderDecoration.setAdapter(stickyHeaderAdapter);
@@ -332,10 +342,6 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
 
     public void addItemSpace(int space, boolean addSpaceAboveFirstItem, boolean addSpaceBelowLastItem) {
         addItemDecoration(new SpaceItemDecoration(space, addSpaceAboveFirstItem, addSpaceBelowLastItem));
-    }
-
-    public int getItemSpace() {
-        return mItemSpace;
     }
 
     @Override

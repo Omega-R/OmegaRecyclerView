@@ -15,31 +15,17 @@ import android.widget.LinearLayout;
 
 public class DividerItemDecoration extends OmegaRecyclerView.ItemDecoration {
 
-    public interface Orientation {
-        int UNKNOWN = -1;
-        int HORIZONTAL = LinearLayout.HORIZONTAL;
-        int VERTICAL = LinearLayout.VERTICAL;
-    }
-
-    public interface ShowDivider {
-        int NONE = 0;
-        int BEGINNING = 1;
-        int MIDDLE = 2;
-        int END = 4;
-    }
-
-
     private final Drawable mDivider;
-    private int mDividerSize;
-    private int mShowDivider;
     private final int mOffset;
     private final float mDividerAlpha;
+    private int mDividerSize;
+    private int mShowDivider;
     private int mOrientation;
+    private int mPadding;
 
     public DividerItemDecoration(Drawable divider, int dividerSize, int showDivider, int offset, float dividerAlpha) {
         this(divider, Orientation.UNKNOWN, dividerSize, showDivider, offset, dividerAlpha);
     }
-
     public DividerItemDecoration(Drawable divider, int orientation, int dividerSize, int showDivider, int offset, float dividerAlpha) {
         mOrientation = orientation;
         mDivider = divider;
@@ -57,6 +43,10 @@ public class DividerItemDecoration extends OmegaRecyclerView.ItemDecoration {
         }
     }
 
+    public void setPadding(int padding) {
+        mPadding = padding;
+    }
+
     private void updateSize() {
         if (mDividerSize < 0) {
             switch (mOrientation) {
@@ -69,7 +59,6 @@ public class DividerItemDecoration extends OmegaRecyclerView.ItemDecoration {
             }
         }
     }
-
 
     @Override
     public void getItemOffsets(Rect outRect, View view, RecyclerView parent,
@@ -100,7 +89,6 @@ public class DividerItemDecoration extends OmegaRecyclerView.ItemDecoration {
         }
     }
 
-
     @Override
     public void onDrawOver(Canvas c, RecyclerView parent, RecyclerView.State state) {
         final Drawable divider = this.mDivider;
@@ -114,14 +102,13 @@ public class DividerItemDecoration extends OmegaRecyclerView.ItemDecoration {
         final int childCount = parent.getChildCount();
 
         if (childCount > 0) {
+            size = mDividerSize;
             if (mOrientation == Orientation.VERTICAL) {
-                size = mDividerSize;
-                left = parent.getPaddingLeft();
-                right = parent.getWidth() - parent.getPaddingRight();
+                left = parent.getPaddingLeft() + mPadding;
+                right = parent.getWidth() - parent.getPaddingRight() - mPadding;
             } else { //horizontal
-                size = mDividerSize;
-                top = parent.getPaddingTop();
-                bottom = parent.getHeight() - parent.getPaddingBottom() ;
+                top = parent.getPaddingTop() + mPadding;
+                bottom = parent.getHeight() - parent.getPaddingBottom() - mPadding;
             }
 
             // show beginning divider
@@ -208,5 +195,19 @@ public class DividerItemDecoration extends OmegaRecyclerView.ItemDecoration {
         }
 
         return true;
+    }
+
+
+    public interface Orientation {
+        int UNKNOWN = -1;
+        int HORIZONTAL = LinearLayout.HORIZONTAL;
+        int VERTICAL = LinearLayout.VERTICAL;
+    }
+
+    public interface ShowDivider {
+        int NONE = 0;
+        int BEGINNING = 1;
+        int MIDDLE = 2;
+        int END = 4;
     }
 }

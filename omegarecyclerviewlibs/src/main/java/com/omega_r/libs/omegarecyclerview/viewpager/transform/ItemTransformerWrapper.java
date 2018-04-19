@@ -12,8 +12,8 @@ public class ItemTransformerWrapper implements ItemTransformer {
     }
 
     @Override
-    public void transformItem(View item, float position) {
-        mPageTransformer.transformPage(item, position);
+    public void transformItem(View view, float position, boolean isHorizontal) {
+        mPageTransformer.transformPage(view, position);
     }
 
 }
