@@ -33,10 +33,8 @@ public class DepthPageTransformer implements ItemTransformer {
         view.setScaleX(scaleFactor);
         view.setScaleY(scaleFactor);
         if (isHorizontal) {
-            view.setPivotY(0.5f * view.getHeight());
             view.setTranslationX(view.getWidth() * -position);
         } else {
-            view.setPivotX(0.5f * view.getWidth());
             view.setTranslationY(view.getHeight() * -position);
         }
     }

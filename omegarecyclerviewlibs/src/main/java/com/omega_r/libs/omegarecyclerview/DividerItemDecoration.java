@@ -13,7 +13,7 @@ import android.widget.LinearLayout;
  * Created by mac on 28.03.17.
  */
 
-public class DividerItemDecoration extends RecyclerView.ItemDecoration {
+public class DividerItemDecoration extends OmegaRecyclerView.ItemDecoration {
 
     private final Drawable mDivider;
     private final int mOffset;
@@ -70,6 +70,18 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
 
         updateOrientation(parent);
 
+        int adapterPosition = getAdapterPosition(parent, view);
+
+        if (adapterPosition == RecyclerView.NO_POSITION) return;
+        if (adapterPosition == 0) {
+            if (!((mShowDivider & ShowDivider.BEGINNING) == ShowDivider.BEGINNING)) return;
+        } else  if (adapterPosition == parent.getAdapter().getItemCount() - 1) {
+            if (!((mShowDivider & ShowDivider.END) == ShowDivider.END)) return;
+        } else {
+            if (!((mShowDivider & ShowDivider.MIDDLE) == ShowDivider.MIDDLE)) return;
+        }
+        if (!isShowDivider(parent, adapterPosition)) return;
+
         if (mOrientation == Orientation.VERTICAL) {
             outRect.top = mDividerSize;
         } else {
@@ -107,7 +119,7 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
                 for (int i = 0; i < childCount; i++) {
                     child = parent.getChildAt(i);
 
-                    if (isShowDivider(parent, parent.getChildAdapterPosition(child))) {
+                    if (isShowDivider(parent, getAdapterPosition(parent, child))) {
 
                         params = (RecyclerView.LayoutParams) child.getLayoutParams();
 
@@ -131,7 +143,7 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
                 for (int i = startIndex + 1; i < childCount; i++) {
                     child = parent.getChildAt(i);
 
-                    if (isShowDivider(parent, parent.getChildAdapterPosition(child))) {
+                    if (isShowDivider(parent, getAdapterPosition(parent, child))) {
                         params = (RecyclerView.LayoutParams) child.getLayoutParams();
 
                         if (mOrientation == Orientation.VERTICAL) {
@@ -153,7 +165,7 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
                 for (int i = childCount - 1; i >= 0; i--) {
                     child = parent.getChildAt(i);
                     int childLayoutPosition = parent.getChildLayoutPosition(child);
-                    int childAdapterPosition = parent.getChildAdapterPosition(child);
+                    int childAdapterPosition = getAdapterPosition(parent, child);
 
                     if (childLayoutPosition == i && isShowDivider(parent, childAdapterPosition)) {
                         params = (RecyclerView.LayoutParams) child.getLayoutParams();

@@ -25,6 +25,7 @@
             <enum name="header" value="0"/>
             <enum name="footer" value="1"/>
         </attr>
+        <attr name="layout_showDivider" format="boolean"/>
     </declare-styleable>
 
     <declare-styleable name="OmegaPagerRecyclerView">

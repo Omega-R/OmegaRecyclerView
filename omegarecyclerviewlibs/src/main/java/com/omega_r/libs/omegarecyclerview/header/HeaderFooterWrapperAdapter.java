@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.omega_r.libs.omegarecyclerview.OmegaRecyclerView;
+import com.omega_r.libs.omegarecyclerview.R;
 import com.omega_r.libs.omegarecyclerview.sticky_header.StickyHeaderAdapter;
 import com.omega_r.libs.omegarecyclerview.sticky_header.StickyHeaderDecoration;
 
@@ -58,7 +59,15 @@ public class HeaderFooterWrapperAdapter<T extends RecyclerView.Adapter> extends 
 
     @Override
     public boolean isShowDivided(int position) {
-        if (isHeaderPosition(position) || isFooterPosition(position)) {
+        SparseArray<View> sectionArray = null;
+        if (isHeaderPosition(position)) sectionArray = mHeaderArray;
+        if (isFooterPosition(position)) sectionArray = mFooterArray;
+
+        if (sectionArray != null) {
+            Object tag = sectionArray.get(getItemViewType(position)).getTag(R.id.section_show_divider);
+            if (tag instanceof Boolean) {
+                return (boolean) tag;
+            }
             return super.isShowDivided(position);
         }
 
@@ -156,15 +165,22 @@ public class HeaderFooterWrapperAdapter<T extends RecyclerView.Adapter> extends 
 
     @Override
     public long getHeaderId(int position) {
-        StickyHeaderAdapter stickyHeaderAdapter = getStickyHeaderAdapter();
-        if (stickyHeaderAdapter == null || isHeaderPosition(position) || isFooterPosition(position)) {
+        if (position < 0) {
             return StickyHeaderDecoration.NO_HEADER_ID;
         }
-        return stickyHeaderAdapter.getHeaderId(position - mHeaderArray.size());
+        StickyHeaderAdapter stickyHeaderAdapter = getStickyHeaderAdapter();
+        if (stickyHeaderAdapter == null) {
+            return StickyHeaderDecoration.NO_HEADER_ID;
+        }
+        return stickyHeaderAdapter.getHeaderId(position );
     }
 
     public int applyRealPositionToChildPosition(int realPosition) {
         return realPosition - mHeaderArray.size();
+    }
+
+    public int applyChildPositionToRealPosition(int childPosition) {
+        return childPosition + mHeaderArray.size();
     }
 
     @Nullable
@@ -187,7 +203,7 @@ public class HeaderFooterWrapperAdapter<T extends RecyclerView.Adapter> extends 
         StickyHeaderAdapter stickyHeaderAdapter = getStickyHeaderAdapter();
         assert stickyHeaderAdapter != null;
         //noinspection unchecked
-        stickyHeaderAdapter.onBindHeaderViewHolder(viewHolder, position - mHeaderArray.size());
+        stickyHeaderAdapter.onBindHeaderViewHolder(viewHolder, position);
     }
 
     @Override
