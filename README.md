@@ -24,7 +24,7 @@ allprojects {
 **Step 2.** Add the dependency
 ```
 dependencies {
-    compile 'com.github.Omega-R:OmegaRecyclerView:1.4.0'
+    implementation 'com.github.Omega-R:OmegaRecyclerView:1.6.11@aar'
 }
 ```
 
@@ -35,7 +35,7 @@ com.omega_r.libs.omegarecyclerview.OmegaRecyclerView
         android:id="@+id/custom_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:divider="1"
+        android:divider="#888"
         android:dividerHeight="1dp"
         app:itemSpace="12dp"
         app:showDivider="middle"/>
@@ -216,10 +216,10 @@ OmegaRecyclerView.setFootersVisibility(false);
 ## ViewPager
 <img src="/images/viewpager_scale.gif?raw=true" width="300" height="533" />    <img src="/images/viewpager_vertical.gif?raw=true" width="300" height="533" />
 
-For usage just add ViewPagerOmegaRecyclerView
+For usage just add OmegaPagerRecyclerView
 ```
 <?xml version="1.0" encoding="utf-8"?>
-    <com.omega_r.libs.omegarecyclerview.viewpager.ViewPagerOmegaRecyclerView
+    <com.omega_r.libs.omegarecyclerview.viewpager.OmegaPagerRecyclerView
         android:id="@+id/recyclerview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -238,6 +238,9 @@ You could use your owner transformation.
                                                             .setMinScale(0.8f)
                                                             .build());
 ```
+
+### [You could see our otransformations on wiki page.](https://github.com/Omega-R/OmegaRecyclerView/wiki/ViewPager)
+
 
 # License
 ```
