@@ -172,6 +172,18 @@ public class HeaderFooterWrapperAdapter<T extends RecyclerView.Adapter> extends 
         if (stickyHeaderAdapter == null) {
             return StickyHeaderDecoration.NO_HEADER_ID;
         }
+
+        int realAdapterItemCount = mRealAdapter.getItemCount();
+        if (realAdapterItemCount == 0) {
+            return StickyHeaderDecoration.NO_HEADER_ID;
+        }
+        if (isHeaderPosition(position)) {
+            return stickyHeaderAdapter.getHeaderId(0);
+        }
+        if (isFooterPosition(position)) {
+            return stickyHeaderAdapter.getHeaderId(realAdapterItemCount - 1);
+        }
+
         return stickyHeaderAdapter.getHeaderId(position );
     }
 
