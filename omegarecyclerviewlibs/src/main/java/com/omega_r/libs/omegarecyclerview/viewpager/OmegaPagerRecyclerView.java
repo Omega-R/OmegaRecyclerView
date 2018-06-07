@@ -81,12 +81,12 @@ public class OmegaPagerRecyclerView extends OmegaRecyclerView implements ViewPag
     }
 
     @Nullable
-    public ViewHolder getViewHolder(int position) {
+    public RecyclerView.ViewHolder getViewHolder(int position) {
         View view = null;
         if (getLayoutManager() != null) {
             view = getLayoutManager().findViewByPosition(position);
         }
-        return view != null ? (ViewHolder) getChildViewHolder(view) : null;
+        return view != null ? getChildViewHolder(view) : null;
     }
 
     /**
@@ -192,13 +192,13 @@ public class OmegaPagerRecyclerView extends OmegaRecyclerView implements ViewPag
         mOnItemChangedListenerSet.remove(onItemChangedListener);
     }
 
-    private void notifyScrollStart(ViewHolder holder, int current) {
+    private void notifyScrollStart(RecyclerView.ViewHolder holder, int current) {
         for (ScrollStateChangeListener listener : mScrollStateChangeListenerSet) {
             listener.onScrollStart(holder, current);
         }
     }
 
-    private void notifyScrollEnd(ViewHolder holder, int current) {
+    private void notifyScrollEnd(RecyclerView.ViewHolder holder, int current) {
         for (ScrollStateChangeListener listener : mScrollStateChangeListenerSet) {
             listener.onScrollEnd(holder, current);
         }
@@ -223,7 +223,7 @@ public class OmegaPagerRecyclerView extends OmegaRecyclerView implements ViewPag
         if (layoutManager == null) return;
 
         int current = layoutManager.getCurrentPosition();
-        ViewHolder holder = getViewHolder(current);
+        RecyclerView.ViewHolder holder = getViewHolder(current);
         if (holder != null) {
             notifyScrollStart(holder, current);
         }
@@ -235,7 +235,7 @@ public class OmegaPagerRecyclerView extends OmegaRecyclerView implements ViewPag
         if (layoutManager == null) return;
 
         int current = getLayoutManager().getCurrentPosition();
-        ViewHolder holder = getViewHolder(current);
+        RecyclerView.ViewHolder holder = getViewHolder(current);
         if (holder != null) {
             notifyScrollEnd(holder, current);
             notifyCurrentItemChanged(holder, current);
@@ -273,13 +273,13 @@ public class OmegaPagerRecyclerView extends OmegaRecyclerView implements ViewPag
     }
 
     private void notifyScroll(float position, int currentIndex, int newIndex,
-                              ViewHolder currentHolder, ViewHolder newHolder) {
+                              RecyclerView.ViewHolder currentHolder, RecyclerView.ViewHolder newHolder) {
         for (ScrollStateChangeListener listener : mScrollStateChangeListenerSet) {
             listener.onScroll(position, currentIndex, newIndex, currentHolder, newHolder);
         }
     }
 
-    private void notifyCurrentItemChanged(ViewHolder holder, int current) {
+    private void notifyCurrentItemChanged(RecyclerView.ViewHolder holder, int current) {
         for (OnItemChangedListener listener : mOnItemChangedListenerSet) {
             listener.onCurrentItemChanged(holder, current);
         }
@@ -308,11 +308,11 @@ public class OmegaPagerRecyclerView extends OmegaRecyclerView implements ViewPag
         if (layoutManager == null) return;
 
         int current = layoutManager.getCurrentPosition();
-        ViewHolder currentHolder = getViewHolder(current);
+        RecyclerView.ViewHolder currentHolder = getViewHolder(current);
         notifyCurrentItemChanged(currentHolder, current);
     }
 
-    public interface ScrollStateChangeListener<T extends ViewHolder> {
+    public interface ScrollStateChangeListener<T extends RecyclerView.ViewHolder> {
 
         void onScrollStart(@NonNull T currentItemHolder, int adapterPosition);
 
@@ -322,7 +322,7 @@ public class OmegaPagerRecyclerView extends OmegaRecyclerView implements ViewPag
                       @Nullable T currentHolder, @Nullable T newCurrent);
     }
 
-    public interface OnItemChangedListener<T extends ViewHolder> {
+    public interface OnItemChangedListener<T extends RecyclerView.ViewHolder> {
         /*
          * This method will be also triggered when view appears on the screen for the first time.
          * If data set is empty, viewHolder will be null and adapterPosition will be NO_POSITION

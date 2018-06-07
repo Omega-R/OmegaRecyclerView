@@ -312,7 +312,10 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
 
     private void recycleDetachedViewsAndClearCache(RecyclerView.Recycler recycler) {
         for (int i = 0; i < mViewCacheArray.size(); i++) {
-            recycler.recycleView(mViewCacheArray.valueAt(i));
+            View view = mViewCacheArray.valueAt(i);
+            if (view.getParent() == null) {
+                recycler.recycleView(view);
+            }
         }
         mViewCacheArray.clear();
     }
