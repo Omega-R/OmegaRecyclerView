@@ -69,8 +69,8 @@ public class OmegaPagerRecyclerView extends OmegaRecyclerView implements ViewPag
     }
 
     private void initTransformation(TypedArray a) {
-        if (a.hasValue(R.styleable.OmegaPagerRecyclerView_transformation)) {
-            int section = a.getInt(R.styleable.OmegaPagerRecyclerView_transformation, 0);
+        if (a.hasValue(R.styleable.OmegaPagerRecyclerView_transformer)) {
+            int section = a.getInt(R.styleable.OmegaPagerRecyclerView_transformer, 0);
             switch (section) {
                 case Transformers.NONE:
                     setItemTransformer((ItemTransformer) null);
