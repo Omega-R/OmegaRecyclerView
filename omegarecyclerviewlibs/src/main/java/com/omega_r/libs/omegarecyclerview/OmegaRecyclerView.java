@@ -2,14 +2,15 @@ package com.omega_r.libs.omegarecyclerview;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Color;
-import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.support.v7.widget.ExpandedRecyclerView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,9 +21,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.omega_r.libs.omegarecyclerview.header.HeaderFooterWrapperAdapter;
-import com.omega_r.libs.omegarecyclerview.pagination.PaginationAdapter;
 import com.omega_r.libs.omegarecyclerview.pagination.OnPageRequestListener;
 import com.omega_r.libs.omegarecyclerview.pagination.PageRequester;
+import com.omega_r.libs.omegarecyclerview.pagination.PaginationAdapter;
 import com.omega_r.libs.omegarecyclerview.pagination.WrapperAdapter;
 import com.omega_r.libs.omegarecyclerview.sticky_header.StickyHeaderAdapter;
 import com.omega_r.libs.omegarecyclerview.sticky_header.StickyHeaderDecoration;
@@ -52,6 +53,7 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
     private WeakHashMap<ViewGroup.LayoutParams, SectionState> mLayoutParamCache = new WeakHashMap<>();
     private int mShowDivider;
     private int mItemSpace;
+    private RecyclerView.ViewHolder mViewHolder;
 
     public OmegaRecyclerView(Context context) {
         super(context);
@@ -182,7 +184,7 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
         if (currentAdapter != null) {
             currentAdapter.unregisterAdapterDataObserver(mEmptyObserver);
             if (currentAdapter instanceof HeaderFooterWrapperAdapter) {
-               ((HeaderFooterWrapperAdapter) currentAdapter).getWrappedAdapter().unregisterAdapterDataObserver(mHeaderObserver);
+                ((HeaderFooterWrapperAdapter) currentAdapter).getWrappedAdapter().unregisterAdapterDataObserver(mHeaderObserver);
             }
         }
         mEmptyObserver.onChanged();
@@ -612,6 +614,8 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
+        private final Context context;
+
         public ViewHolder(ViewGroup parent, @LayoutRes int res) {
             this(parent, LayoutInflater.from(parent.getContext()), res);
         }
@@ -622,12 +626,26 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
 
         public ViewHolder(View itemView) {
             super(itemView);
+            context = itemView.getContext();
         }
 
         protected final <T extends View> T findViewById(int id) {
             //noinspection unchecked
             return (T) itemView.findViewById(id);
         }
+
+        protected Context getContext() {
+            return context;
+        }
+
+        protected Resources getResources() {
+            return context.getResources();
+        }
+
+        protected String getString(@StringRes int res) {
+            return context.getString(res);
+        }
+
     }
 
     public static class ItemDecoration extends RecyclerView.ItemDecoration {
@@ -638,7 +656,7 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
             if (parent instanceof OmegaRecyclerView) {
                 RecyclerView.Adapter adapter = parent.getAdapter();
                 if (adapter instanceof HeaderFooterWrapperAdapter) {
-                    return  ((HeaderFooterWrapperAdapter) adapter).applyChildPositionToRealPosition(childPosition);
+                    return ((HeaderFooterWrapperAdapter) adapter).applyChildPositionToRealPosition(childPosition);
                 }
             }
 
