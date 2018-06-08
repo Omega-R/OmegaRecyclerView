@@ -72,7 +72,7 @@ public class OmegaPagerRecyclerView extends OmegaRecyclerView implements ViewPag
         if (a.hasValue(R.styleable.OmegaPagerRecyclerView_transformation)) {
             int section = a.getInt(R.styleable.OmegaPagerRecyclerView_transformation, 0);
             switch (section) {
-                case Transformers.None:
+                case Transformers.NONE:
                     setItemTransformer((ItemTransformer) null);
                     break;
                 case Transformers.ACCORDION_TRANSFORMER:
@@ -508,7 +508,7 @@ public class OmegaPagerRecyclerView extends OmegaRecyclerView implements ViewPag
 
     public interface Transformers {
 
-        int None = 0;
+        int NONE = 0;
         int ACCORDION_TRANSFORMER = 1;
         int BACKGROUND_TO_FOREGROUND_TRANSFORMER = 2;
         int CUBE_IN_TRANSFORMER = 3;
