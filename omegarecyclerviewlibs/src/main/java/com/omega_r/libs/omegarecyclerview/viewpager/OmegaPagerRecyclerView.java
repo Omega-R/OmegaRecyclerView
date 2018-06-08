@@ -1,6 +1,7 @@
 package com.omega_r.libs.omegarecyclerview.viewpager;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.support.annotation.FloatRange;
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
@@ -12,6 +13,21 @@ import android.view.View;
 import android.view.animation.Interpolator;
 
 import com.omega_r.libs.omegarecyclerview.OmegaRecyclerView;
+import com.omega_r.libs.omegarecyclerview.R;
+import com.omega_r.libs.omegarecyclerview.viewpager.default_transformers.AccordionTransformer;
+import com.omega_r.libs.omegarecyclerview.viewpager.default_transformers.BackgroundToForegroundTransformer;
+import com.omega_r.libs.omegarecyclerview.viewpager.default_transformers.CubeInTransformer;
+import com.omega_r.libs.omegarecyclerview.viewpager.default_transformers.CubeOutTransformer;
+import com.omega_r.libs.omegarecyclerview.viewpager.default_transformers.DepthPageTransformer;
+import com.omega_r.libs.omegarecyclerview.viewpager.default_transformers.FadeTransformer;
+import com.omega_r.libs.omegarecyclerview.viewpager.default_transformers.FlipTransformer;
+import com.omega_r.libs.omegarecyclerview.viewpager.default_transformers.ForegroundToBackgroundTransformer;
+import com.omega_r.libs.omegarecyclerview.viewpager.default_transformers.RotateDownTransformer;
+import com.omega_r.libs.omegarecyclerview.viewpager.default_transformers.RotateUpTransformer;
+import com.omega_r.libs.omegarecyclerview.viewpager.default_transformers.StackTransformer;
+import com.omega_r.libs.omegarecyclerview.viewpager.default_transformers.TabletTransformer;
+import com.omega_r.libs.omegarecyclerview.viewpager.default_transformers.ZoomInTransformer;
+import com.omega_r.libs.omegarecyclerview.viewpager.default_transformers.ZoomOutSlideTransformer;
 import com.omega_r.libs.omegarecyclerview.viewpager.transform.ItemTransformer;
 import com.omega_r.libs.omegarecyclerview.viewpager.transform.ItemTransformerWrapper;
 
@@ -27,7 +43,6 @@ public class OmegaPagerRecyclerView extends OmegaRecyclerView implements ViewPag
     private final Set<ViewPager.OnPageChangeListener> mViewPagerOnPageChangeListeners = new CopyOnWriteArraySet<>();
     private boolean mIsOverScrollEnabled;
     private boolean mFirstLayout = true;
-
 
     public OmegaPagerRecyclerView(Context context) {
         super(context);
@@ -45,7 +60,65 @@ public class OmegaPagerRecyclerView extends OmegaRecyclerView implements ViewPag
     }
 
     private void init(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+        if (attrs != null) {
+            final TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.OmegaPagerRecyclerView);
+            initTransformation(typedArray);
+            typedArray.recycle();
+        }
         mIsOverScrollEnabled = getOverScrollMode() != OVER_SCROLL_NEVER;
+    }
+
+    private void initTransformation(TypedArray a) {
+        if (a.hasValue(R.styleable.OmegaPagerRecyclerView_transformation)) {
+            int section = a.getInt(R.styleable.OmegaPagerRecyclerView_transformation, 0);
+            switch (section) {
+                case Transformers.None:
+                    setItemTransformer((ItemTransformer) null);
+                    break;
+                case Transformers.ACCORDION_TRANSFORMER:
+                    setItemTransformer(new AccordionTransformer());
+                    break;
+                case Transformers.BACKGROUND_TO_FOREGROUND_TRANSFORMER:
+                    setItemTransformer(new BackgroundToForegroundTransformer());
+                    break;
+                case Transformers.CUBE_IN_TRANSFORMER:
+                    setItemTransformer(new CubeInTransformer());
+                    break;
+                case Transformers.CUBE_OUT_TRANSFORMER:
+                    setItemTransformer(new CubeOutTransformer());
+                    break;
+                case Transformers.DEPTH_PAGE_TRANSFORMER:
+                    setItemTransformer(new DepthPageTransformer());
+                    break;
+                case Transformers.FADE_TRANSFORMER:
+                    setItemTransformer(new FadeTransformer());
+                    break;
+                case Transformers.FLIP_TRANSFORMER:
+                    setItemTransformer(new FlipTransformer());
+                    break;
+                case Transformers.FOREGROUND_TO_BACKGROUND:
+                    setItemTransformer(new ForegroundToBackgroundTransformer());
+                    break;
+                case Transformers.ROTATE_DOWN_TRANSFORMER:
+                    setItemTransformer(new RotateDownTransformer());
+                    break;
+                case Transformers.ROTATE_UP_TRANSFORMER:
+                    setItemTransformer(new RotateUpTransformer());
+                    break;
+                case Transformers.STACK_TRANSFORMER:
+                    setItemTransformer(new StackTransformer());
+                    break;
+                case Transformers.TABLET_TRANSFORMER:
+                    setItemTransformer(new TabletTransformer());
+                    break;
+                case Transformers.ZOOM_IN_TRANSFORMER:
+                    setItemTransformer(new ZoomInTransformer());
+                    break;
+                case Transformers.ZOOM_OUT_SLIDE_TRANSFORMER:
+                    setItemTransformer(new ZoomOutSlideTransformer());
+                    break;
+            }
+        }
     }
 
     @Override
@@ -156,7 +229,6 @@ public class OmegaPagerRecyclerView extends OmegaRecyclerView implements ViewPag
      * scrolled. See {@link ViewPager.OnPageChangeListener}.
      *
      * @param listener Listener to set
-     *
      * @deprecated Use {@link #addOnPageChangeListener(ViewPager.OnPageChangeListener)}
      * and {@link #removeOnPageChangeListener(ViewPager.OnPageChangeListener)} instead.
      */
@@ -172,7 +244,7 @@ public class OmegaPagerRecyclerView extends OmegaRecyclerView implements ViewPag
     /**
      * Add a listener that will be invoked whenever the page changes or is incrementally
      * scrolled. See {@link ViewPager.OnPageChangeListener}.
-     *
+     * <p>
      * <p>Components that add a listener should take care to remove it when finished.
      * Other components that take ownership of a view may call {@link #clearOnPageChangeListeners()}
      * to remove all attached listeners.</p>
@@ -199,6 +271,7 @@ public class OmegaPagerRecyclerView extends OmegaRecyclerView implements ViewPag
     public void clearOnPageChangeListeners() {
         mViewPagerOnPageChangeListeners.clear();
     }
+
 
     public void setItemTransformer(@Nullable ItemTransformer transformer) {
         ViewPagerLayoutManager layoutManager = getLayoutManager();
@@ -432,4 +505,25 @@ public class OmegaPagerRecyclerView extends OmegaRecyclerView implements ViewPag
          */
         void onCurrentItemChanged(@Nullable T viewHolder, int adapterPosition);
     }
+
+    public interface Transformers {
+
+        int None = 0;
+        int ACCORDION_TRANSFORMER = 1;
+        int BACKGROUND_TO_FOREGROUND_TRANSFORMER = 2;
+        int CUBE_IN_TRANSFORMER = 3;
+        int CUBE_OUT_TRANSFORMER = 4;
+        int DEPTH_PAGE_TRANSFORMER = 5;
+        int FADE_TRANSFORMER = 6;
+        int FLIP_TRANSFORMER = 7;
+        int FOREGROUND_TO_BACKGROUND = 8;
+        int ROTATE_DOWN_TRANSFORMER = 9;
+        int ROTATE_UP_TRANSFORMER = 10;
+        int STACK_TRANSFORMER = 11;
+        int TABLET_TRANSFORMER = 12;
+        int ZOOM_IN_TRANSFORMER = 13;
+        int ZOOM_OUT_SLIDE_TRANSFORMER = 14;
+
+    }
+
 }
