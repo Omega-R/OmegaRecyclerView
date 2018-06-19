@@ -31,6 +31,7 @@ public class HeaderFooterWrapperAdapter<T extends RecyclerView.Adapter> extends 
 
     public HeaderFooterWrapperAdapter(T adapter) {
         mRealAdapter = adapter;
+        setHasStableIds(mRealAdapter.hasStableIds());
     }
 
     @Override
@@ -76,6 +77,15 @@ public class HeaderFooterWrapperAdapter<T extends RecyclerView.Adapter> extends 
         }
 
         return super.isShowDivided(position);
+    }
+
+    @Override
+    public long getItemId(int position) {
+        if (position < 0 || mRealAdapter.getItemCount() <= position || mRealAdapter.getItemCount() == 0) {
+            return super.getItemId(position);
+        }
+
+        return mRealAdapter.getItemId(position);
     }
 
     @Override
@@ -165,7 +175,7 @@ public class HeaderFooterWrapperAdapter<T extends RecyclerView.Adapter> extends 
 
     @Override
     public long getHeaderId(int position) {
-        if (position < 0) {
+        if (position < 0 || mRealAdapter.getItemCount() <= position) {
             return StickyHeaderDecoration.NO_HEADER_ID;
         }
         StickyHeaderAdapter stickyHeaderAdapter = getStickyHeaderAdapter();

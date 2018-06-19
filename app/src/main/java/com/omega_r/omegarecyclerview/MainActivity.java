@@ -29,35 +29,35 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (view.getId()) {
             case R.id.button_swipe_menu:
                 AppOmegaIntentBuilder.from(this)
-                        .appActivity()
+                        .appActivities()
                         .swipeMenuActivity()
                         .createIntentHandler()
                         .startActivity();
                 break;
             case R.id.button_sticky_header:
                 AppOmegaIntentBuilder.from(this)
-                        .appActivity()
+                        .appActivities()
                         .stickyHeaderActivity()
                         .createIntentHandler()
                         .startActivity();
                 break;
             case R.id.button_pagination:
                 AppOmegaIntentBuilder.from(this)
-                        .appActivity()
+                        .appActivities()
                         .paginationActivity()
                         .createIntentHandler()
                         .startActivity();
                 break;
             case R.id.button_sections:
                 AppOmegaIntentBuilder.from(this)
-                        .appActivity()
+                        .appActivities()
                         .sectionsActivity()
                         .createIntentHandler()
                         .startActivity();
                 break;
             case R.id.button_viewpager:
                 AppOmegaIntentBuilder.from(this)
-                        .appActivity()
+                        .appActivities()
                         .viewPagerActivity()
                         .createIntentHandler()
                         .startActivity();

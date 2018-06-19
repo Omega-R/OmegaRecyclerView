@@ -18,6 +18,7 @@
         android:layout_height="match_parent"
         android:orientation="horizontal"
         app:pageSize="1"
+        app:transformer="RotateUpTransformer"
         app:infinite="true"/>
 
 </LinearLayout>
