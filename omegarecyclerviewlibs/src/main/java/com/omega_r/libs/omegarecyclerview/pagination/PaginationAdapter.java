@@ -86,6 +86,14 @@ public class PaginationAdapter extends WrapperAdapter {
     }
 
     @Override
+    public long getItemId(int position) {
+        if (position == super.getItemCount()) {
+            return RecyclerView.NO_ID;
+        }
+        return super.getItemId(position);
+    }
+
+    @Override
     public int getItemViewType(int position) {
         if (mShowPagination != null && position == super.getItemCount()) {
             switch (mShowPagination) {

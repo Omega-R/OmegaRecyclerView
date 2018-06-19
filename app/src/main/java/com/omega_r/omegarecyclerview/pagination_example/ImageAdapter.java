@@ -21,6 +21,7 @@ public class ImageAdapter extends OmegaRecyclerView.Adapter<ImageAdapter.ViewHol
     private Callback mCallback;
 
     public ImageAdapter() {
+        setHasStableIds(true);
     }
 
     @Override
@@ -41,6 +42,11 @@ public class ImageAdapter extends OmegaRecyclerView.Adapter<ImageAdapter.ViewHol
     @Override
     public int getItemCount() {
         return mList.size();
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return mList.get(position).getImageRes() + position;
     }
 
     @Nullable
