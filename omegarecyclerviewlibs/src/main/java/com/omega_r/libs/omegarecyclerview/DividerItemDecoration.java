@@ -26,6 +26,7 @@ public class DividerItemDecoration extends OmegaRecyclerView.ItemDecoration {
     public DividerItemDecoration(Drawable divider, int dividerSize, int showDivider, int offset, float dividerAlpha) {
         this(divider, Orientation.UNKNOWN, dividerSize, showDivider, offset, dividerAlpha);
     }
+
     public DividerItemDecoration(Drawable divider, int orientation, int dividerSize, int showDivider, int offset, float dividerAlpha) {
         mOrientation = orientation;
         mDivider = divider;
@@ -75,7 +76,7 @@ public class DividerItemDecoration extends OmegaRecyclerView.ItemDecoration {
         if (adapterPosition == RecyclerView.NO_POSITION) return;
         if (adapterPosition == 0) {
             if (!((mShowDivider & ShowDivider.BEGINNING) == ShowDivider.BEGINNING)) return;
-        } else  if (adapterPosition == parent.getAdapter().getItemCount() - 1) {
+        } else if (adapterPosition == parent.getAdapter().getItemCount() - 1) {
             if (!((mShowDivider & ShowDivider.END) == ShowDivider.END)) return;
         } else {
             if (!((mShowDivider & ShowDivider.MIDDLE) == ShowDivider.MIDDLE)) return;
@@ -124,10 +125,10 @@ public class DividerItemDecoration extends OmegaRecyclerView.ItemDecoration {
                         params = (RecyclerView.LayoutParams) child.getLayoutParams();
 
                         if (mOrientation == Orientation.VERTICAL) {
-                            top = child.getTop() + params.topMargin;
+                            top = child.getTop() + params.topMargin - mDividerSize - mOffset;
                             bottom = top + size;
                         } else { // horizontal
-                            left = child.getRight() + params.rightMargin;
+                            left = child.getLeft() + params.rightMargin - mDividerSize - mOffset;
                             right = left + size;
                         }
                         divider.setAlpha((int) (child.getAlpha() * 255f * mDividerAlpha));
@@ -170,10 +171,10 @@ public class DividerItemDecoration extends OmegaRecyclerView.ItemDecoration {
                     if (childLayoutPosition == i && isShowDivider(parent, childAdapterPosition)) {
                         params = (RecyclerView.LayoutParams) child.getLayoutParams();
                         if (mOrientation == LinearLayoutManager.VERTICAL) {
-                            top = child.getBottom() + params.bottomMargin;
+                            top = child.getBottom() + params.bottomMargin + mDividerSize + mOffset;
                             bottom = top + size;
                         } else { // horizontal
-                            left = child.getRight() + params.rightMargin;
+                            left = child.getRight() + params.rightMargin + mDividerSize + mOffset;
                             right = left + size;
                         }
 
@@ -196,7 +197,6 @@ public class DividerItemDecoration extends OmegaRecyclerView.ItemDecoration {
 
         return true;
     }
-
 
     public interface Orientation {
         int UNKNOWN = -1;
