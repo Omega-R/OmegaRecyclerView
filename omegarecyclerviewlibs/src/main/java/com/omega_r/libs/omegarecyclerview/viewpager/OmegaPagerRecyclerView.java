@@ -46,7 +46,7 @@ public class OmegaPagerRecyclerView extends OmegaRecyclerView implements ViewPag
     private boolean mIsOverScrollEnabled;
     private boolean mFirstLayout = true;
     private boolean mIsAutoScrollEnabled = false;
-    private int mAutoScrollIntervalInMillis;
+    private int mAutoScrollIntervalInMilliseconds = DEFAULT_AUTO_SCROLL_INTERVAL;
     private final AdapterDataObserver dataObserver = new AdapterDataObserver() {
         @Override
         public void onChanged() {
@@ -80,7 +80,7 @@ public class OmegaPagerRecyclerView extends OmegaRecyclerView implements ViewPag
     }
 
     private void initAutoScroll(TypedArray typedArray) {
-        mAutoScrollIntervalInMillis = typedArray.getInt(R.styleable.OmegaPagerRecyclerView_autoScrollIntervalInMill, DEFAULT_AUTO_SCROLL_INTERVAL);
+        mAutoScrollIntervalInMilliseconds = typedArray.getInt(R.styleable.OmegaPagerRecyclerView_autoScrollInterval, DEFAULT_AUTO_SCROLL_INTERVAL);
         mIsAutoScrollEnabled = typedArray.getBoolean(R.styleable.OmegaPagerRecyclerView_autoScrollEnabled, false);
     }
 
@@ -181,14 +181,14 @@ public class OmegaPagerRecyclerView extends OmegaRecyclerView implements ViewPag
     }
 
     public final void setAutoScrollInterval(int intervalInMillis) {
-        if (mAutoScrollIntervalInMillis != intervalInMillis) {
-            mAutoScrollIntervalInMillis = intervalInMillis;
+        if (mAutoScrollIntervalInMilliseconds != intervalInMillis) {
+            mAutoScrollIntervalInMilliseconds = intervalInMillis;
             updateAutoScroll();
         }
     }
 
     public final int getAutoScrollInterval() {
-        return mAutoScrollIntervalInMillis;
+        return mAutoScrollIntervalInMilliseconds;
     }
 
     private void updateAutoScroll() {
@@ -196,9 +196,9 @@ public class OmegaPagerRecyclerView extends OmegaRecyclerView implements ViewPag
         if (handler == null) return;
 
         handler.removeCallbacksAndMessages(null);
-        if (mIsAutoScrollEnabled && mAutoScrollIntervalInMillis > 0
+        if (mIsAutoScrollEnabled && mAutoScrollIntervalInMilliseconds > 0
                 && getItemCount() > 1 && getLayoutManager() != null) {
-            postDelayed(this, mAutoScrollIntervalInMillis);
+            postDelayed(this, mAutoScrollIntervalInMilliseconds);
         }
     }
 
@@ -214,7 +214,7 @@ public class OmegaPagerRecyclerView extends OmegaRecyclerView implements ViewPag
             return;
         }
         layoutManager.smoothScrollToNextPosition();
-        postDelayed(this, mAutoScrollIntervalInMillis);
+        postDelayed(this, mAutoScrollIntervalInMilliseconds);
     }
 
     @Override
