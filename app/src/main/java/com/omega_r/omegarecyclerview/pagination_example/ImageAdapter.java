@@ -20,10 +20,6 @@ public class ImageAdapter extends OmegaRecyclerView.Adapter<ImageAdapter.ViewHol
     @Nullable
     private Callback mCallback;
 
-    public ImageAdapter() {
-        setHasStableIds(true);
-    }
-
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_image, parent, false));
@@ -42,11 +38,6 @@ public class ImageAdapter extends OmegaRecyclerView.Adapter<ImageAdapter.ViewHol
     @Override
     public int getItemCount() {
         return mList.size();
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return mList.get(position).getImageRes() + position;
     }
 
     @Nullable

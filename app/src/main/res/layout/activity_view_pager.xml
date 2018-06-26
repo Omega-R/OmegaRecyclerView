@@ -17,6 +17,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal"
+        app:autoScrollEnabled="true"
+        app:autoScrollIntervalInMill="2500"
         app:pageSize="1"
         app:transformer="RotateUpTransformer"
         app:infinite="true"/>
