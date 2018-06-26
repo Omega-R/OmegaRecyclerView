@@ -2,6 +2,7 @@ package com.omega_r.libs.omegarecyclerview;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.Rect;
@@ -10,6 +11,7 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.support.v7.widget.ExpandedRecyclerView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -627,6 +629,18 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
         protected final <T extends View> T findViewById(int id) {
             //noinspection unchecked
             return (T) itemView.findViewById(id);
+        }
+
+        protected final Context getContext() {
+            return itemView.getContext();
+        }
+
+        protected final Resources getResources() {
+            return getContext().getResources();
+        }
+
+        protected final String getString(@StringRes int res) {
+            return getResources().getString(res);
         }
     }
 
