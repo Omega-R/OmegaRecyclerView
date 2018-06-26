@@ -2,6 +2,7 @@ package com.omega_r.libs.omegarecyclerview.viewpager;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.os.Handler;
 import android.support.annotation.FloatRange;
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
@@ -36,13 +37,22 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 @SuppressWarnings("unchecked")
-public class OmegaPagerRecyclerView extends OmegaRecyclerView implements ViewPagerLayoutManager.ScrollStateListener {
+public class OmegaPagerRecyclerView extends OmegaRecyclerView implements ViewPagerLayoutManager.ScrollStateListener, Runnable {
 
+    private static final int DEFAULT_AUTO_SCROLL_INTERVAL = 2000;
     private final Set<ScrollStateChangeListener> mScrollStateChangeListenerSet = new HashSet<>();
     private final Set<OnItemChangedListener> mOnItemChangedListenerSet = new HashSet<>();
     private final Set<ViewPager.OnPageChangeListener> mViewPagerOnPageChangeListeners = new CopyOnWriteArraySet<>();
     private boolean mIsOverScrollEnabled;
     private boolean mFirstLayout = true;
+    private boolean mIsAutoScrollEnabled = false;
+    private int mAutoScrollIntervalInMilliseconds = DEFAULT_AUTO_SCROLL_INTERVAL;
+    private final AdapterDataObserver dataObserver = new AdapterDataObserver() {
+        @Override
+        public void onChanged() {
+            updateAutoScroll();
+        }
+    };
 
     public OmegaPagerRecyclerView(Context context) {
         super(context);
@@ -62,15 +72,21 @@ public class OmegaPagerRecyclerView extends OmegaRecyclerView implements ViewPag
     private void init(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         if (attrs != null) {
             final TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.OmegaPagerRecyclerView);
+            initAutoScroll(typedArray);
             initTransformation(typedArray);
             typedArray.recycle();
         }
         mIsOverScrollEnabled = getOverScrollMode() != OVER_SCROLL_NEVER;
     }
 
-    private void initTransformation(TypedArray a) {
-        if (a.hasValue(R.styleable.OmegaPagerRecyclerView_transformer)) {
-            int section = a.getInt(R.styleable.OmegaPagerRecyclerView_transformer, Transformers.NONE);
+    private void initAutoScroll(TypedArray typedArray) {
+        mAutoScrollIntervalInMilliseconds = typedArray.getInt(R.styleable.OmegaPagerRecyclerView_autoScrollInterval, DEFAULT_AUTO_SCROLL_INTERVAL);
+        mIsAutoScrollEnabled = typedArray.getBoolean(R.styleable.OmegaPagerRecyclerView_autoScrollEnabled, false);
+    }
+
+    private void initTransformation(TypedArray typedArray) {
+        if (typedArray.hasValue(R.styleable.OmegaPagerRecyclerView_transformer)) {
+            int section = typedArray.getInt(R.styleable.OmegaPagerRecyclerView_transformer, Transformers.NONE);
             switch (section) {
                 case Transformers.ACCORDION_TRANSFORMER:
                     setItemTransformer(new AccordionTransformer());
@@ -137,14 +153,68 @@ public class OmegaPagerRecyclerView extends OmegaRecyclerView implements ViewPag
             throw new IllegalStateException("LayoutManager " + layoutManager.toString() + " should be ViewPagerLayoutManager");
         }
         super.setLayoutManager(layoutManager);
+        updateAutoScroll();
     }
 
     @Override
     public void setAdapter(RecyclerView.Adapter adapter) {
+        RecyclerView.Adapter oldAdapter = getAdapter();
+        if (oldAdapter != null) {
+            oldAdapter.unregisterAdapterDataObserver(dataObserver);
+        }
         super.setAdapter(adapter);
         if (adapter != null) {
             mFirstLayout = true;
+            adapter.registerAdapterDataObserver(dataObserver);
         }
+    }
+
+    public final void setAutoScrollEnabled(boolean autoScrollEnabled) {
+        if (mIsAutoScrollEnabled != autoScrollEnabled) {
+            mIsAutoScrollEnabled = autoScrollEnabled;
+            updateAutoScroll();
+        }
+    }
+
+    public final boolean isAutoScrollEnabled() {
+        return mIsAutoScrollEnabled;
+    }
+
+    public final void setAutoScrollInterval(int intervalInMillis) {
+        if (mAutoScrollIntervalInMilliseconds != intervalInMillis) {
+            mAutoScrollIntervalInMilliseconds = intervalInMillis;
+            updateAutoScroll();
+        }
+    }
+
+    public final int getAutoScrollInterval() {
+        return mAutoScrollIntervalInMilliseconds;
+    }
+
+    private void updateAutoScroll() {
+        Handler handler = getHandler();
+        if (handler == null) return;
+
+        handler.removeCallbacksAndMessages(null);
+        if (mIsAutoScrollEnabled && mAutoScrollIntervalInMilliseconds > 0
+                && getItemCount() > 1 && getLayoutManager() != null) {
+            postDelayed(this, mAutoScrollIntervalInMilliseconds);
+        }
+    }
+
+    @Override
+    public void run() {
+        Handler handler = getHandler();
+        if (handler == null) {
+            return;
+        }
+        ViewPagerLayoutManager layoutManager = getLayoutManager();
+        if (layoutManager == null) {
+            handler.removeCallbacksAndMessages(null);
+            return;
+        }
+        layoutManager.smoothScrollToNextPosition();
+        postDelayed(this, mAutoScrollIntervalInMilliseconds);
     }
 
     @Override

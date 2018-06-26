@@ -52,6 +52,8 @@
             <enum name="ZoomInTransformer" value="13" />
             <enum name="ZoomOutSlideTransformer" value="14" />
         </attr>
+        <attr name="autoScrollInterval" format="integer"/>
+        <attr name="autoScrollEnabled" format="boolean"/>
     </declare-styleable>
 
 </resources>
