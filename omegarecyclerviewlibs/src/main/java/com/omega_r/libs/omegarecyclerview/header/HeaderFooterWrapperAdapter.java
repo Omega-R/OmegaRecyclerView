@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 
 import com.omega_r.libs.omegarecyclerview.OmegaRecyclerView;
 import com.omega_r.libs.omegarecyclerview.R;
@@ -34,20 +35,45 @@ public class HeaderFooterWrapperAdapter<T extends RecyclerView.Adapter> extends 
         setHasStableIds(mRealAdapter.hasStableIds());
     }
 
+    @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if (isHeader(viewType)) {
-            return new SectionViewHolder(mHeaderArray.get(viewType));
+            return removeParentView(new SectionViewHolder(mHeaderArray.get(viewType)), viewType);
         }
         if (isFooter(viewType)) {
-            return new SectionViewHolder(mFooterArray.get(viewType));
+            return removeParentView(new SectionViewHolder(mFooterArray.get(viewType)), viewType);
         }
         return mRealAdapter.onCreateViewHolder(parent, viewType);
     }
 
+    private SectionViewHolder removeParentView(@NonNull SectionViewHolder sectionViewHolder, int viewType) {
+        View itemView = sectionViewHolder.itemView;
+        if (itemView.getParent() == null) {
+            return sectionViewHolder;
+        } else {
+            RecyclerView recyclerView = (RecyclerView) itemView.getParent();
+            RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
+
+            int headerIndex = mHeaderArray.indexOfKey(viewType);
+            int footerIndex = mFooterArray.indexOfKey(viewType);
+            if (headerIndex != -1 || footerIndex != -1) {
+                layoutManager.removeView(itemView);
+            }
+
+            return sectionViewHolder;
+        }
+    }
+
+    @Override
+    public void setHasStableIds(boolean hasStableIds) {
+        super.setHasStableIds(hasStableIds);
+        mRealAdapter.setHasStableIds(hasStableIds);
+    }
+
     @Override
     @SuppressWarnings("unchecked")
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if (!(isHeaderPosition(position) || isFooterPosition(position))) {
             mRealAdapter.onBindViewHolder(holder, position - mHeaderArray.size());
         }
@@ -82,7 +108,7 @@ public class HeaderFooterWrapperAdapter<T extends RecyclerView.Adapter> extends 
     @Override
     public long getItemId(int position) {
         if (position < 0 || mRealAdapter.getItemCount() <= position || mRealAdapter.getItemCount() == 0) {
-            return super.getItemId(position);
+            return getItemViewType(position);
         }
 
         return mRealAdapter.getItemId(position);
@@ -194,7 +220,7 @@ public class HeaderFooterWrapperAdapter<T extends RecyclerView.Adapter> extends 
             return stickyHeaderAdapter.getHeaderId(realAdapterItemCount - 1);
         }
 
-        return stickyHeaderAdapter.getHeaderId(position );
+        return stickyHeaderAdapter.getHeaderId(position);
     }
 
     public int applyRealPositionToChildPosition(int realPosition) {
