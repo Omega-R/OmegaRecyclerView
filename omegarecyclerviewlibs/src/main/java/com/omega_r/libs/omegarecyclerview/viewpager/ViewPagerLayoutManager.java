@@ -56,7 +56,7 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
 
     private int mScrolled;
     private int mPendingScroll;
-    public int mCurrentPosition = NO_POSITION;
+    protected int mCurrentPosition = NO_POSITION;
     private int mPendingPosition = NO_POSITION;
 
     private final SparseArray<View> mViewCacheArray = new SparseArray<>();
@@ -154,7 +154,7 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
         mChildHalfHeight = childViewHeight / 2;
 
         mScrollToChangeCurrent = mOrientationHelper.getDistanceToChangeCurrent(childViewWidth,
-                                                                               childViewHeight);
+                childViewHeight);
 
         mExtraLayoutSpace = mScrollToChangeCurrent * mOffscreenItems;
 
@@ -439,7 +439,7 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
         if (mCurrentPosition == scrollPosition || mPendingPosition != NO_POSITION) {
             return;
         }
-        startSmoothPendingScroll(scrollPosition);
+        smoothScrollToPosition(scrollPosition);
     }
 
     @Override
@@ -531,7 +531,7 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
         boolean isInScrollDirection = velocity * mScrolled >= 0;
         boolean canFling = isInScrollDirection && isInBounds(newPosition);
         if (canFling) {
-            startSmoothPendingScroll(newPosition);
+            smoothScrollToPosition(newPosition);
         } else {
             returnToCurrentPosition();
         }
@@ -575,8 +575,16 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
         startSmoothScroll(scroller);
     }
 
-    private void startSmoothPendingScroll(int position) {
-        if (mCurrentPosition == position) return;
+    public final void smoothScrollToNextPosition() {
+        int nextPosition = mCurrentPosition + 1;
+        if (!mIsInfinite && (mCurrentPosition == getItemCount() - 1)) {
+            nextPosition = 0;
+        }
+        smoothScrollToPosition(nextPosition);
+    }
+
+    public final void smoothScrollToPosition(int position) {
+        if (mCurrentPosition == position || position < 0 || position >= getItemCount()) return;
         mPendingScroll = -mScrolled;
         Direction direction = Direction.fromDelta(position - mCurrentPosition);
         int distanceToScroll = Math.abs(position - mCurrentPosition) * mScrollToChangeCurrent;
@@ -712,7 +720,7 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
         requestLayout();
     }
 
-    public void setInfinite(boolean infinite) {
+    public final void setInfinite(boolean infinite) {
         mIsInfinite = infinite;
         clearState();
     }
@@ -823,6 +831,10 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
     private boolean isViewVisible(Point viewCenter, int endBound) {
         return mOrientationHelper.isViewVisible(viewCenter, mChildHalfWidth, mChildHalfHeight,
                 endBound, mExtraLayoutSpace);
+    }
+
+    public final boolean isInfinite() {
+        return mIsInfinite;
     }
 
     private class DiscreteLinearSmoothScroller extends LinearSmoothScroller {
