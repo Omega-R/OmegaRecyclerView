@@ -54,6 +54,7 @@
         </attr>
         <attr name="autoScrollInterval" format="integer"/>
         <attr name="autoScrollEnabled" format="boolean"/>
+        <attr name="useDefaultAdapter" format="boolean"/>
     </declare-styleable>
 
 </resources>
