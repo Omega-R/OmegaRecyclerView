@@ -21,7 +21,8 @@ public class DividerItemDecoration extends OmegaRecyclerView.ItemDecoration {
     private int mDividerSize;
     private int mShowDivider;
     private int mOrientation;
-    private int mPadding;
+    private int mPaddingStart;
+    private int mPaddingEnd;
 
     public DividerItemDecoration(Drawable divider, int dividerSize, int showDivider, int offset, float dividerAlpha) {
         this(divider, Orientation.UNKNOWN, dividerSize, showDivider, offset, dividerAlpha);
@@ -45,7 +46,16 @@ public class DividerItemDecoration extends OmegaRecyclerView.ItemDecoration {
     }
 
     public void setPadding(int padding) {
-        mPadding = padding;
+        mPaddingStart = padding;
+        mPaddingEnd = padding;
+    }
+
+    public void setPaddingStart(int padding) {
+        mPaddingStart = padding;
+    }
+
+    public void setPaddingEnd(int padding) {
+        mPaddingEnd = padding;
     }
 
     private void updateSize() {
@@ -105,11 +115,11 @@ public class DividerItemDecoration extends OmegaRecyclerView.ItemDecoration {
         if (childCount > 0) {
             size = mDividerSize;
             if (mOrientation == Orientation.VERTICAL) {
-                left = parent.getPaddingLeft() + mPadding;
-                right = parent.getWidth() - parent.getPaddingRight() - mPadding;
+                left = parent.getPaddingLeft() + mPaddingStart;
+                right = parent.getWidth() - parent.getPaddingRight() - mPaddingEnd;
             } else { //horizontal
-                top = parent.getPaddingTop() + mPadding;
-                bottom = parent.getHeight() - parent.getPaddingBottom() - mPadding;
+                top = parent.getPaddingTop() + mPaddingStart;
+                bottom = parent.getHeight() - parent.getPaddingBottom() - mPaddingEnd;
             }
 
             // show beginning divider

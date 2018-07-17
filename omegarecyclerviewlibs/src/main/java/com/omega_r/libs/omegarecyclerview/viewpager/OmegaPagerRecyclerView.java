@@ -72,11 +72,17 @@ public class OmegaPagerRecyclerView extends OmegaRecyclerView implements ViewPag
     private void init(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         if (attrs != null) {
             final TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.OmegaPagerRecyclerView);
+            initDefaultAdapter(typedArray);
             initAutoScroll(typedArray);
             initTransformation(typedArray);
             typedArray.recycle();
         }
         mIsOverScrollEnabled = getOverScrollMode() != OVER_SCROLL_NEVER;
+    }
+
+    private void initDefaultAdapter(TypedArray typedArray) {
+        boolean useDefaultAdapter = typedArray.getBoolean(R.styleable.OmegaPagerRecyclerView_useDefaultAdapter, false);
+        if (useDefaultAdapter) setAdapter(new DefaultPagerAdapter());
     }
 
     private void initAutoScroll(TypedArray typedArray) {
