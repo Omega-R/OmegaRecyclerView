@@ -11,10 +11,9 @@
         android:layout_height="match_parent"
         app:itemSpace="16dp"
         app:showDivider="middle"
-        app:heightDivider="1dp"
+        app:dividerHeight="1dp"
         app:divider="@color/colorAccent"
-        app:paddingDivider="8dp"
-        tools:listitem="@layout/item_test"
-    />
+        app:dividerPaddingStart="32dp"
+        tools:listitem="@layout/item_test"/>
 
 </RelativeLayout>

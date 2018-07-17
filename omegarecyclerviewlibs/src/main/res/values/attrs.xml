@@ -6,8 +6,10 @@
         <attr name="android:dividerHeight" />
 
         <attr name="divider" format="reference" />
-        <attr name="heightDivider" format="dimension" />
-        <attr name="paddingDivider" format="dimension" />
+        <attr name="dividerHeight" format="dimension" />
+        <attr name="dividerPadding" format="dimension" />
+        <attr name="dividerPaddingStart" format="dimension" />
+        <attr name="dividerPaddingEnd" format="dimension" />
         <attr name="showDivider">
             <flag name="none" value="0" />
             <flag name="beginning" value="1" />

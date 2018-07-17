@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Color;
-import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.IdRes;
@@ -118,12 +117,11 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
                     }
                 }
 
-                float dividerHeight = a.getDimension(R.styleable.OmegaRecyclerView_heightDivider,
+                float dividerHeight = a.getDimension(R.styleable.OmegaRecyclerView_dividerHeight,
                         a.getDimension(R.styleable.OmegaRecyclerView_android_dividerHeight, -1));
                 float alpha = a.getFloat(R.styleable.OmegaRecyclerView_alphaDivider, 1);
                 int itemSpace = (int) a.getDimension(R.styleable.OmegaRecyclerView_itemSpace, 0);
 
-                int paddingDivider = a.getDimensionPixelSize(R.styleable.OmegaRecyclerView_paddingDivider, 0);
                 DividerItemDecoration decoration = new DividerItemDecoration(
                         dividerDrawable,
                         (int) dividerHeight,
@@ -131,7 +129,18 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
                         itemSpace / 2,
                         alpha
                 );
-                decoration.setPadding(paddingDivider);
+
+                int paddingStartDivider = a.getDimensionPixelSize(R.styleable.OmegaRecyclerView_dividerPaddingStart, 0);
+                int paddingEndDivider = a.getDimensionPixelSize(R.styleable.OmegaRecyclerView_dividerPaddingEnd, 0);
+
+                decoration.setPaddingStart(paddingStartDivider);
+                decoration.setPaddingEnd(paddingEndDivider);
+
+                if (a.hasValue(R.styleable.OmegaRecyclerView_dividerPadding)) {
+                    int paddingDivider = a.getDimensionPixelSize(R.styleable.OmegaRecyclerView_dividerPadding, 0);
+                    decoration.setPadding(paddingDivider);
+                }
+
                 addItemDecoration(decoration);
             }
         }
