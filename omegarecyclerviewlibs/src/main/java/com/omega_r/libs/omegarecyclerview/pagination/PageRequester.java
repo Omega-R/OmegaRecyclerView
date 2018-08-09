@@ -30,7 +30,7 @@ public class PageRequester extends RecyclerView.ItemDecoration {
         int itemCount = recyclerView.getAdapter().getItemCount();
         // RecyclerView.Adapter getItemCount gives count of values + 1 (PaginationViewHolder)
         int preventionPosition = itemCount - mCallback.getPagePreventionForEnd() - 1;
-        if (adapterPosition >= preventionPosition && itemCount > mLastItemCount && preventionPosition > 0) {
+        if (adapterPosition >= preventionPosition && itemCount > mLastItemCount) {
             mCurrentPage++;
             recyclerView.post(new Runnable() {
                 @Override
