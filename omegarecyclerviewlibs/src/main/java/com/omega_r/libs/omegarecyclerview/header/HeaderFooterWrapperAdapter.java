@@ -32,7 +32,7 @@ public class HeaderFooterWrapperAdapter<T extends RecyclerView.Adapter> extends 
 
     public HeaderFooterWrapperAdapter(T adapter) {
         mRealAdapter = adapter;
-        setHasStableIds(mRealAdapter.hasStableIds());
+        super.setHasStableIds(mRealAdapter.hasStableIds());
     }
 
     @NonNull
