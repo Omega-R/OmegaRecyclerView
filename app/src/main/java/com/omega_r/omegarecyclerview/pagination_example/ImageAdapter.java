@@ -20,6 +20,10 @@ public class ImageAdapter extends OmegaRecyclerView.Adapter<ImageAdapter.ViewHol
     @Nullable
     private Callback mCallback;
 
+    public ImageAdapter() {
+        setHasStableIds(true);
+    }
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_image, parent, false));
@@ -33,6 +37,12 @@ public class ImageAdapter extends OmegaRecyclerView.Adapter<ImageAdapter.ViewHol
     public void addValues(List<Image> list) {
         mList.addAll(list);
         notifyItemInserted(mList.size() - list.size());
+    }
+
+
+    @Override
+    public long getItemId(int position) {
+        return position;
     }
 
     @Override
