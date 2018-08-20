@@ -3,17 +3,21 @@ package com.omega_r.libs.omegarecyclerview.header;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+import android.widget.FrameLayout;
 
 import com.omega_r.libs.omegarecyclerview.OmegaRecyclerView;
 import com.omega_r.libs.omegarecyclerview.R;
 import com.omega_r.libs.omegarecyclerview.sticky_header.StickyHeaderAdapter;
 import com.omega_r.libs.omegarecyclerview.sticky_header.StickyHeaderDecoration;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class HeaderFooterWrapperAdapter<T extends RecyclerView.Adapter> extends OmegaRecyclerView.Adapter<RecyclerView.ViewHolder> implements StickyHeaderAdapter {
 
@@ -39,31 +43,15 @@ public class HeaderFooterWrapperAdapter<T extends RecyclerView.Adapter> extends 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if (isHeader(viewType)) {
-            return removeParentView(new SectionViewHolder(mHeaderArray.get(viewType)), viewType);
+            return new SectionViewHolder(mHeaderArray.get(viewType));
         }
         if (isFooter(viewType)) {
-            return removeParentView(new SectionViewHolder(mFooterArray.get(viewType)), viewType);
+            return new SectionViewHolder(mFooterArray.get(viewType));
         }
+
         return mRealAdapter.onCreateViewHolder(parent, viewType);
     }
 
-    private SectionViewHolder removeParentView(@NonNull SectionViewHolder sectionViewHolder, int viewType) {
-        View itemView = sectionViewHolder.itemView;
-        if (itemView.getParent() == null) {
-            return sectionViewHolder;
-        } else {
-            RecyclerView recyclerView = (RecyclerView) itemView.getParent();
-            RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
-
-            int headerIndex = mHeaderArray.indexOfKey(viewType);
-            int footerIndex = mFooterArray.indexOfKey(viewType);
-            if (headerIndex != -1 || footerIndex != -1) {
-                layoutManager.removeView(itemView);
-            }
-
-            return sectionViewHolder;
-        }
-    }
 
     @Override
     public void setHasStableIds(boolean hasStableIds) {
@@ -279,10 +267,20 @@ public class HeaderFooterWrapperAdapter<T extends RecyclerView.Adapter> extends 
         super.tryNotifyItemRangeRemoved(positionStart + mHeaderArray.size(), itemCount);
     }
 
-    public class SectionViewHolder extends RecyclerView.ViewHolder {
+    public static class SectionViewHolder extends RecyclerView.ViewHolder {
 
         public SectionViewHolder(View itemView) {
-            super(itemView);
+            super(wrapView(itemView));
+        }
+
+        private static View wrapView(View view) {
+            FrameLayout layout = new FrameLayout(view.getContext());
+            if (view.getParent() instanceof ViewGroup) {
+                ((ViewGroup)view.getParent()).removeView(view);
+            }
+            layout.setLayoutParams(view.getLayoutParams());
+            layout.addView(view);
+            return layout;
         }
     }
 }
