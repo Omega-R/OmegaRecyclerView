@@ -3,21 +3,16 @@ package com.omega_r.libs.omegarecyclerview.header;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
-import android.widget.FrameLayout;
 
 import com.omega_r.libs.omegarecyclerview.OmegaRecyclerView;
 import com.omega_r.libs.omegarecyclerview.R;
 import com.omega_r.libs.omegarecyclerview.sticky_header.StickyHeaderAdapter;
 import com.omega_r.libs.omegarecyclerview.sticky_header.StickyHeaderDecoration;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class HeaderFooterWrapperAdapter<T extends RecyclerView.Adapter> extends OmegaRecyclerView.Adapter<RecyclerView.ViewHolder> implements StickyHeaderAdapter {
 
@@ -64,6 +59,8 @@ public class HeaderFooterWrapperAdapter<T extends RecyclerView.Adapter> extends 
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if (!(isHeaderPosition(position) || isFooterPosition(position))) {
             mRealAdapter.onBindViewHolder(holder, position - mHeaderArray.size());
+        } else {
+            ((SectionViewHolder) holder).bind();
         }
     }
 
@@ -267,20 +264,22 @@ public class HeaderFooterWrapperAdapter<T extends RecyclerView.Adapter> extends 
         super.tryNotifyItemRangeRemoved(positionStart + mHeaderArray.size(), itemCount);
     }
 
-    public static class SectionViewHolder extends RecyclerView.ViewHolder {
+    private static class SectionViewHolder extends RecyclerView.ViewHolder {
 
-        public SectionViewHolder(View itemView) {
-            super(wrapView(itemView));
+        private View contentView;
+
+        private SectionViewHolder(View itemView) {
+            super(new SectionContentFrameLayout(itemView.getContext()));
+            contentView = itemView;
         }
 
-        private static View wrapView(View view) {
-            FrameLayout layout = new FrameLayout(view.getContext());
-            if (view.getParent() instanceof ViewGroup) {
-                ((ViewGroup)view.getParent()).removeView(view);
+        private void bind() {
+            if (contentView.getParent() instanceof ViewGroup) {
+                ((ViewGroup) contentView.getParent()).removeView(contentView);
             }
-            layout.setLayoutParams(view.getLayoutParams());
-            layout.addView(view);
-            return layout;
+            itemView.setLayoutParams(contentView.getLayoutParams());
+            ((ViewGroup) itemView).addView(contentView);
         }
+
     }
 }
