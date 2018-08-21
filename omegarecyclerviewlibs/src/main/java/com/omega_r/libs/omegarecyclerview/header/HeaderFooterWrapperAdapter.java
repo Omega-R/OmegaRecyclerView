@@ -277,7 +277,7 @@ public class HeaderFooterWrapperAdapter<T extends RecyclerView.Adapter> extends 
             if (contentView.getParent() instanceof ViewGroup) {
                 ((ViewGroup) contentView.getParent()).removeView(contentView);
             }
-            itemView.setLayoutParams(contentView.getLayoutParams());
+            itemView.setLayoutParams(new ViewGroup.LayoutParams(contentView.getLayoutParams()));
             ((ViewGroup) itemView).addView(contentView);
         }
 
