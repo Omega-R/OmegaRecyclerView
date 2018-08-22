@@ -7,10 +7,13 @@ import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.ColorInt;
+import android.support.annotation.ColorRes;
 import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.ExpandedRecyclerView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -650,6 +653,15 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
 
         protected final String getString(@StringRes int res) {
             return getResources().getString(res);
+        }
+
+        protected final String getString(@StringRes int res, Object... formatArgs) {
+            return getResources().getString(res, formatArgs);
+        }
+
+        @ColorInt
+        protected final int getColor(@ColorRes int id) {
+            return ContextCompat.getColor(getContext(), id);
         }
     }
 
