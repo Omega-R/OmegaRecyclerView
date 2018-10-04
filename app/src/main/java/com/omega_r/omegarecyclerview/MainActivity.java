@@ -18,10 +18,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.button_pagination).setOnClickListener(this);
         findViewById(R.id.button_sections).setOnClickListener(this);
         findViewById(R.id.button_viewpager).setOnClickListener(this);
+        findViewById(R.id.button_list_adapter).setOnClickListener(this);
     }
 
     /**
-     * AppOmegaIntentBuilder it's amazing library for start different intents
+     * AppOmegaIntentBuilder is amazing library for start different intents
      * See on GitHub {@link "https://github.com/Omega-R/OmegaIntentBuilder"}.
      */
     @Override
@@ -59,6 +60,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 AppOmegaIntentBuilder.from(this)
                         .appActivities()
                         .viewPagerActivity()
+                        .createIntentHandler()
+                        .startActivity();
+                break;
+            case R.id.button_list_adapter:
+                AppOmegaIntentBuilder.from(this)
+                        .appActivities()
+                        .listAdapterActivity()
                         .createIntentHandler()
                         .startActivity();
                 break;
