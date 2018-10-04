@@ -11,18 +11,17 @@
         android:theme="@style/Theme.AppCompat.Light">
         <activity android:name=".MainActivity">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".sticky_header_example.StickyHeaderActivity"/>
-        <activity android:name=".swipe_menu_example.SwipeMenuActivity"/>
-        <activity android:name=".pagination_example.PaginationActivity"/>
-        <activity android:name=".sections_example.SectionsActivity"/>
-        <activity android:name=".viewpager.ViewPagerActivity"/>
-
+        <activity android:name=".sticky_header_example.StickyHeaderActivity" />
+        <activity android:name=".swipe_menu_example.SwipeMenuActivity" />
+        <activity android:name=".pagination_example.PaginationActivity" />
+        <activity android:name=".sections_example.SectionsActivity" />
+        <activity android:name=".viewpager.ViewPagerActivity" />
+        <activity android:name=".ListAdapterExample.ListAdapterActivity" />
     </application>
 
 </manifest>

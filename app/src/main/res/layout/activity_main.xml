@@ -38,4 +38,10 @@
         android:layout_height="wrap_content"
         android:text="@string/viewpager_example"/>
 
+    <Button
+        android:id="@+id/button_list_adapter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/list_adapter_example"/>
+
 </LinearLayout>

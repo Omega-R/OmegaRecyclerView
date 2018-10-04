@@ -13,4 +13,5 @@
     <string name="header">Header</string>
     <string name="footer">Mail us (Footer)</string>
     <string name="viewpager_example">ViewPager Example</string>
+    <string name="list_adapter_example">BaseListAdapter Example</string>
 </resources>
