@@ -3,6 +3,7 @@ package com.omega_r.libs.omegarecyclerview.header;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 /**
@@ -21,7 +22,10 @@ final class SectionContentFrameLayout extends FrameLayout {
         } else {
             View child = getChildAt(0);
             child.measure(widthMeasureSpec, heightMeasureSpec);
-            setMeasuredDimension(child.getMeasuredWidth(), child.getMeasuredHeight());
+
+            ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) child.getLayoutParams();
+            setMeasuredDimension(child.getMeasuredWidth(),
+                    child.getMeasuredHeight() + layoutParams.bottomMargin + layoutParams.topMargin);
         }
 
     }
