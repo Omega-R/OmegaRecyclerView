@@ -10,19 +10,20 @@
         android:id="@+id/textview_header"
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:layout_marginBottom="2dp"
         android:background="@color/pale_grey"
         android:foreground="?selectableItemBackground"
         android:gravity="center"
         android:text="@string/header"
+        app:layout_section="header"
         android:textSize="22sp"
-        app:layout_section="header" />
+        android:layout_marginBottom="16dp"
+        android:layout_marginTop="24dp"/>
 
     <TextView
         android:id="@+id/textview_footer"
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:layout_marginTop="2dp"
+        android:layout_marginTop="24dp"
         android:background="@color/pale_grey"
         android:foreground="?selectableItemBackground"
         android:gravity="center"
