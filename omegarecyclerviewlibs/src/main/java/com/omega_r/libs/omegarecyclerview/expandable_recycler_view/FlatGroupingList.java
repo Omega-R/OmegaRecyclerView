@@ -1,36 +1,27 @@
 package com.omega_r.libs.omegarecyclerview.expandable_recycler_view;
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.util.SparseIntArray;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class FlatGroupingList<P, CH> {
+public class FlatGroupingList<G, CH> {
 
     public static final int POSITION_NOT_FOUND = -1;
 
-    private final List<Item> mFlatList = new ArrayList<>();
-    private final List<Group<P, CH>> mUnflatList;
-    private final List<Integer> mIndexMapping = new ArrayList<>(); // represents mapping {visibleIndex : flatIndex}
+    private final List<ExpandableViewData<G, CH>> mItems;
+    private final List<PositionData> mPositions = new ArrayList<>(); // represents mapping {visibleIndex : realPositionData}
 
     private final boolean[] mExpandStates;
 
-    public FlatGroupingList(@NonNull List<Group<P, CH>> unflat) {
-        mUnflatList = unflat;
+    public FlatGroupingList(@NonNull List<ExpandableViewData<G, CH>> items) {
+        mItems = items;
 
-        for (Group<P, CH> group : unflat) {
-            P parent = group.getParent();
-
-            mFlatList.add(new Item(parent, ExpandableType.GROUP, null));
-
-            for (CH child : group.getChilds()) {
-                mFlatList.add(new Item(child, ExpandableType.CHILD, parent));
-            }
+        for (ExpandableViewData<G, CH> expandableViewData : mItems) {
+            G group = expandableViewData.getGroup();
         }
 
-        mExpandStates = new boolean[unflat.size()];
+        mExpandStates = new boolean[mItems.size()];
         for (int i = 0; i < mExpandStates.length; i++) {
             mExpandStates[i] = false;
         }
@@ -39,138 +30,71 @@ public class FlatGroupingList<P, CH> {
     }
 
     public int getVisibleItemsCount() {
-        int count = 0;
-
-        for (int i = 0; i < mUnflatList.size(); i++) {
-            count++;
-            if (mExpandStates[i]) {
-                count += mUnflatList.get(i).getChilds().size();
-            }
-        }
-        return count;
+        return mPositions.size();
     }
 
-    public void onExpandStateChanged(P parent, boolean isExpanded) {
-        int pos = getUnflattedPosition(parent);
-        if (pos == POSITION_NOT_FOUND) throw new IllegalStateException("Group not in FlatGroupingList");
+    public void onExpandStateChanged(G group, boolean isExpanded) {
+        int pos = getUnflattedPosition(group);
+        if (pos == POSITION_NOT_FOUND) throw new IllegalStateException("ExpandableViewData not in FlatGroupingList");
 
         mExpandStates[pos] = isExpanded;
         updateIndexes();
     }
 
     public ExpandableType getType(int visiblePosition) {
-        return getItem(visiblePosition).getType();
+        PositionData positionData = mPositions.get(visiblePosition);
+        return positionData.isGroup ? ExpandableType.GROUP : ExpandableType.CHILD;
     }
 
     public int getVisiblePosition(Object obj) {
-        int flatIndex = getFlatPosition(obj);
-        if (flatIndex == POSITION_NOT_FOUND) throw new IllegalStateException("Object not in list");
-        return mIndexMapping.indexOf(flatIndex);
+        for (int i = 0; i < mPositions.size(); i++) {
+            PositionData position = mPositions.get(i);
+            ExpandableViewData<G, CH> data = mItems.get(position.groupIndex);
+            if (data.get(position).equals(obj)) {
+                return i;
+            }
+        }
+        return POSITION_NOT_FOUND;
     }
 
-    public boolean isExpanded(P parent) {
-        for (int i = 0; i < mUnflatList.size(); i++) {
-            Group<P, CH> group = mUnflatList.get(i);
-            if (group.getParent().equals(parent)) return mExpandStates[i];
+    public boolean isExpanded(G group) {
+        for (int i = 0; i < mItems.size(); i++) {
+            ExpandableViewData<G, CH> expandableViewData = mItems.get(i);
+            if (expandableViewData.is(group)) return mExpandStates[i];
         }
         return false;
     }
 
     public Object get(int visiblePosition) {
-        return getItem(visiblePosition).get();
+        PositionData positionData = mPositions.get(visiblePosition);
+        ExpandableViewData<G, CH> expandableViewData = mItems.get(positionData.groupIndex);
+        return expandableViewData.get(positionData);
     }
 
-    public int getChildsCount(P parent) {
-        for (Group<P, CH> group : mUnflatList) {
-            if (group.getParent().equals(parent)) return group.getChilds().size();
+    public int getChildsCount(G group) {
+        for (ExpandableViewData<G, CH> expandableViewData : mItems) {
+            if (expandableViewData.is(group)) return expandableViewData.getChilds().size();
         }
         return POSITION_NOT_FOUND;
     }
 
-    private int getUnflattedPosition(Object obj) {
-        for (int i = 0; i < mUnflatList.size(); i++) {
-            Group<P, CH> group = mUnflatList.get(i);
-            if (group.getParent().equals(obj)) return i;
-
-            for (CH child : group.getChilds()) {
-                if (child.equals(obj)) return i;
-            }
-        }
-        return POSITION_NOT_FOUND;
-    }
-
-    private Item getItem(int visiblePosition) {
-        return mFlatList.get(mIndexMapping.get(visiblePosition));
-    }
-
-    private int getFlatPosition(Object obj) {
-        for (int i = 0; i < mFlatList.size(); i++) {
-            if (mFlatList.get(i).get().equals(obj)) return i;
+    private int getUnflattedPosition(G group) {
+        for (int i = 0; i < mItems.size(); i++) {
+            if (mItems.get(i).is(group)) return i;
         }
         return POSITION_NOT_FOUND;
     }
 
     private void updateIndexes() {
-        mIndexMapping.clear();
-        boolean expandedFlag = false;
-        int visibleIndex = 0;
-        for (int i = 0; i < mFlatList.size(); i++) {
-            Item item = mFlatList.get(i);
-            if (item.isParent()) {
-                expandedFlag = isExpanded(item.asParent());
-                mIndexMapping.add(i);
-            } else if (expandedFlag) {
-                mIndexMapping.add(i);
+        mPositions.clear();
+        for (int i = 0; i < mItems.size(); i++) {
+            ExpandableViewData<G, CH> item = mItems.get(i);
+            mPositions.add(new PositionData(i));
+            if (isExpanded(item.getGroup())) {
+                for (int j = 0; j < item.getChilds().size(); j++) {
+                    mPositions.add(new PositionData(i, j));
+                }
             }
-        }
-    }
-
-    private class Item {
-        private Object object;
-        private ExpandableType type;
-
-        @Nullable
-        private P parent;
-
-        public Item(Object object, ExpandableType type, @Nullable P parent) {
-            this.object = object;
-            this.type = type;
-            this.parent = parent;
-        }
-
-        @SuppressWarnings("unchecked")
-        P asParent() {
-            try {
-                return (P)object;
-            } catch (ClassCastException ex) {
-                throw new IllegalStateException("Item is not an instance of Parent");
-            }
-        }
-
-        @SuppressWarnings("unchecked")
-        CH asChild() {
-            try {
-                return (CH)object;
-            } catch (ClassCastException ex) {
-                throw new IllegalStateException("Item is not an instance of Child");
-            }
-        }
-
-        Object get() {
-            return object;
-        }
-
-        ExpandableType getType() {
-            return type;
-        }
-
-        @Nullable
-        public P getParent() {
-            return parent;
-        }
-
-        public boolean isParent() {
-            return parent == null;
         }
     }
 }

@@ -55,26 +55,26 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
     // endregion
 
     //region Adapter
-    public static abstract class Adapter<P, CH> extends OmegaRecyclerView.Adapter<BaseViewHolder> {
+    public static abstract class Adapter<G, CH> extends OmegaRecyclerView.Adapter<BaseViewHolder> {
 
         private static final int VH_TYPE_GROUP = 0;
         private static final int VH_TYPE_CHILD = 1;
 
-        private FlatGroupingList<P, CH> items = new FlatGroupingList<>(Collections.<Group<P,CH>>emptyList());
+        private FlatGroupingList<G, CH> items = new FlatGroupingList<>(Collections.<ExpandableViewData<G,CH>>emptyList());
 
         protected abstract GroupViewHolder provideGroupViewHolder(@NonNull ViewGroup viewGroup);
         protected abstract ChildViewHolder provideChildViewHolder(@NonNull ViewGroup viewGroup);
 
-        public Adapter(@NonNull List<Group<P, CH>> groups) {
-            items = new FlatGroupingList<>(groups);
+        public Adapter(@NonNull List<ExpandableViewData<G, CH>> expandableViewData) {
+            items = new FlatGroupingList<>(expandableViewData);
         }
 
         public Adapter() {
             // nothing
         }
 
-        public void setItems(@NonNull List<Group<P, CH>> groups) {
-            items = new FlatGroupingList<>(groups);
+        public void setItems(@NonNull List<ExpandableViewData<G, CH>> expandableViewData) {
+            items = new FlatGroupingList<>(expandableViewData);
             tryNotifyDataSetChanged();
         }
 
@@ -112,11 +112,11 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
             return super.getItemViewType(position);
         }
 
-        public void expand(P parent) {
-            items.onExpandStateChanged(parent, true);
+        public void expand(G group) {
+            items.onExpandStateChanged(group, true);
 
-            int positionStart = items.getVisiblePosition(parent) + 1;
-            int childsCount = items.getChildsCount(parent);
+            int positionStart = items.getVisiblePosition(group) + 1;
+            int childsCount = items.getChildsCount(group);
 
             if (childsCount > 0) {
                 tryNotifyItemChanged(positionStart);
@@ -124,11 +124,11 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
             }
         }
 
-        public void collapse(P parent) {
-            items.onExpandStateChanged(parent, false);
+        public void collapse(G group) {
+            items.onExpandStateChanged(group, false);
 
-            int positionStart = items.getVisiblePosition(parent) + 1;
-            int childsCount = items.getChildsCount(parent);
+            int positionStart = items.getVisiblePosition(group) + 1;
+            int childsCount = items.getChildsCount(group);
 
             if (childsCount > 0) {
                 notifyItemChanged(positionStart);
@@ -136,17 +136,17 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
             }
         }
 
-        private void notifyExpandFired(P parent) {
-            if (parent == null) return;
+        private void notifyExpandFired(G group) {
+            if (group == null) return;
 
-            if (items.isExpanded(parent)) {
-                collapse(parent);
+            if (items.isExpanded(group)) {
+                collapse(group);
             } else {
-                expand(parent);
+                expand(group);
             }
         }
 
-        public abstract class GroupViewHolder extends BaseViewHolder<P> {
+        public abstract class GroupViewHolder extends BaseViewHolder<G> {
 
             private View currentExpandFiringView = itemView;
             private final OnClickListener clickListener = new OnClickListener() {
