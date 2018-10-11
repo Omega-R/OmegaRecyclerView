@@ -44,4 +44,11 @@
         android:layout_height="wrap_content"
         android:text="@string/list_adapter_example"/>
 
+
+    <Button
+        android:id="@+id/button_expandable_recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/expandable_recyclerview_example"/>
+
 </LinearLayout>

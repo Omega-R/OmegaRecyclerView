@@ -22,6 +22,7 @@
         <activity android:name=".sections_example.SectionsActivity" />
         <activity android:name=".viewpager.ViewPagerActivity" />
         <activity android:name=".ListAdapterExample.ListAdapterActivity" />
+        <activity android:name=".expandable_example.ExpandableActivity"></activity>
     </application>
 
 </manifest>
