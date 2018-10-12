@@ -24,18 +24,16 @@ public class ExpandableActivity extends AppCompatActivity {
         ExpandableAdapter adapter = new ExpandableAdapter();
         recyclerView.setAdapter(adapter);
 
-        List<ExpandableViewData<String, String>> items = Arrays.asList(
-                ExpandableViewData.of(getString(R.string.group_text_1), getString(R.string.child_text_1)),
-                ExpandableViewData.of(getString(R.string.group_text_2), getString(R.string.child_text_2)),
-                ExpandableViewData.of(getString(R.string.group_text_3), getString(R.string.child_text_3)),
-                ExpandableViewData.of(getString(R.string.group_text_4),
+        adapter.setItems(
+                SimpleData.from(getString(R.string.group_text_1), getString(R.string.child_text_1)),
+                SimpleData.from(getString(R.string.group_text_2), getString(R.string.child_text_2)),
+                SimpleData.from(getString(R.string.group_text_3), getString(R.string.child_text_3)),
+                SimpleData.from(getString(R.string.group_text_4),
                         getString(R.string.child_text_1),
                         getString(R.string.child_text_2),
                         getString(R.string.child_text_3),
                         getString(R.string.child_text_4),
                         getString(R.string.child_text_5))
         );
-
-        adapter.setItems(items);
     }
 }

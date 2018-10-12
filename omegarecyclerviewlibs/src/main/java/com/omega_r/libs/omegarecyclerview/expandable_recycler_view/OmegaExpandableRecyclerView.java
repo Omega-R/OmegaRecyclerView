@@ -12,6 +12,8 @@ import android.view.ViewGroup;
 
 import com.omega_r.libs.omegarecyclerview.OmegaRecyclerView;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -60,22 +62,47 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
         private static final int VH_TYPE_GROUP = 0;
         private static final int VH_TYPE_CHILD = 1;
 
-        private FlatGroupingList<G, CH> items = new FlatGroupingList<>(Collections.<ExpandableViewData<G,CH>>emptyList());
+        private FlatGroupingList<G, CH> items;
 
         protected abstract GroupViewHolder provideGroupViewHolder(@NonNull ViewGroup viewGroup);
         protected abstract ChildViewHolder provideChildViewHolder(@NonNull ViewGroup viewGroup);
 
-        public Adapter(@NonNull List<ExpandableViewData<G, CH>> expandableViewData) {
-            items = new FlatGroupingList<>(expandableViewData);
+        @SafeVarargs
+        public Adapter(ExpandableViewData<G, CH>... expandableViewData) {
+            items = new FlatGroupingList<>(Arrays.asList(expandableViewData));
+        }
+
+        @SafeVarargs
+        public Adapter(GroupProvider<G, CH>... groupProviders) {
+            items = new FlatGroupingList<>(convertFrom(groupProviders));
         }
 
         public Adapter() {
-            // nothing
+            items = new FlatGroupingList<>(Collections.<ExpandableViewData<G,CH>>emptyList());
         }
 
-        public void setItems(@NonNull List<ExpandableViewData<G, CH>> expandableViewData) {
+        @NonNull
+        private List<ExpandableViewData<G, CH>> convertFrom(GroupProvider<G, CH>[] groupProviders) {
+            List<ExpandableViewData<G, CH>> expandableViewData = new ArrayList<>();
+            for (GroupProvider<G, CH> groupProvider : groupProviders) {
+                expandableViewData.add(ExpandableViewData.of(groupProvider.provideGroup(), groupProvider.provideChilds()));
+            }
+            return expandableViewData;
+        }
+
+        public final void setItems(@NonNull List<ExpandableViewData<G, CH>> expandableViewData) {
             items = new FlatGroupingList<>(expandableViewData);
             tryNotifyDataSetChanged();
+        }
+
+        @SafeVarargs
+        public final void setItems(ExpandableViewData<G, CH>... expandableViewData) {
+            setItems(Arrays.asList(expandableViewData));
+        }
+
+        @SafeVarargs
+        public final void setItems(GroupProvider<G, CH>... groupProviders) {
+            setItems(convertFrom(groupProviders));
         }
 
         @NonNull
@@ -136,13 +163,14 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
             }
         }
 
-        private void notifyExpandFired(G group) {
-            if (group == null) return;
-
+        private void notifyExpandFired(GroupViewHolder viewHolder) {
+            G group = viewHolder.getItem();
             if (items.isExpanded(group)) {
                 collapse(group);
+                viewHolder.onCollapse(viewHolder, items.getGroupIndex(group));
             } else {
                 expand(group);
+                viewHolder.onExpand(viewHolder, items.getGroupIndex(group));
             }
         }
 
@@ -152,12 +180,12 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
             private final OnClickListener clickListener = new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    notifyExpandFired(getItem());
+                    notifyExpandFired(GroupViewHolder.this);
                 }
             };
 
-            protected abstract void onExpand();
-            protected abstract void onCollapse();
+            protected abstract void onExpand(GroupViewHolder viewHolder, int groupIndex);
+            protected abstract void onCollapse(GroupViewHolder viewHolder, int groupIndex);
 
             public GroupViewHolder(ViewGroup parent, @LayoutRes int res) {
                 super(parent, res);
