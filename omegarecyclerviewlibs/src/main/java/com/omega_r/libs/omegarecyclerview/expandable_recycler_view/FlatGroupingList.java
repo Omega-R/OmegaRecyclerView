@@ -3,6 +3,7 @@ package com.omega_r.libs.omegarecyclerview.expandable_recycler_view;
 import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class FlatGroupingList<G, CH> {
@@ -17,14 +18,8 @@ public class FlatGroupingList<G, CH> {
     public FlatGroupingList(@NonNull List<ExpandableViewData<G, CH>> items) {
         mItems = items;
 
-        for (ExpandableViewData<G, CH> expandableViewData : mItems) {
-            G group = expandableViewData.getGroup();
-        }
-
         mExpandStates = new boolean[mItems.size()];
-        for (int i = 0; i < mExpandStates.length; i++) {
-            mExpandStates[i] = false;
-        }
+        Arrays.fill(mExpandStates, false);
 
         updateIndexes();
     }
@@ -90,7 +85,7 @@ public class FlatGroupingList<G, CH> {
         for (int i = 0; i < mItems.size(); i++) {
             ExpandableViewData<G, CH> item = mItems.get(i);
             mPositions.add(new PositionData(i));
-            if (isExpanded(item.getGroup())) {
+            if (mExpandStates[i]) {
                 for (int j = 0; j < item.getChilds().size(); j++) {
                     mPositions.add(new PositionData(i, j));
                 }
