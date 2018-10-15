@@ -8,7 +8,7 @@ import java.util.List;
 
 public class FlatGroupingList<G, CH> {
 
-    public static final int POSITION_NOT_FOUND = -1;
+    public static final int POSITION_NOT_FOUND = PositionData.POSITION_NOT_FOUND;
 
     private final List<ExpandableViewData<G, CH>> mItems;
     private final List<PositionData> mPositions = new ArrayList<>(); // represents mapping {visibleIndex : realPositionData}
@@ -78,6 +78,14 @@ public class FlatGroupingList<G, CH> {
             if (expandableViewData.is(group)) return expandableViewData.getChilds().size();
         }
         return POSITION_NOT_FOUND;
+    }
+
+    public int getPositionInGroup(int visiblePosition) {
+        return mPositions.get(visiblePosition).childIndex;
+    }
+
+    public int getChildsInGroup(int visiblePosition) {
+        return mItems.get(mPositions.get(visiblePosition).groupIndex).getChilds().size();
     }
 
     private int getUnflattedPosition(G group) {

@@ -4,17 +4,18 @@ import android.content.Context;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.omega_r.libs.omegarecyclerview.OmegaRecyclerView;
+import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.animation.AnimationHelper;
 import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.animation.standard_animations.DropDownItemAnimator;
 import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.data.ExpandableViewData;
 import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.data.FlatGroupingList;
 import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.data.GroupProvider;
+import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.layout_manager.ExpandableLayoutManager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,14 +42,14 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
     @Override
     protected void initDefaultLayoutManager(@Nullable AttributeSet attrs, int defStyleAttr) {
         if (getLayoutManager() == null) {
-            setLayoutManager(new LinearLayoutManager(getContext(), attrs, defStyleAttr, 0)); // TODO: Expandable Layout Manager
+            setLayoutManager(new ExpandableLayoutManager(getContext(), attrs, defStyleAttr, 0));
         }
     }
 
     @Override
     public void setLayoutManager(@Nullable LayoutManager layoutManager) {
-        if (layoutManager != null && !(layoutManager instanceof LinearLayoutManager)) { // TODO: Expandable Layout Manager
-            throw new IllegalStateException("LayoutManager " + layoutManager.toString() + " should be LinearLayoutManager");
+        if (layoutManager != null && !(layoutManager instanceof ExpandableLayoutManager)) {
+            throw new IllegalStateException("LayoutManager " + layoutManager.toString() + " should be ExpandableLayoutManager");
         }
         super.setLayoutManager(layoutManager);
     }
@@ -154,24 +155,18 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
         public void expand(G group) {
             items.onExpandStateChanged(group, true);
 
-            final int positionStart = items.getVisiblePosition(group) + 1;
-            final int childsCount = items.getChildsCount(group);
-
+            int childsCount = items.getChildsCount(group);
             if (childsCount > 0) {
-                tryNotifyItemChanged(positionStart);
-                tryNotifyItemRangeInserted(positionStart, childsCount);
+                tryNotifyItemRangeInserted(items.getVisiblePosition(group) + 1, childsCount);
             }
         }
 
         public void collapse(G group) {
             items.onExpandStateChanged(group, false);
 
-            final int positionStart = items.getVisiblePosition(group) + 1;
-            final int childsCount = items.getChildsCount(group);
-
+            int childsCount = items.getChildsCount(group);
             if (childsCount > 0) {
-                tryNotifyItemChanged(positionStart);
-                tryNotifyItemRangeRemoved(positionStart, childsCount);
+                tryNotifyItemRangeRemoved(items.getVisiblePosition(group) + 1, childsCount);
             }
         }
 
@@ -214,10 +209,15 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
 
         public abstract class ChildViewHolder extends BaseViewHolder<CH> {
 
+            public AnimationHelper animationHelper;
+
             public ChildViewHolder(ViewGroup parent, @LayoutRes int res) {
                 super(parent, res);
             }
 
+            public void setAnimationHelper(AnimationHelper animationHelper) {
+                this.animationHelper = animationHelper;
+            }
         }
     }
     //endregion
