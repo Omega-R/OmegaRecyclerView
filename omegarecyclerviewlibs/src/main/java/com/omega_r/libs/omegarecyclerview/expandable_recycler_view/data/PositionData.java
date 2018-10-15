@@ -1,9 +1,9 @@
-package com.omega_r.libs.omegarecyclerview.expandable_recycler_view;
+package com.omega_r.libs.omegarecyclerview.expandable_recycler_view.data;
 
 public class PositionData {
-    int groupIndex;
-    int childIndex;
-    boolean isGroup;
+    public int groupIndex;
+    public int childIndex;
+    public boolean isGroup;
 
     public PositionData(int groupIndex, int childIndex) {
         this.groupIndex = groupIndex;

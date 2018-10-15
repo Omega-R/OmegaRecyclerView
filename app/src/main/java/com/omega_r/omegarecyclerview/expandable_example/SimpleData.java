@@ -1,6 +1,6 @@
 package com.omega_r.omegarecyclerview.expandable_example;
 
-import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.GroupProvider;
+import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.data.GroupProvider;
 
 import java.util.Arrays;
 import java.util.List;

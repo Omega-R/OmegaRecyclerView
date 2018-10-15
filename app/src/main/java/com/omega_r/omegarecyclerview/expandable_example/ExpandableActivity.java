@@ -4,11 +4,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 
-import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.ExpandableViewData;
 import com.omega_r.omegarecyclerview.R;
-
-import java.util.Arrays;
-import java.util.List;
 
 import omega.com.annotations.OmegaActivity;
 

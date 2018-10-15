@@ -11,6 +11,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.omega_r.libs.omegarecyclerview.OmegaRecyclerView;
+import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.animation.standard_animations.DropDownItemAnimator;
+import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.data.ExpandableViewData;
+import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.data.FlatGroupingList;
+import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.data.GroupProvider;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,6 +31,7 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
 
     public OmegaExpandableRecyclerView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
+        setItemAnimator(new DropDownItemAnimator());
     }
 
     public OmegaExpandableRecyclerView(Context context, @Nullable AttributeSet attrs, int defStyle) {
@@ -50,7 +55,8 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
 
     @Override
     public void setAdapter(RecyclerView.Adapter adapter) {
-        if (!(adapter instanceof Adapter)) throw new IllegalStateException("Adapter should extend OmegaExpandableRecyclerView.Adapter");
+        if (!(adapter instanceof Adapter))
+            throw new IllegalStateException("Adapter should extend OmegaExpandableRecyclerView.Adapter");
         super.setAdapter(adapter);
     }
 
@@ -65,6 +71,7 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
         private FlatGroupingList<G, CH> items;
 
         protected abstract GroupViewHolder provideGroupViewHolder(@NonNull ViewGroup viewGroup);
+
         protected abstract ChildViewHolder provideChildViewHolder(@NonNull ViewGroup viewGroup);
 
         @SafeVarargs
@@ -78,7 +85,7 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
         }
 
         public Adapter() {
-            items = new FlatGroupingList<>(Collections.<ExpandableViewData<G,CH>>emptyList());
+            items = new FlatGroupingList<>(Collections.<ExpandableViewData<G, CH>>emptyList());
         }
 
         @NonNull
@@ -124,6 +131,11 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
         }
 
         @Override
+        public void onViewRecycled(@NonNull BaseViewHolder holder) {
+            super.onViewRecycled(holder);
+        }
+
+        @Override
         public int getItemCount() {
             return items.getVisibleItemsCount();
         }
@@ -142,8 +154,8 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
         public void expand(G group) {
             items.onExpandStateChanged(group, true);
 
-            int positionStart = items.getVisiblePosition(group) + 1;
-            int childsCount = items.getChildsCount(group);
+            final int positionStart = items.getVisiblePosition(group) + 1;
+            final int childsCount = items.getChildsCount(group);
 
             if (childsCount > 0) {
                 tryNotifyItemChanged(positionStart);
@@ -154,12 +166,12 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
         public void collapse(G group) {
             items.onExpandStateChanged(group, false);
 
-            int positionStart = items.getVisiblePosition(group) + 1;
-            int childsCount = items.getChildsCount(group);
+            final int positionStart = items.getVisiblePosition(group) + 1;
+            final int childsCount = items.getChildsCount(group);
 
             if (childsCount > 0) {
-                notifyItemChanged(positionStart);
-                notifyItemRangeRemoved(positionStart, childsCount);
+                tryNotifyItemChanged(positionStart);
+                tryNotifyItemRangeRemoved(positionStart, childsCount);
             }
         }
 
@@ -185,6 +197,7 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
             };
 
             protected abstract void onExpand(GroupViewHolder viewHolder, int groupIndex);
+
             protected abstract void onCollapse(GroupViewHolder viewHolder, int groupIndex);
 
             public GroupViewHolder(ViewGroup parent, @LayoutRes int res) {
