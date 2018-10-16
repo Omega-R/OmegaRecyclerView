@@ -37,17 +37,17 @@ public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
 
     protected abstract void setupRemoveAnimation(ViewPropertyAnimator animation, OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder);
 
-    protected abstract void onRemoveCancel(OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder);
+    protected abstract void onRemoveCancel(ViewPropertyAnimator animation, OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder);
 
-    protected abstract void onRemoveEnd(OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder);
+    protected abstract void onRemoveEnd(ViewPropertyAnimator animation, OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder);
 
     protected abstract void onAddStart(OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder);
 
     protected abstract void setupAddAnimation(ViewPropertyAnimator animation, OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder);
 
-    protected abstract void onAddCancel(OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder);
+    protected abstract void onAddCancel(ViewPropertyAnimator animation, OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder);
 
-    protected abstract void onAddEnd(OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder);
+    protected abstract void onAddEnd(ViewPropertyAnimator animation, OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder);
 
     @Override
     public void runPendingAnimations() {
@@ -220,13 +220,13 @@ public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
                     }
 
                     @Override
-                    public void onAnimationCancel(Animator animation) {
-                        onRemoveCancel(holder);
+                    public void onAnimationCancel(Animator animator) {
+                        onRemoveCancel(animation, holder);
                     }
 
                     public void onAnimationEnd(Animator animator) {
                         animation.setListener(null);
-                        onRemoveEnd(holder);
+                        onRemoveEnd(animation, holder);
                         dispatchRemoveFinished(holder);
                         mRemoveAnimations.remove(holder);
                         dispatchFinishedWhenDone();
@@ -294,13 +294,14 @@ public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
                     }
 
                     @Override
-                    public void onAnimationCancel(Animator animation) {
-                        onAddCancel(holder);
+                    public void onAnimationCancel(Animator animator) {
+                        onAddCancel(animation, holder);
                         holder.itemView.setAlpha(1f);
                     }
 
                     public void onAnimationEnd(Animator animator) {
                         animation.setListener(null);
+                        onAddEnd(animation, holder);
                         holder.itemView.setAlpha(1f);
                         dispatchAddFinished(holder);
                         mAddAnimations.remove(holder);
