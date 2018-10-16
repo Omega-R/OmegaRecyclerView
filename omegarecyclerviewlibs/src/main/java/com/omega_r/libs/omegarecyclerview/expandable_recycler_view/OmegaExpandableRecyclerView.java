@@ -29,15 +29,27 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
 
     public OmegaExpandableRecyclerView(Context context) {
         super(context);
+        init();
     }
 
     public OmegaExpandableRecyclerView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        setItemAnimator(new DropDownItemAnimator());
+        init();
     }
 
     public OmegaExpandableRecyclerView(Context context, @Nullable AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        init();
+    }
+
+    private void init() {
+        setItemAnimator(new DropDownItemAnimator());
+        setChildDrawingOrderCallback(new RecyclerView.ChildDrawingOrderCallback() {
+            @Override
+            public int onGetChildDrawingOrder(int childCount, int i) {
+                return childCount - i - 1;
+            }
+        });
     }
 
     @Override
@@ -175,7 +187,7 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
             if (childsCount > 0) {
 
                 if (recyclerView != null) {
-                    ExpandableLayoutManager lm = (ExpandableLayoutManager)recyclerView.getLayoutManager();
+                    ExpandableLayoutManager lm = (ExpandableLayoutManager) recyclerView.getLayoutManager();
                     if (lm != null) lm.setAddedRange(Range.ofLength(positionStart, childsCount));
                 }
 
