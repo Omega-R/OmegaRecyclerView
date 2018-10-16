@@ -50,7 +50,6 @@ public class DropDownItemAnimator extends ExpandableItemAnimator {
         if (Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
             animation.setUpdateListener(null);
         }
-        holder.itemView.setAlpha(0f);
         holder.itemView.setTranslationY(0f);
     }
 
