@@ -28,7 +28,7 @@ public class ExpandedRecyclerView extends RecyclerView {
     }
 
     public static ExpandedViewHolder getChildViewHolderInt(View child) {
-        return child == null ? null : (ExpandedViewHolder)((RecyclerView.LayoutParams)child.getLayoutParams()).mViewHolder;
+        return child == null ? null : (ExpandedViewHolder) ((RecyclerView.LayoutParams) child.getLayoutParams()).mViewHolder;
     }
 
     public int getLayoutStep() {

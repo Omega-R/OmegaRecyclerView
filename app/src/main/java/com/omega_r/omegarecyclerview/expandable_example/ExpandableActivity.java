@@ -1,7 +1,7 @@
 package com.omega_r.omegarecyclerview.expandable_example;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
@@ -33,7 +33,9 @@ public class ExpandableActivity extends AppCompatActivity implements CompoundBut
         adapter.setItems(
                 SimpleData.from(getString(R.string.group_text_1), getString(R.string.child_text_1)),
                 SimpleData.from(getString(R.string.group_text_2), getString(R.string.child_text_2)),
-                SimpleData.from(getString(R.string.group_text_3), getString(R.string.child_text_3)),
+                SimpleData.from(getString(R.string.group_text_3),
+                        getString(R.string.child_text_3),
+                        getString(R.string.child_text_5)),
                 SimpleData.from(getString(R.string.group_text_4),
                         getString(R.string.child_text_1),
                         getString(R.string.child_text_2),
@@ -42,8 +44,8 @@ public class ExpandableActivity extends AppCompatActivity implements CompoundBut
                         getString(R.string.child_text_5))
         );
 
-        ((RadioButton)findViewById(R.id.radiobutton_dropdown)).setOnCheckedChangeListener(this);
-        ((RadioButton)findViewById(R.id.radiobutton_fade)).setOnCheckedChangeListener(this);
+        ((RadioButton) findViewById(R.id.radiobutton_dropdown)).setOnCheckedChangeListener(this);
+        ((RadioButton) findViewById(R.id.radiobutton_fade)).setOnCheckedChangeListener(this);
     }
 
     @Override

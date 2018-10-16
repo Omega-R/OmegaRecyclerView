@@ -36,21 +36,25 @@ public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
     private ArrayList<ViewHolder> mRemoveAnimations = new ArrayList<>();
     private ArrayList<ViewHolder> mChangeAnimations = new ArrayList<>();
 
-    protected abstract void onRemoveStart(OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder);
+    protected abstract void onRemoveStart(final OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder);
 
-    protected abstract void setupRemoveAnimation(ViewPropertyAnimator animation, OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder);
+    protected abstract void setupRemoveAnimation(ViewPropertyAnimator animation, final OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder);
 
-    protected abstract void onRemoveCancel(ViewPropertyAnimator animation, OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder);
+    protected abstract void onRemoveCancel(ViewPropertyAnimator animation, final OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder);
 
-    protected abstract void onRemoveEnd(ViewPropertyAnimator animation, OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder);
+    protected abstract void onRemoveEnd(ViewPropertyAnimator animation, final OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder);
 
-    protected abstract void onAddStart(OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder);
+    protected abstract void onAddStart(final OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder);
 
-    protected abstract void setupAddAnimation(ViewPropertyAnimator animation, OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder);
+    protected abstract void setupAddAnimation(ViewPropertyAnimator animation, final OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder);
 
-    protected abstract void onAddCancel(ViewPropertyAnimator animation, OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder);
+    protected abstract void onAddCancel(ViewPropertyAnimator animation, final OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder);
 
-    protected abstract void onAddEnd(ViewPropertyAnimator animation, OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder);
+    protected abstract void onAddEnd(ViewPropertyAnimator animation, final OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder);
+
+    protected abstract boolean shouldReverseAddOrder();
+
+    protected abstract boolean shouldReverseRemoveOrder();
 
     @Override
     public void runPendingAnimations() {
@@ -71,7 +75,7 @@ public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
             public void apply(ViewHolder param) {
                 animateRemoveImpl(param);
             }
-        });
+        }, false);
     }
 
     private void runRemoveActions(boolean hasRemovals) {
@@ -129,7 +133,7 @@ public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
                     public void apply(ViewHolder param) {
                         animateAddImpl(param);
                     }
-                });
+                }, true);
                 mAdditionsList.remove(additions);
             }
         };
@@ -145,35 +149,51 @@ public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
         }
     }
 
-    private void proceedWithAnimationHelper(List<ViewHolder> holders, UnVoidFunction<ViewHolder> func) {
-        float heightSum = 0f;
+    private void proceedWithAnimationHelper(List<ViewHolder> holders, UnVoidFunction<ViewHolder> func, boolean isAdding) {
         int childChangesCount = 0;
-        for (int i = holders.size() - 1; i >= 0; i--) {
+        for (int i = 0; i < holders.size(); i++) {
             ViewHolder holder = holders.get(i);
             if (holder instanceof OmegaExpandableRecyclerView.Adapter.ChildViewHolder) {
                 OmegaExpandableRecyclerView.Adapter.ChildViewHolder childViewHolder =
                         (OmegaExpandableRecyclerView.Adapter.ChildViewHolder) holder;
-                AnimationHelper helper = new AnimationHelper();
-                helper.previousChangedHoldersHeight = heightSum;
-                childViewHolder.animationHelper = helper;
+                childViewHolder.animationHelper = new AnimationHelper();
+
+                if (isAdding) {
+                    childViewHolder.animationHelper.lowerViewHolder = i < holders.size() - 1 ? holders.get(i + 1) : null;
+                    childViewHolder.animationHelper.upperViewHolder = i > 0 ? holders.get(i - 1) : null;
+                } else {
+                    childViewHolder.animationHelper.upperViewHolder = i < holders.size() - 1 ? holders.get(i + 1) : null;
+                    childViewHolder.animationHelper.lowerViewHolder = i > 0 ? holders.get(i - 1) : null;
+                }
 
                 childChangesCount++;
-                heightSum += holder.itemView.getHeight();
             }
         }
 
-        int positionInChanges = 0;
-        for (ViewHolder holder : holders) {
-            if (holder instanceof OmegaExpandableRecyclerView.Adapter.ChildViewHolder) {
-                OmegaExpandableRecyclerView.Adapter.ChildViewHolder childHolder =
-                        (OmegaExpandableRecyclerView.Adapter.ChildViewHolder) holder;
-                childHolder.animationHelper.totalChanges = childChangesCount;
-                childHolder.animationHelper.positionInChanges = positionInChanges++;
+        if (isAdding && shouldReverseAddOrder() || !isAdding && shouldReverseRemoveOrder()) {
+            for (int i = holders.size() - 1; i >= 0; i--) {
+                applyViewHolder(holders.get(i), func, childChangesCount, i);
             }
 
-            func.apply(holder);
+        } else {
+            for (int i = 0; i < holders.size(); i++) {
+                applyViewHolder(holders.get(i), func, childChangesCount, i);
+            }
         }
+
+
         holders.clear();
+    }
+
+    private void applyViewHolder(ViewHolder holder, UnVoidFunction<ViewHolder> func, int childChangesCount, int positionInChanges) {
+        if (holder instanceof OmegaExpandableRecyclerView.Adapter.ChildViewHolder) {
+            OmegaExpandableRecyclerView.Adapter.ChildViewHolder childHolder =
+                    (OmegaExpandableRecyclerView.Adapter.ChildViewHolder) holder;
+            childHolder.animationHelper.totalChanges = childChangesCount;
+            childHolder.animationHelper.positionInChanges = positionInChanges;
+        }
+
+        func.apply(holder);
     }
 
     @Override
@@ -230,6 +250,7 @@ public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
                     public void onAnimationEnd(Animator animator) {
                         animation.setListener(null);
                         onRemoveEnd(animation, holder);
+                        holder.animationHelper.clear();
                         dispatchRemoveFinished(holder);
                         mRemoveAnimations.remove(holder);
                         dispatchFinishedWhenDone();
@@ -305,6 +326,7 @@ public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
                     public void onAnimationEnd(Animator animator) {
                         animation.setListener(null);
                         onAddEnd(animation, holder);
+                        holder.animationHelper.clear();
                         holder.itemView.setAlpha(1f);
                         dispatchAddFinished(holder);
                         mAddAnimations.remove(holder);

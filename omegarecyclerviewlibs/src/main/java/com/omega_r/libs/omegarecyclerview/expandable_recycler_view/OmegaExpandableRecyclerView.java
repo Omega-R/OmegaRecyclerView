@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import com.omega_r.libs.omegarecyclerview.OmegaRecyclerView;
 import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.animation.AnimationHelper;
 import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.animation.ExpandableItemAnimator;
-import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.animation.standard_animations.DropDownItemAnimator;
 import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.animation.standard_animations.FadeItemAnimator;
 import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.data.ExpandableViewData;
 import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.data.FlatGroupingList;
@@ -253,9 +252,6 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
                 super(parent, res);
             }
 
-            public void setAnimationHelper(AnimationHelper animationHelper) {
-                this.animationHelper = animationHelper;
-            }
         }
     }
     //endregion
