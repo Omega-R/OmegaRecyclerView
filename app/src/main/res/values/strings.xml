@@ -25,4 +25,6 @@
     <string name="group_text_3">Section 1.10.32 of "de Finibus Bonorum et Malorum", 1914 translation by H. Rackham</string>
     <string name="group_text_4">Section 1.10.33 of "de Finibus Bonorum et Malorum", written by Cicero in 45 BC</string>
     <string name="group_text_5">Section 1.10.33 of "de Finibus Bonorum et Malorum", 1914 translation by H. Rackham</string>
+    <string name="button_use_fade">Fade</string>
+    <string name="button_use_dropdown">Dropdown</string>
 </resources>

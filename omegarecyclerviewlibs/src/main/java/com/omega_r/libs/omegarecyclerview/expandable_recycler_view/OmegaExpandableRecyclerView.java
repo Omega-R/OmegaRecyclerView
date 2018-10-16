@@ -11,7 +11,9 @@ import android.view.ViewGroup;
 
 import com.omega_r.libs.omegarecyclerview.OmegaRecyclerView;
 import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.animation.AnimationHelper;
+import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.animation.ExpandableItemAnimator;
 import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.animation.standard_animations.DropDownItemAnimator;
+import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.animation.standard_animations.FadeItemAnimator;
 import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.data.ExpandableViewData;
 import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.data.FlatGroupingList;
 import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.data.GroupProvider;
@@ -24,6 +26,8 @@ import java.util.Collections;
 import java.util.List;
 
 public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
+
+    private static final ExpandableItemAnimator DEFAULT_ANIMATOR = new FadeItemAnimator();
 
     //region Recycler
 
@@ -43,7 +47,7 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
     }
 
     private void init() {
-        setItemAnimator(new DropDownItemAnimator());
+        setItemAnimator(DEFAULT_ANIMATOR);
         setChildDrawingOrderCallback(new RecyclerView.ChildDrawingOrderCallback() {
             @Override
             public int onGetChildDrawingOrder(int childCount, int i) {

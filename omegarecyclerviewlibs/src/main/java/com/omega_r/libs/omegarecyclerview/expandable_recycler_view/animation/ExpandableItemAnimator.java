@@ -15,6 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
+
+    public static final long DEFAULT_ANIMATION_DURATION = 300L; // default value from ValueAnimator
+
     private static final String TAG = ExpandableItemAnimator.class.getName();
 
     private ArrayList<ViewHolder> mPendingRemovals = new ArrayList<>();

@@ -10,6 +10,26 @@
     <com.omega_r.libs.omegarecyclerview.expandable_recycler_view.OmegaExpandableRecyclerView
         android:id="@+id/recyclerview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:background="@color/white_two"/>
+
+    <RadioGroup
+        android:id="@+id/radiogroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center_horizontal|bottom">
+        <RadioButton
+            android:id="@+id/radiobutton_fade"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_use_fade"
+            android:checked="true"/>
+        <RadioButton
+            android:id="@+id/radiobutton_dropdown"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_use_dropdown"/>
+    </RadioGroup>
 
 </FrameLayout>
