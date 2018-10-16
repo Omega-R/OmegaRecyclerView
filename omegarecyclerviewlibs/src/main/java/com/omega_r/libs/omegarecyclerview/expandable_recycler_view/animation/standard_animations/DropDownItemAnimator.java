@@ -9,7 +9,7 @@ public class DropDownItemAnimator extends ExpandableItemAnimator {
 
     @Override
     protected void onRemoveStart(OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder) {
-        holder.itemView.setTranslationY(0);
+        holder.itemView.setTranslationY(0f);
     }
 
     @Override
@@ -24,6 +24,12 @@ public class DropDownItemAnimator extends ExpandableItemAnimator {
     }
 
     @Override
+    protected void onRemoveEnd(OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder) {
+        holder.itemView.setAlpha(0f);
+        holder.itemView.setTranslationY(0f);
+    }
+
+    @Override
     protected void onAddStart(OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder) {
         holder.itemView.setTranslationY(-holder.itemView.getHeight() - holder.animationHelper.previousChangedHoldersHeight);
     }
@@ -31,7 +37,7 @@ public class DropDownItemAnimator extends ExpandableItemAnimator {
     @Override
     protected void setupAddAnimation(ViewPropertyAnimator animation, OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder) {
         animation
-                .translationY(0);
+                .translationY(0f);
     }
 
     @Override
@@ -39,4 +45,9 @@ public class DropDownItemAnimator extends ExpandableItemAnimator {
         // nothing
     }
 
+    @Override
+    protected void onAddEnd(OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder) {
+        holder.itemView.setAlpha(1f);
+        holder.itemView.setTranslationY(0f);
+    }
 }

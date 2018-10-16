@@ -39,11 +39,15 @@ public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
 
     protected abstract void onRemoveCancel(OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder);
 
+    protected abstract void onRemoveEnd(OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder);
+
     protected abstract void onAddStart(OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder);
 
     protected abstract void setupAddAnimation(ViewPropertyAnimator animation, OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder);
 
     protected abstract void onAddCancel(OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder);
+
+    protected abstract void onAddEnd(OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder);
 
     @Override
     public void runPendingAnimations() {
@@ -222,7 +226,7 @@ public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
 
                     public void onAnimationEnd(Animator animator) {
                         animation.setListener(null);
-                        holder.itemView.setAlpha(1f);
+                        onRemoveEnd(holder);
                         dispatchRemoveFinished(holder);
                         mRemoveAnimations.remove(holder);
                         dispatchFinishedWhenDone();
