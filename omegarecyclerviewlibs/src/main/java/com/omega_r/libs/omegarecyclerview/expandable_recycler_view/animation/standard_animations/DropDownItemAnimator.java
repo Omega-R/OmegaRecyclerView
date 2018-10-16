@@ -20,7 +20,7 @@ public class DropDownItemAnimator extends ExpandableItemAnimator {
 
     @Override
     protected void onRemoveCancel(OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder) {
-        holder.itemView.setTranslationY(-holder.itemView.getHeight() - holder.animationHelper.previousChangedHoldersHeight);
+        // nothing
     }
 
     @Override
@@ -36,7 +36,7 @@ public class DropDownItemAnimator extends ExpandableItemAnimator {
 
     @Override
     protected void onAddCancel(OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder) {
-        holder.itemView.setTranslationY(0);
+        // nothing
     }
 
 }

@@ -15,6 +15,7 @@ import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.animation.sta
 import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.data.ExpandableViewData;
 import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.data.FlatGroupingList;
 import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.data.GroupProvider;
+import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.data.Range;
 import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.layout_manager.ExpandableLayoutManager;
 
 import java.util.ArrayList;
@@ -70,6 +71,7 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
         private static final int VH_TYPE_CHILD = 1;
 
         private FlatGroupingList<G, CH> items;
+        private RecyclerView recyclerView;
 
         protected abstract GroupViewHolder provideGroupViewHolder(@NonNull ViewGroup viewGroup);
 
@@ -152,12 +154,32 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
             return super.getItemViewType(position);
         }
 
+        @Override
+        public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+            super.onAttachedToRecyclerView(recyclerView);
+            this.recyclerView = recyclerView;
+        }
+
+        @Override
+        public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
+            super.onDetachedFromRecyclerView(recyclerView);
+            this.recyclerView = null;
+        }
+
         public void expand(G group) {
             items.onExpandStateChanged(group, true);
 
             int childsCount = items.getChildsCount(group);
+            int positionStart = items.getVisiblePosition(group) + 1;
+
             if (childsCount > 0) {
-                tryNotifyItemRangeInserted(items.getVisiblePosition(group) + 1, childsCount);
+
+                if (recyclerView != null) {
+                    ExpandableLayoutManager lm = (ExpandableLayoutManager)recyclerView.getLayoutManager();
+                    if (lm != null) lm.setAddedRange(Range.ofLength(positionStart, childsCount));
+                }
+
+                tryNotifyItemRangeInserted(positionStart, childsCount);
             }
         }
 

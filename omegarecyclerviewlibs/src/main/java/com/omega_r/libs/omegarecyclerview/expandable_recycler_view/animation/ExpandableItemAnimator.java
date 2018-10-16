@@ -208,7 +208,7 @@ public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
     private void animateRemoveChild(final OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder) {
         onRemoveStart(holder);
         final ViewPropertyAnimator animation = holder.itemView.animate();
-        this.setupRemoveAnimation(animation, holder);
+        setupRemoveAnimation(animation, holder);
         animation
                 .setListener(new AnimatorListenerAdapter() {
                     public void onAnimationStart(Animator animator) {
