@@ -250,8 +250,8 @@ public class HeaderFooterWrapperAdapter<T extends RecyclerView.Adapter> extends 
     }
 
     @Override
-    protected void tryNotifyItemRemoved(int positionStart, int itemCount) {
-        super.tryNotifyItemRemoved(positionStart + mHeaderArray.size(), itemCount);
+    protected void tryNotifyItemRemoved(int position) {
+        super.tryNotifyItemRemoved(position + mHeaderArray.size());
     }
 
     @Override

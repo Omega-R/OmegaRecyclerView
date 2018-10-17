@@ -127,8 +127,8 @@ public class WrapperAdapter<T extends RecyclerView.ViewHolder> extends OmegaRecy
         }
 
         @Override
-        public void onItemRangeRemoved(int positionStart, int itemCount) {
-            tryNotifyItemRemoved(positionStart, itemCount);
+        public void onItemRangeRemoved(int position, int itemCount) {
+            tryNotifyItemRangeRemoved(position, itemCount);
         }
 
         @Override

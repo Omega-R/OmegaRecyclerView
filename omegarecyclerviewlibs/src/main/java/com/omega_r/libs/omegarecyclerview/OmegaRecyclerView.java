@@ -548,6 +548,21 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
             }
         }
 
+        protected void tryNotifyItemChanged(final int position) {
+            if (recyclerView == null) return;
+
+            if (!recyclerView.isComputingLayout()) {
+                notifyItemChanged(position);
+            } else {
+                recyclerView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        tryNotifyItemChanged(position);
+                    }
+                });
+            }
+        }
+
         protected void tryNotifyItemRangeInserted(final int positionStart, final int itemCount) {
             if (recyclerView == null) return;
 
@@ -563,16 +578,16 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
             }
         }
 
-        protected void tryNotifyItemRemoved(final int positionStart, final int itemCount) {
+        protected void tryNotifyItemRemoved(final int position) {
             if (recyclerView == null) return;
 
             if (!recyclerView.isComputingLayout()) {
-                notifyItemRangeRemoved(positionStart, itemCount);
+                notifyItemRemoved(position);
             } else {
                 recyclerView.post(new Runnable() {
                     @Override
                     public void run() {
-                        tryNotifyItemRemoved(positionStart, itemCount);
+                        tryNotifyItemRemoved(position);
                     }
                 });
             }
@@ -624,7 +639,7 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
         }
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends ExpandedRecyclerView.ViewHolder {
 
         public ViewHolder(ViewGroup parent, @LayoutRes int res) {
             this(parent, LayoutInflater.from(parent.getContext()), res);
