@@ -24,21 +24,21 @@ public class ExpandedRecyclerView extends RecyclerView {
     }
 
     @Override
-    protected int getAdapterPositionFor(ViewHolder viewHolder) {
+    protected int getAdapterPositionFor(RecyclerView.ViewHolder viewHolder) {
         return super.getAdapterPositionFor(viewHolder);
     }
 
-    public static ExpandedViewHolder getChildViewHolderInt(View child) {
-        return child == null ? null : (ExpandedViewHolder) ((RecyclerView.LayoutParams) child.getLayoutParams()).mViewHolder;
+    public static ViewHolder getChildViewHolderInt(View child) {
+        return child == null ? null : (ViewHolder) ((RecyclerView.LayoutParams) child.getLayoutParams()).mViewHolder;
     }
 
     public int getLayoutStep() {
         return mState.mLayoutStep;
     }
 
-    public static class ExpandedViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        public ExpandedViewHolder(@NonNull View itemView) {
+        public ViewHolder(@NonNull View itemView) {
             super(itemView);
         }
 

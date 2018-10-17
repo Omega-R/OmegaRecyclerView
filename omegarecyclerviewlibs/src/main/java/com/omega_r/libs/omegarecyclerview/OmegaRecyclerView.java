@@ -639,7 +639,7 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
         }
     }
 
-    public static class ViewHolder extends ExpandedViewHolder {
+    public static class ViewHolder extends ExpandedRecyclerView.ViewHolder {
 
         public ViewHolder(ViewGroup parent, @LayoutRes int res) {
             this(parent, LayoutInflater.from(parent.getContext()), res);

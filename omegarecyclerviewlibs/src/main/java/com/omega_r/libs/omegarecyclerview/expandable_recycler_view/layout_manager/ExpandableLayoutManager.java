@@ -59,7 +59,7 @@ public class ExpandableLayoutManager extends LinearLayoutManager {
     @Override
     public void addView(View child) {
         child.setAlpha(1f);
-        ExpandedRecyclerView.ExpandedViewHolder holder = ExpandedRecyclerView.getChildViewHolderInt(child);
+        ExpandedRecyclerView.ViewHolder holder = ExpandedRecyclerView.getChildViewHolderInt(child);
         if (holder instanceof OmegaExpandableRecyclerView.Adapter.ChildViewHolder) {
             int adapterPosition = holder.getAdapterPosition();
             if (mAddedRange.contains(adapterPosition)) {

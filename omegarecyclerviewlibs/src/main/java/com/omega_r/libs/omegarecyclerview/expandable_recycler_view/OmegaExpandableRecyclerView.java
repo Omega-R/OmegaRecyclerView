@@ -1,17 +1,21 @@
 package com.omega_r.libs.omegarecyclerview.expandable_recycler_view;
 
 import android.content.Context;
+import android.content.res.TypedArray;
+import android.support.annotation.IntRange;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.omega_r.libs.omegarecyclerview.OmegaRecyclerView;
+import com.omega_r.libs.omegarecyclerview.R;
 import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.animation.AnimationHelper;
-import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.animation.ExpandableItemAnimator;
+import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.animation.standard_animations.DropDownItemAnimator;
 import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.animation.standard_animations.FadeItemAnimator;
 import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.data.ExpandableViewData;
 import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.data.FlatGroupingList;
@@ -26,8 +30,11 @@ import java.util.List;
 
 public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
 
-    private static final ExpandableItemAnimator DEFAULT_ANIMATOR = new FadeItemAnimator();
+    public static final int CHILD_ANIM_DEFAULT = 0;
+    public static final int CHILD_ANIM_FADE = 1;
+    public static final int CHILD_ANIM_DROPDOWN = 2;
 
+    private int mChildAnimInt = CHILD_ANIM_DEFAULT;
     //region Recycler
 
     public OmegaExpandableRecyclerView(Context context) {
@@ -37,22 +44,50 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
 
     public OmegaExpandableRecyclerView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
+        parseAttributes(attrs, 0);
         init();
     }
 
     public OmegaExpandableRecyclerView(Context context, @Nullable AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        parseAttributes(attrs, defStyle);
         init();
     }
 
+
     private void init() {
-        setItemAnimator(DEFAULT_ANIMATOR);
+        setItemAnimator(requestItemAnimator());
         setChildDrawingOrderCallback(new RecyclerView.ChildDrawingOrderCallback() {
             @Override
             public int onGetChildDrawingOrder(int childCount, int i) {
                 return childCount - i - 1;
             }
         });
+    }
+
+    @Nullable
+    private ItemAnimator requestItemAnimator() {
+        switch (mChildAnimInt) {
+            case CHILD_ANIM_DEFAULT:
+                return new DefaultItemAnimator();
+            case CHILD_ANIM_DROPDOWN:
+                return new DropDownItemAnimator();
+            case CHILD_ANIM_FADE:
+                return new FadeItemAnimator();
+        }
+        return null;
+    }
+
+    private void parseAttributes(AttributeSet attributeSet, int defStyleAttr) {
+        TypedArray attrs = getContext().getTheme()
+                .obtainStyledAttributes(attributeSet, R.styleable.OmegaExpandableRecyclerView, defStyleAttr, 0);
+        try {
+            mChildAnimInt = attrs.getInteger(R.styleable.OmegaExpandableRecyclerView_childAnimation, CHILD_ANIM_DEFAULT);
+//            mExpandMode = attrs.getInteger(R.styleable.OmegaExpandableRecyclerView_expandMode, EXPAND_MODE_SINGLE);
+        } finally {
+            attrs.recycle();
+        }
+
     }
 
     @Override
@@ -75,6 +110,14 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
         if (!(adapter instanceof Adapter))
             throw new IllegalStateException("Adapter should extend OmegaExpandableRecyclerView.Adapter");
         super.setAdapter(adapter);
+    }
+
+    public int getChildAnimInt() {
+        return mChildAnimInt;
+    }
+
+    public void setChildAnimInt(@IntRange(from = CHILD_ANIM_DEFAULT, to = CHILD_ANIM_DROPDOWN) int childAnimInt) {
+        mChildAnimInt = childAnimInt;
     }
 
     // endregion
