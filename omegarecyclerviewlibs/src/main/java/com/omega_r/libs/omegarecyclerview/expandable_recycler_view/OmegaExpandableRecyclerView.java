@@ -9,8 +9,10 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 
 import com.omega_r.libs.omegarecyclerview.OmegaRecyclerView;
 import com.omega_r.libs.omegarecyclerview.R;
@@ -34,7 +36,12 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
     public static final int CHILD_ANIM_FADE = 1;
     public static final int CHILD_ANIM_DROPDOWN = 2;
 
+    public static final int EXPAND_MODE_SINGLE = 0;
+    public static final int EXPAND_MODE_MULTIPLE = 1;
+
+    private int mExpandMode = EXPAND_MODE_SINGLE;
     private int mChildAnimInt = CHILD_ANIM_DEFAULT;
+
     //region Recycler
 
     public OmegaExpandableRecyclerView(Context context) {
@@ -83,7 +90,7 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
                 .obtainStyledAttributes(attributeSet, R.styleable.OmegaExpandableRecyclerView, defStyleAttr, 0);
         try {
             mChildAnimInt = attrs.getInteger(R.styleable.OmegaExpandableRecyclerView_childAnimation, CHILD_ANIM_DEFAULT);
-//            mExpandMode = attrs.getInteger(R.styleable.OmegaExpandableRecyclerView_expandMode, EXPAND_MODE_SINGLE);
+            mExpandMode = attrs.getInteger(R.styleable.OmegaExpandableRecyclerView_expandMode, EXPAND_MODE_SINGLE);
         } finally {
             attrs.recycle();
         }
@@ -120,6 +127,9 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
         mChildAnimInt = childAnimInt;
     }
 
+    public int getExpandMode() {
+        return mExpandMode;
+    }
     // endregion
 
     //region Adapter
@@ -129,7 +139,7 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
         private static final int VH_TYPE_CHILD = 1;
 
         private FlatGroupingList<G, CH> items;
-        private RecyclerView recyclerView;
+        private OmegaExpandableRecyclerView recyclerView;
 
         protected abstract GroupViewHolder provideGroupViewHolder(@NonNull ViewGroup viewGroup);
 
@@ -215,7 +225,7 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
         @Override
         public void onAttachedToRecyclerView(RecyclerView recyclerView) {
             super.onAttachedToRecyclerView(recyclerView);
-            this.recyclerView = recyclerView;
+            this.recyclerView = (OmegaExpandableRecyclerView) recyclerView;
         }
 
         @Override
@@ -225,6 +235,13 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
         }
 
         public void expand(G group) {
+            if (recyclerView != null && recyclerView.getExpandMode() == EXPAND_MODE_SINGLE) {
+                List<G> expandedGroups = items.getExpandedGroups();
+                for (G expandedGroup : expandedGroups) {
+                    collapse(expandedGroup);
+                }
+            }
+
             items.onExpandStateChanged(group, true);
 
             int childsCount = items.getChildsCount(group);
@@ -289,12 +306,19 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
 
         public abstract class ChildViewHolder extends BaseViewHolder<CH> {
 
+            public View contentView;
             public AnimationHelper animationHelper;
 
             public ChildViewHolder(ViewGroup parent, @LayoutRes int res) {
-                super(parent, res);
+                this(LayoutInflater.from(parent.getContext()).inflate(res, parent, false));
             }
 
+            private ChildViewHolder(View view) {
+                super(new MaskView(view.getContext()));
+                itemView.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT));
+                ((ViewGroup) itemView).addView(view);
+                contentView = view;
+            }
         }
     }
     //endregion
@@ -305,6 +329,10 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
 
         BaseViewHolder(ViewGroup parent, @LayoutRes int res) {
             super(parent, res);
+        }
+
+        BaseViewHolder(View itemView) {
+            super(itemView);
         }
 
         private void bind(T item) {

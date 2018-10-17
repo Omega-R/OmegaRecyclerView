@@ -16,18 +16,17 @@ public class FadeItemAnimator extends ExpandableItemAnimator {
     @Override
     protected void setupRemoveAnimation(ViewPropertyAnimator animation, final OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder) {
         animation
-                .setDuration(FADE_DURATION)
-                .alpha(0f);
+                .alpha(0f)
+                .setDuration(FADE_DURATION);
     }
 
     @Override
     protected void onRemoveCancel(ViewPropertyAnimator animation, final OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder) {
-        animation.setDuration(DEFAULT_ANIMATION_DURATION);
+        // nothing
     }
 
     @Override
     protected void onRemoveEnd(ViewPropertyAnimator animation, final OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder) {
-        animation.setDuration(DEFAULT_ANIMATION_DURATION);
         holder.itemView.setAlpha(1f);
     }
 
@@ -39,18 +38,17 @@ public class FadeItemAnimator extends ExpandableItemAnimator {
     @Override
     protected void setupAddAnimation(ViewPropertyAnimator animation, final OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder) {
         animation
-                .setDuration(FADE_DURATION)
-                .alpha(1f);
+                .alpha(1f)
+                .setDuration(FADE_DURATION);
     }
 
     @Override
     protected void onAddCancel(ViewPropertyAnimator animation, final OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder) {
-        animation.setDuration(DEFAULT_ANIMATION_DURATION);
+        // nothing
     }
 
     @Override
     protected void onAddEnd(ViewPropertyAnimator animation, final OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder) {
-        animation.setDuration(DEFAULT_ANIMATION_DURATION);
         holder.itemView.setAlpha(1f);
     }
 
@@ -62,5 +60,10 @@ public class FadeItemAnimator extends ExpandableItemAnimator {
     @Override
     protected boolean shouldReverseRemoveOrder() {
         return false;
+    }
+
+    @Override
+    protected boolean isNeedAddingDelay() {
+        return true;
     }
 }

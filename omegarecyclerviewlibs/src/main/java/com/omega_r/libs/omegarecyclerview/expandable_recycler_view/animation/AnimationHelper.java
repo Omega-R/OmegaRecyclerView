@@ -6,6 +6,10 @@ import android.support.v7.widget.RecyclerView;
 public class AnimationHelper {
     public int totalChanges;
     public int positionInChanges;
+    public boolean havePendingRemovals;
+    public boolean havePendingAdding;
+    public int height;
+    public int width;
 
     @Nullable
     public RecyclerView.ViewHolder upperViewHolder;
@@ -18,5 +22,9 @@ public class AnimationHelper {
         positionInChanges = 0;
         upperViewHolder = null;
         lowerViewHolder = null;
+        havePendingRemovals = false;
+        havePendingAdding = false;
+        height = 0;
+        width = 0;
     }
 }

@@ -16,7 +16,6 @@ import java.util.List;
 
 public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
 
-    protected static final long DEFAULT_ANIMATION_DURATION = 300L; // default value from ValueAnimator
     private static final String TAG = ExpandableItemAnimator.class.getName();
 
     private ArrayList<ViewHolder> mPendingRemovals = new ArrayList<>();
@@ -53,6 +52,8 @@ public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
 
     protected abstract boolean shouldReverseRemoveOrder();
 
+    protected abstract boolean isNeedAddingDelay();
+
     @Override
     public void runPendingAnimations() {
         boolean removalsPending = !mPendingRemovals.isEmpty();
@@ -61,7 +62,7 @@ public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
         boolean additionsPending = !mPendingAdditions.isEmpty();
 
         if (removalsPending) runRemoveActions();
-        if (movesPending) runRemoveActions(removalsPending);
+        if (movesPending) runMoveActions(removalsPending);
         if (changesPending) runChangesActions(removalsPending);
         if (additionsPending) runAddActions(removalsPending, movesPending, changesPending);
     }
@@ -72,10 +73,10 @@ public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
             public void apply(ViewHolder param) {
                 runRemoveAnimation(param);
             }
-        }, false);
+        }, false, true);
     }
 
-    private void runRemoveActions(boolean hasRemovals) {
+    private void runMoveActions(boolean hasRemovals) {
         final ArrayList<MoveInfo> moves = new ArrayList<>(mPendingMoves);
         mMovesList.add(moves);
         mPendingMoves.clear();
@@ -119,7 +120,7 @@ public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
         }
     }
 
-    private void runAddActions(boolean hasRemovals, boolean hasMoves, boolean hasChanges) {
+    private void runAddActions(final boolean hasRemovals, boolean hasMoves, boolean hasChanges) {
         final ArrayList<ViewHolder> additions = new ArrayList<>(mPendingAdditions);
         mAdditionsList.add(additions);
         mPendingAdditions.clear();
@@ -130,7 +131,7 @@ public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
                     public void apply(ViewHolder param) {
                         runAddAnimation(param);
                     }
-                }, true);
+                }, true, hasRemovals);
                 mAdditionsList.remove(additions);
             }
         };
@@ -140,13 +141,13 @@ public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
             long changeDuration = hasChanges ? getChangeDuration() : 0;
             long totalDelay = removeDuration + Math.max(moveDuration, changeDuration);
             View view = additions.get(0).itemView;
-            ViewCompat.postOnAnimationDelayed(view, adder, totalDelay);
+            ViewCompat.postOnAnimationDelayed(view, adder, isNeedAddingDelay() ? totalDelay : 0L);
         } else {
             adder.run();
         }
     }
 
-    private void proceedWithAnimationHelper(List<ViewHolder> holders, UnVoidFunction<ViewHolder> func, boolean isAdding) {
+    private void proceedWithAnimationHelper(List<ViewHolder> holders, UnVoidFunction<ViewHolder> func, boolean isAdding, boolean havePendingRemovals) {
         int childChangesCount = 0;
         for (int i = 0; i < holders.size(); i++) {
             ViewHolder holder = holders.get(i);
@@ -154,6 +155,10 @@ public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
                 OmegaExpandableRecyclerView.Adapter.ChildViewHolder childViewHolder =
                         (OmegaExpandableRecyclerView.Adapter.ChildViewHolder) holder;
                 childViewHolder.animationHelper = new AnimationHelper();
+                childViewHolder.animationHelper.havePendingRemovals = havePendingRemovals;
+                childViewHolder.animationHelper.havePendingAdding = !mPendingAdditions.isEmpty() || isAdding;
+                childViewHolder.animationHelper.height = childViewHolder.itemView.getHeight();
+                childViewHolder.animationHelper.width = childViewHolder.itemView.getWidth();
 
                 if (isAdding) {
                     childViewHolder.animationHelper.lowerViewHolder = i < holders.size() - 1 ? holders.get(i + 1) : null;

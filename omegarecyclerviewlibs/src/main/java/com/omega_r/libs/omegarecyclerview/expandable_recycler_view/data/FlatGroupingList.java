@@ -88,6 +88,14 @@ public class FlatGroupingList<G, CH> {
         return mItems.get(mPositions.get(visiblePosition).groupIndex).getChilds().size();
     }
 
+    public List<G> getExpandedGroups() {
+        List<G> expandedGroups = new ArrayList<>();
+        for (int i = 0; i < mExpandStates.length; i++) {
+            if (mExpandStates[i]) expandedGroups.add(mItems.get(i).getGroup());
+        }
+        return expandedGroups;
+    }
+
     private int getUnflattedPosition(G group) {
         for (int i = 0; i < mItems.size(); i++) {
             if (mItems.get(i).is(group)) return i;

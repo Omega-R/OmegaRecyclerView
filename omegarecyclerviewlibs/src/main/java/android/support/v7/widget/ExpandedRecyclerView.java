@@ -42,7 +42,7 @@ public class ExpandedRecyclerView extends RecyclerView {
             super(itemView);
         }
 
-        public boolean isAddedInPreLayout() {
+        public final boolean isAddedInPreLayout() {
             return (mFlags & FLAG_APPEARED_IN_PRE_LAYOUT) != 0;
         }
 

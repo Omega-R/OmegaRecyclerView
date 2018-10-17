@@ -11,8 +11,9 @@
         android:id="@+id/recyclerview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white_two"
-        app:childAnimation="Dropdown"/>
+        android:background="@color/black"
+        app:childAnimation="Dropdown"
+        app:expandMode="single"/>
 
     <RadioGroup
         android:id="@+id/radiogroup"
