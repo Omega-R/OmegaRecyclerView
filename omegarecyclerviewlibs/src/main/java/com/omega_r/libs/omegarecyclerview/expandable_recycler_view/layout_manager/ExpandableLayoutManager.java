@@ -3,7 +3,6 @@ package com.omega_r.libs.omegarecyclerview.expandable_recycler_view.layout_manag
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.ExpandedRecyclerView;
-import android.support.v7.widget.ExpandedViewHolder;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
@@ -58,14 +57,9 @@ public class ExpandableLayoutManager extends LinearLayoutManager {
     }
 
     @Override
-    public void addDisappearingView(View child) {
-        super.addDisappearingView(child);
-    }
-
-    @Override
     public void addView(View child) {
         child.setAlpha(1f);
-        ExpandedViewHolder holder = ExpandedRecyclerView.getChildViewHolderInt(child);
+        ExpandedRecyclerView.ExpandedViewHolder holder = ExpandedRecyclerView.getChildViewHolderInt(child);
         if (holder instanceof OmegaExpandableRecyclerView.Adapter.ChildViewHolder) {
             int adapterPosition = holder.getAdapterPosition();
             if (mAddedRange.contains(adapterPosition)) {

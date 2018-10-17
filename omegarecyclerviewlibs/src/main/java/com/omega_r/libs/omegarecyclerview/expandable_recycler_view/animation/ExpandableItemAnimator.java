@@ -16,8 +16,7 @@ import java.util.List;
 
 public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
 
-    public static final long DEFAULT_ANIMATION_DURATION = 300L; // default value from ValueAnimator
-
+    protected static final long DEFAULT_ANIMATION_DURATION = 300L; // default value from ValueAnimator
     private static final String TAG = ExpandableItemAnimator.class.getName();
 
     private ArrayList<ViewHolder> mPendingRemovals = new ArrayList<>();
@@ -25,11 +24,9 @@ public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
     private ArrayList<MoveInfo> mPendingMoves = new ArrayList<>();
     private ArrayList<ChangeInfo> mPendingChanges = new ArrayList<>();
 
-
     private ArrayList<ArrayList<ViewHolder>> mAdditionsList = new ArrayList<>();
     private ArrayList<ArrayList<MoveInfo>> mMovesList = new ArrayList<>();
     private ArrayList<ArrayList<ChangeInfo>> mChangesList = new ArrayList<>();
-
 
     private ArrayList<ViewHolder> mAddAnimations = new ArrayList<>();
     private ArrayList<ViewHolder> mMoveAnimations = new ArrayList<>();
@@ -73,7 +70,7 @@ public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
         proceedWithAnimationHelper(mPendingRemovals, new UnVoidFunction<ViewHolder>() {
             @Override
             public void apply(ViewHolder param) {
-                animateRemoveImpl(param);
+                runRemoveAnimation(param);
             }
         }, false);
     }
@@ -86,7 +83,7 @@ public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
             @Override
             public void run() {
                 for (MoveInfo moveInfo : moves) {
-                    animateMoveImpl(moveInfo.holder, moveInfo.fromX, moveInfo.fromY, moveInfo.toX, moveInfo.toY);
+                    runMoveAnimation(moveInfo.holder, moveInfo.fromX, moveInfo.fromY, moveInfo.toX, moveInfo.toY);
                 }
                 moves.clear();
                 mMovesList.remove(moves);
@@ -108,7 +105,7 @@ public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
             @Override
             public void run() {
                 for (ChangeInfo change : changes) {
-                    animateChangeImpl(change);
+                    runChangeAnimation(change);
                 }
                 changes.clear();
                 mChangesList.remove(changes);
@@ -131,7 +128,7 @@ public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
                 proceedWithAnimationHelper(additions, new UnVoidFunction<ViewHolder>() {
                     @Override
                     public void apply(ViewHolder param) {
-                        animateAddImpl(param);
+                        runAddAnimation(param);
                     }
                 }, true);
                 mAdditionsList.remove(additions);
@@ -203,7 +200,7 @@ public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
         return true;
     }
 
-    private void animateRemoveImpl(ViewHolder holder) {
+    private void runRemoveAnimation(ViewHolder holder) {
         if (holder instanceof OmegaExpandableRecyclerView.Adapter.ChildViewHolder) {
             animateRemoveChild((OmegaExpandableRecyclerView.Adapter.ChildViewHolder) holder);
         } else {
@@ -266,7 +263,7 @@ public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
         return true;
     }
 
-    private void animateAddImpl(final ViewHolder holder) {
+    private void runAddAnimation(final ViewHolder holder) {
         if (holder instanceof OmegaExpandableRecyclerView.Adapter.ChildViewHolder) {
             animateAddChild((OmegaExpandableRecyclerView.Adapter.ChildViewHolder) holder);
         } else {
@@ -361,7 +358,7 @@ public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
         }
     }
 
-    private void animateMoveImpl(final ViewHolder holder, int fromX, int fromY, int toX, int toY) {
+    private void runMoveAnimation(final ViewHolder holder, int fromX, int fromY, int toX, int toY) {
         final View view = holder.itemView;
         final int deltaX = toX - fromX;
         final int deltaY = toY - fromY;
@@ -427,7 +424,7 @@ public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
         }
     }
 
-    private void animateChangeImpl(final ChangeInfo changeInfo) {
+    private void runChangeAnimation(final ChangeInfo changeInfo) {
         ViewHolder holder = changeInfo.oldHolder;
         final View view = holder == null ? null : holder.itemView;
         ViewHolder newHolder = changeInfo.newHolder;

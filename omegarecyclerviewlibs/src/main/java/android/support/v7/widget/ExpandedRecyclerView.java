@@ -1,6 +1,7 @@
 package android.support.v7.widget;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
@@ -34,4 +35,21 @@ public class ExpandedRecyclerView extends RecyclerView {
     public int getLayoutStep() {
         return mState.mLayoutStep;
     }
+
+    public static class ExpandedViewHolder extends RecyclerView.ViewHolder {
+
+        public ExpandedViewHolder(@NonNull View itemView) {
+            super(itemView);
+        }
+
+        public boolean isAddedInPreLayout() {
+            return (mFlags & FLAG_APPEARED_IN_PRE_LAYOUT) != 0;
+        }
+
+        public boolean isAttachedScrap() {
+            return super.isScrap() && !mInChangeScrap;
+        }
+
+    }
+
 }
