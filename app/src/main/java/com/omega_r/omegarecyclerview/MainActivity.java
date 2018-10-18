@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.button_expandable_recyclerview:
                 AppOmegaIntentBuilder.from(this)
                         .appActivities()
-                        .expandableActivity()
+                        .chooseExpandableActivity()
                         .createIntentHandler()
                         .startActivity();
                 break;

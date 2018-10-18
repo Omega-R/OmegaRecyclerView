@@ -132,4 +132,12 @@ public class FlatGroupingList<G, CH> {
         mExpandStates = savedInstanceState.getBooleanArray(KEY_STATES);
         updateIndexes();
     }
+
+    public List<ExpandableViewData<G, CH>> getItems() {
+        return mItems;
+    }
+
+    public ExpandableViewData<G, CH> getDataAtVisiblePosition(int pos) {
+        return mItems.get(mPositions.get(pos).groupIndex);
+    }
 }

@@ -1,4 +1,4 @@
-package com.omega_r.omegarecyclerview.expandable_example;
+package com.omega_r.omegarecyclerview.expandable_example.core;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -20,34 +20,44 @@ public class ExpandableActivity extends AppCompatActivity implements CompoundBut
     private static final ExpandableItemAnimator DROPDOWN_ANIMATOR = new DropDownItemAnimator();
 
     private OmegaExpandableRecyclerView mRecyclerView;
-    private ExpandableAdapter mAdapter = new ExpandableAdapter();
+    private OmegaExpandableRecyclerView.Adapter mAdapter = provideAdapter();
+
+    protected OmegaExpandableRecyclerView.Adapter provideAdapter() {
+        return new ExpandableAdapter();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_expandable);
 
+        setupRecyclerView();
+        setupRadioButtons();
+        fillAdapter();
+    }
+
+    protected void setupRecyclerView() {
         mRecyclerView = findViewById(R.id.recyclerview);
         mRecyclerView.setAdapter(mAdapter);
+    }
 
+    protected void fillAdapter() {
         mAdapter.setItems(
-                SimpleData.from(getString(R.string.group_text_1), getString(R.string.child_text_1)),
-                SimpleData.from(getString(R.string.group_text_2), getString(R.string.child_text_2)),
-                SimpleData.from(getString(R.string.group_text_3),
+                SimpleData.from(new QuoteGlobalInfo(getString(R.string.group_text_1), 1500), getString(R.string.child_text_1)),
+                SimpleData.from(new QuoteGlobalInfo(getString(R.string.group_text_2), 1500), getString(R.string.child_text_2)),
+                SimpleData.from(new QuoteGlobalInfo(getString(R.string.group_text_3), 1914),
                         getString(R.string.child_text_3),
                         getString(R.string.child_text_5)),
-                SimpleData.from(getString(R.string.group_text_4),
+                SimpleData.from(new QuoteGlobalInfo(getString(R.string.group_text_5), 1914),
                         getString(R.string.child_text_1),
                         getString(R.string.child_text_2),
                         getString(R.string.child_text_3),
                         getString(R.string.child_text_4),
                         getString(R.string.child_text_5))
         );
-
-        setupRadioButtons();
     }
 
-    private void setupRadioButtons() {
+    protected void setupRadioButtons() {
         RadioButton dropdownRB = findViewById(R.id.radiobutton_dropdown);
         RadioButton fadeRB = findViewById(R.id.radiobutton_fade);
         RadioButton singleRB = findViewById(R.id.radiobutton_single);

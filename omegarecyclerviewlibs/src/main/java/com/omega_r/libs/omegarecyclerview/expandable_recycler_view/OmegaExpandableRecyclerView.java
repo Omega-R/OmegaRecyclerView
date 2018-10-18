@@ -183,8 +183,8 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
     //region Adapter
     public static abstract class Adapter<G, CH> extends OmegaRecyclerView.Adapter<BaseViewHolder> {
 
-        private static final int VH_TYPE_GROUP = 0;
-        private static final int VH_TYPE_CHILD = 1;
+        private static final int VH_TYPE_GROUP = 238956;
+        private static final int VH_TYPE_CHILD = 238957;
 
         private static final long ANTI_SPAM_DELAY = 400;
 
@@ -215,7 +215,7 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
         private List<ExpandableViewData<G, CH>> convertFrom(GroupProvider<G, CH>[] groupProviders) {
             List<ExpandableViewData<G, CH>> expandableViewData = new ArrayList<>();
             for (GroupProvider<G, CH> groupProvider : groupProviders) {
-                expandableViewData.add(ExpandableViewData.of(groupProvider.provideGroup(), groupProvider.provideChilds()));
+                expandableViewData.add(ExpandableViewData.of(groupProvider.provideGroup(), groupProvider.provideStickyId(), groupProvider.provideChilds()));
             }
             return expandableViewData;
         }
@@ -338,9 +338,17 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
             return items.onSaveInstanceState();
         }
 
-        public void onRestoreInstanceState(Bundle savedInstanceState) {
+        protected void onRestoreInstanceState(Bundle savedInstanceState) {
             items.onRestoreInstanceState(savedInstanceState);
             tryNotifyDataSetChanged();
+        }
+
+        public List<ExpandableViewData<G, CH>> getItems() {
+            return items.getItems();
+        }
+
+        public ExpandableViewData<G, CH> getDataAtPosition(int visiblePosition) {
+            return items.getDataAtVisiblePosition(visiblePosition);
         }
 
         public abstract class GroupViewHolder extends BaseViewHolder<G> {
