@@ -2,6 +2,7 @@ package com.omega_r.libs.omegarecyclerview.expandable_recycler_view;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.os.SystemClock;
 import android.support.annotation.IntRange;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
@@ -9,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -135,6 +137,10 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
 
         private static final int VH_TYPE_GROUP = 0;
         private static final int VH_TYPE_CHILD = 1;
+
+        private static final long ANTI_SPAM_DELAY = 400;
+
+        private long mAntiSpamTimestamp = SystemClock.elapsedRealtime();
 
         private FlatGroupingList<G, CH> items;
         private OmegaExpandableRecyclerView recyclerView;
@@ -266,6 +272,10 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
         }
 
         private void notifyExpandFired(GroupViewHolder viewHolder) {
+            long lastTimestamp = mAntiSpamTimestamp;
+            mAntiSpamTimestamp = SystemClock.elapsedRealtime();
+            if (mAntiSpamTimestamp - lastTimestamp < ANTI_SPAM_DELAY) return;
+
             G group = viewHolder.getItem();
             if (items.isExpanded(group)) {
                 collapse(group);
