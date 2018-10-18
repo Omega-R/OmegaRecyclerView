@@ -47,18 +47,6 @@ public class ExpandableActivity extends AppCompatActivity implements CompoundBut
         setupRadioButtons();
     }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        mAdapter.onSaveInstanceState(outState);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        mAdapter.onRestoreInstanceState(savedInstanceState);
-    }
-
     private void setupRadioButtons() {
         RadioButton dropdownRB = findViewById(R.id.radiobutton_dropdown);
         RadioButton fadeRB = findViewById(R.id.radiobutton_fade);

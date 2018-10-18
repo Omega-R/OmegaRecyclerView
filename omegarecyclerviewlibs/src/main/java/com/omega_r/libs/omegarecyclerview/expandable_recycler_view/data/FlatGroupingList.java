@@ -1,6 +1,7 @@
 package com.omega_r.libs.omegarecyclerview.expandable_recycler_view.data;
 
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
@@ -118,8 +119,10 @@ public class FlatGroupingList<G, CH> {
         }
     }
 
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        savedInstanceState.putBooleanArray(KEY_STATES, mExpandStates);
+    public Parcelable onSaveInstanceState() {
+        Bundle bundle = new Bundle();
+        bundle.putBooleanArray(KEY_STATES, mExpandStates);
+        return bundle;
     }
 
     public void onRestoreInstanceState(Bundle savedInstanceState) {
