@@ -3,6 +3,8 @@ package com.omega_r.libs.omegarecyclerview.expandable_recycler_view;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Build;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.os.SystemClock;
 import android.support.annotation.IntRange;
 import android.support.annotation.LayoutRes;
@@ -40,6 +42,9 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
 
     public static final int EXPAND_MODE_SINGLE = 0;
     public static final int EXPAND_MODE_MULTIPLE = 1;
+
+    private static final String KEY_ADAPTER_DATA = "OmegaExpandableRecyclerView.KEY_ADAPTER_DATA";
+    private static final String KEY_RECYCLER_DATA = "OmegaExpandableRecyclerView.KEY_RECYCLER_DATA";
 
     private int mExpandMode = EXPAND_MODE_SINGLE;
     private int mChildAnimInt = CHILD_ANIM_DEFAULT;
@@ -139,6 +144,36 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
     public int getExpandMode() {
         return mExpandMode;
     }
+
+    @Override
+    protected Parcelable onSaveInstanceState() {
+        Bundle bundle = new Bundle();
+
+        RecyclerView.Adapter adapter = getAdapter();
+        if (adapter != null) {
+            bundle.putParcelable(KEY_ADAPTER_DATA, ((Adapter) adapter).onSaveInstanceState());
+        }
+
+        bundle.putParcelable(KEY_RECYCLER_DATA, super.onSaveInstanceState());
+
+        return bundle;
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Parcelable state) {
+        if (state instanceof Bundle) {
+            Bundle bundle = (Bundle) state;
+            if (bundle.containsKey(KEY_RECYCLER_DATA)) {
+                super.onRestoreInstanceState(bundle.getParcelable(KEY_RECYCLER_DATA));
+            }
+            if (bundle.containsKey(KEY_ADAPTER_DATA) && getAdapter() != null) {
+                ((Adapter)getAdapter()).onRestoreInstanceState(bundle.getBundle(KEY_ADAPTER_DATA));
+            }
+        } else {
+            super.onRestoreInstanceState(state);
+        }
+    }
+
     // endregion
 
     //region Adapter
@@ -293,6 +328,15 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
                 expand(group);
                 viewHolder.onExpand(viewHolder, items.getGroupIndex(group));
             }
+        }
+
+        protected Parcelable onSaveInstanceState() {
+            return items.onSaveInstanceState();
+        }
+
+        public void onRestoreInstanceState(Bundle savedInstanceState) {
+            items.onRestoreInstanceState(savedInstanceState);
+            tryNotifyDataSetChanged();
         }
 
         public abstract class GroupViewHolder extends BaseViewHolder<G> {

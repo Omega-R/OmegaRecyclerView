@@ -1,5 +1,7 @@
 package com.omega_r.libs.omegarecyclerview.expandable_recycler_view.data;
 
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
@@ -9,11 +11,12 @@ import java.util.List;
 public class FlatGroupingList<G, CH> {
 
     public static final int POSITION_NOT_FOUND = PositionData.POSITION_NOT_FOUND;
+    public static final String KEY_STATES = "FlatGroupingList.KEY_STATES";
 
     private final List<ExpandableViewData<G, CH>> mItems;
     private final List<PositionData> mPositions = new ArrayList<>(); // represents mapping {visibleIndex : realPositionData}
 
-    private final boolean[] mExpandStates;
+    private boolean[] mExpandStates;
 
     public FlatGroupingList(@NonNull List<ExpandableViewData<G, CH>> items) {
         mItems = items;
@@ -114,5 +117,19 @@ public class FlatGroupingList<G, CH> {
                 }
             }
         }
+    }
+
+    public Parcelable onSaveInstanceState() {
+        Bundle bundle = new Bundle();
+        bundle.putBooleanArray(KEY_STATES, mExpandStates);
+        return bundle;
+    }
+
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        if (savedInstanceState == null || !savedInstanceState.containsKey(KEY_STATES)) {
+            return;
+        }
+        mExpandStates = savedInstanceState.getBooleanArray(KEY_STATES);
+        updateIndexes();
     }
 }
