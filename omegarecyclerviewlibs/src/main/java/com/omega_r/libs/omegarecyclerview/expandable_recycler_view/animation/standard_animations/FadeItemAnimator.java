@@ -5,7 +5,7 @@ import android.view.ViewPropertyAnimator;
 import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.OmegaExpandableRecyclerView;
 import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.animation.ExpandableItemAnimator;
 
-public class FadeItemAnimator extends ExpandableItemAnimator {
+public final class FadeItemAnimator extends ExpandableItemAnimator {
     private static final int FADE_DURATION = 100;
 
     @Override

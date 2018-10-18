@@ -9,10 +9,8 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 
 import com.omega_r.libs.omegarecyclerview.OmegaRecyclerView;
 import com.omega_r.libs.omegarecyclerview.R;
@@ -306,18 +304,16 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
 
         public abstract class ChildViewHolder extends BaseViewHolder<CH> {
 
-            public View contentView;
-            public AnimationHelper animationHelper;
+            public AnimationHelper animationHelper = new AnimationHelper();
 
             public ChildViewHolder(ViewGroup parent, @LayoutRes int res) {
-                this(LayoutInflater.from(parent.getContext()).inflate(res, parent, false));
+                super(parent, res);
             }
 
-            private ChildViewHolder(View view) {
-                super(new MaskView(view.getContext()));
-                itemView.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT));
-                ((ViewGroup) itemView).addView(view);
-                contentView = view;
+            @Override
+            protected void bind(CH item) {
+                super.bind(item);
+                animationHelper.visibleAdapterPosition = getAdapterPosition();
             }
         }
     }
@@ -331,11 +327,7 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
             super(parent, res);
         }
 
-        BaseViewHolder(View itemView) {
-            super(itemView);
-        }
-
-        private void bind(T item) {
+        protected void bind(T item) {
             this.item = item;
             onBind(item);
         }

@@ -59,18 +59,6 @@ public class ExpandableAdapter extends OmegaExpandableRecyclerView.Adapter<Strin
         ExChildViewHolder(ViewGroup parent) {
             super(parent, R.layout.item_exp_child);
             textView = findViewById(R.id.textview_child_content);
-            if (Build.VERSION.SDK_INT >= 26) {
-                contentView.setBackgroundColor(color());
-            }
-        }
-
-        @RequiresApi(26)
-        private int color() {
-            int rnd = new Random().nextInt();
-            float r = ((rnd >> 16) & 0xff) / 255.0f;
-            float g = ((rnd >>  8) & 0xff) / 255.0f;
-            float b = ((rnd      ) & 0xff) / 255.0f;
-            return Color.argb(1f, r, g, b);
         }
 
         @Override
