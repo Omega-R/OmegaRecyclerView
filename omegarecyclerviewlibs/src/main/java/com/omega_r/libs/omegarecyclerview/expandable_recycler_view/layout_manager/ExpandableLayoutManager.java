@@ -1,6 +1,7 @@
 package com.omega_r.libs.omegarecyclerview.expandable_recycler_view.layout_manager;
 
 import android.content.Context;
+import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.ExpandedRecyclerView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,6 +14,8 @@ import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.OmegaExpandab
 import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.data.Range;
 
 public class ExpandableLayoutManager extends LinearLayoutManager {
+
+    public static final float DEFAULT_CHILD_Z = -50f;
 
     private Range mAddedRange = Range.empty();
 
@@ -59,8 +62,15 @@ public class ExpandableLayoutManager extends LinearLayoutManager {
     @Override
     public void addView(View child) {
         child.setAlpha(1f);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            child.setTranslationZ(0f);
+        }
+
         ExpandedRecyclerView.ViewHolder holder = ExpandedRecyclerView.getChildViewHolderInt(child);
         if (holder instanceof OmegaExpandableRecyclerView.Adapter.ChildViewHolder) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                child.setTranslationZ(DEFAULT_CHILD_Z);
+            }
             int adapterPosition = holder.getAdapterPosition();
             if (mAddedRange.contains(adapterPosition)) {
                 child.setAlpha(0f);

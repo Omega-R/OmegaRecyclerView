@@ -65,6 +65,10 @@
             <enum name="Fade" value="1" />
             <enum name="Dropdown" value="2" />
         </attr>
+        <attr name="expandMode" format="enum">
+            <enum name="single" value="0" />
+            <enum name="multiple" value="1" />
+        </attr>
     </declare-styleable>
 
 </resources>
