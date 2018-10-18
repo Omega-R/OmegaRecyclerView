@@ -2,6 +2,7 @@ package com.omega_r.libs.omegarecyclerview.expandable_recycler_view;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.os.Build;
 import android.os.SystemClock;
 import android.support.annotation.IntRange;
 import android.support.annotation.LayoutRes;
@@ -31,6 +32,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
+    private static final String TAG = OmegaExpandableRecyclerView.class.getName();
 
     public static final int CHILD_ANIM_DEFAULT = 0;
     public static final int CHILD_ANIM_FADE = 1;
@@ -78,7 +80,13 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
             case CHILD_ANIM_DEFAULT:
                 return new DefaultItemAnimator();
             case CHILD_ANIM_DROPDOWN:
-                return new DropDownItemAnimator();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    return new DropDownItemAnimator();
+                } else {
+                    Log.e(TAG, "DropDownItemAnimator supported only since Lollipop");
+                    return new DefaultItemAnimator();
+                }
+
             case CHILD_ANIM_FADE:
                 return new FadeItemAnimator();
         }
@@ -125,6 +133,7 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
 
     public void setChildAnimInt(@IntRange(from = CHILD_ANIM_DEFAULT, to = CHILD_ANIM_DROPDOWN) int childAnimInt) {
         mChildAnimInt = childAnimInt;
+        setItemAnimator(requestItemAnimator());
     }
 
     public int getExpandMode() {
