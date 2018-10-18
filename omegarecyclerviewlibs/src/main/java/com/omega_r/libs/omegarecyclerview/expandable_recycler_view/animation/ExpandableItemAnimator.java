@@ -133,25 +133,41 @@ public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
     }
 
     private void runAddActions(boolean hasRemovals, boolean hasMoves, boolean hasChanges) {
-        final ArrayList<ViewHolder> additions = new ArrayList<>(mPendingChanges.additions);
-        mAdditionsList.add(additions);
-        Runnable adder = new Runnable() {
-            public void run() {
-                proceedWithAnimationHelper(additions, new UnVoidFunction<ViewHolder>() {
-                    @Override
-                    public void apply(ViewHolder param) {
-                        runAddAnimation(param);
-                    }
-                }, true);
-                mAdditionsList.remove(additions);
+        final ArrayList<ViewHolder> groupAdditions = new ArrayList<>();
+        final ArrayList<ViewHolder> childAdditions = new ArrayList<>();
+        for (ViewHolder addition : mPendingChanges.additions) {
+            if (addition instanceof OmegaExpandableRecyclerView.Adapter.ChildViewHolder) {
+                childAdditions.add(addition);
+            } else {
+                groupAdditions.add(addition);
             }
-        };
-        if (hasRemovals || hasMoves || hasChanges) {
-            View view = additions.get(0).itemView;
-            long totalDelay = getTotalDelay(hasRemovals, hasMoves, hasChanges);
-            ViewCompat.postOnAnimationDelayed(view, adder, isNeedAddingDelay() ? totalDelay : 0L);
-        } else {
-            adder.run();
+        }
+
+        scheduleAddAnimation(groupAdditions, true, hasRemovals, hasMoves, hasChanges);
+        scheduleAddAnimation(childAdditions, false, hasRemovals, hasMoves, hasChanges);
+    }
+
+    private void scheduleAddAnimation(final ArrayList<ViewHolder> additions, boolean forceDelay, boolean hasRemovals, boolean hasMoves, boolean hasChanges) {
+        if (!additions.isEmpty()) {
+            mAdditionsList.add(additions);
+            Runnable adder = new Runnable() {
+                public void run() {
+                    proceedWithAnimationHelper(additions, new UnVoidFunction<ViewHolder>() {
+                        @Override
+                        public void apply(ViewHolder param) {
+                            runAddAnimation(param);
+                        }
+                    }, true);
+                    mAdditionsList.remove(additions);
+                }
+            };
+            if (hasRemovals || hasMoves || hasChanges) {
+                View view = additions.get(0).itemView;
+                long totalDelay = getTotalDelay(hasRemovals, hasMoves, hasChanges);
+                ViewCompat.postOnAnimationDelayed(view, adder, forceDelay || isNeedAddingDelay() ? totalDelay : 0L);
+            } else {
+                adder.run();
+            }
         }
     }
 
@@ -281,6 +297,7 @@ public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
 
     @Override
     public boolean animateAdd(final ViewHolder holder) {
+        holder.itemView.setAlpha(0f);
         endAnimation(holder);
         mPendingChanges.additions.add(holder);
         return true;
