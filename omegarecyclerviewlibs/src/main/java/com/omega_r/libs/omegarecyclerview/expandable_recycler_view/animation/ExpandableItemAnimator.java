@@ -3,6 +3,7 @@ package com.omega_r.libs.omegarecyclerview.expandable_recycler_view.animation;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.support.v7.widget.SimpleItemAnimator;
@@ -176,11 +177,11 @@ public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
                 childViewHolder.animationHelper.setPendingChanges(mPendingChanges);
 
                 if (isAdding) {
-                    childViewHolder.animationHelper.lowerViewHolder = i < holders.size() - 1 ? holders.get(i + 1) : null;
-                    childViewHolder.animationHelper.upperViewHolder = i > 0 ? holders.get(i - 1) : null;
+                    childViewHolder.animationHelper.lowerViewHolder = i < holders.size() - 1 ? tryGetChildViewHolder(holders, i + 1) : null;
+                    childViewHolder.animationHelper.upperViewHolder = i > 0 ? tryGetChildViewHolder(holders, i - 1) : null;
                 } else {
-                    childViewHolder.animationHelper.upperViewHolder = i < holders.size() - 1 ? holders.get(i + 1) : null;
-                    childViewHolder.animationHelper.lowerViewHolder = i > 0 ? holders.get(i - 1) : null;
+                    childViewHolder.animationHelper.upperViewHolder = i < holders.size() - 1 ? tryGetChildViewHolder(holders, i + 1) : null;
+                    childViewHolder.animationHelper.lowerViewHolder = i > 0 ? tryGetChildViewHolder(holders, i - 1) : null;
                 }
 
                 childChangesCount++;
@@ -196,6 +197,13 @@ public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
                 applyViewHolder(holders.get(i), func, childChangesCount, i);
             }
         }
+    }
+
+    @Nullable
+    private OmegaExpandableRecyclerView.Adapter.ChildViewHolder tryGetChildViewHolder(List<ViewHolder> holders, int index) {
+        if (index < 0 || index > holders.size() - 1) return null;
+        ViewHolder vh = holders.get(index);
+        return vh instanceof OmegaExpandableRecyclerView.Adapter.ChildViewHolder ? (OmegaExpandableRecyclerView.Adapter.ChildViewHolder) vh : null;
     }
 
     private void applyViewHolder(ViewHolder holder, UnVoidFunction<ViewHolder> func, int childChangesCount, int positionInChanges) {

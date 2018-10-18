@@ -4,6 +4,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 
+import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.OmegaExpandableRecyclerView;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,10 +20,10 @@ public class AnimationHelper {
     private PendingChanges pendingChanges = new PendingChanges();
 
     @Nullable
-    public RecyclerView.ViewHolder upperViewHolder;
+    public OmegaExpandableRecyclerView.Adapter.ChildViewHolder upperViewHolder;
 
     @Nullable
-    public RecyclerView.ViewHolder lowerViewHolder;
+    public OmegaExpandableRecyclerView.Adapter.ChildViewHolder lowerViewHolder;
 
     public void clear() {
         totalChanges = 0;
