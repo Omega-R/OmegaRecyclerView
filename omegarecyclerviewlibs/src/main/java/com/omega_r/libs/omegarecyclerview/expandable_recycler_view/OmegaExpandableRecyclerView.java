@@ -145,6 +145,10 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
         return mExpandMode;
     }
 
+    public void setExpandMode(@IntRange(from = EXPAND_MODE_SINGLE, to = EXPAND_MODE_MULTIPLE) int expandMode) {
+        mExpandMode = expandMode;
+    }
+
     @Override
     protected Parcelable onSaveInstanceState() {
         Bundle bundle = new Bundle();

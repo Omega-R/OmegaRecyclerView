@@ -1,11 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".expandable_example.ExpandableActivity">
+    tools:context=".expandable_example.ExpandableActivity"
+    android:orientation="vertical">
+
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/colorPrimary">
+
+        <RadioButton
+            android:id="@+id/radiobutton_fade"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_use_fade"
+            android:textColor="@color/white"
+            android:checked="true"/>
+
+        <RadioButton
+            android:id="@+id/radiobutton_dropdown"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_use_dropdown"
+            android:textColor="@color/white"/>
+
+    </RadioGroup>
+
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/colorPrimary">
+
+        <RadioButton
+            android:id="@+id/radiobutton_single"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_use_single"
+            android:textColor="@color/white"
+            android:checked="true"/>
+
+        <RadioButton
+            android:id="@+id/radiobutton_multiple"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_use_multiple"
+            android:textColor="@color/white"/>
+
+    </RadioGroup>
 
     <com.omega_r.libs.omegarecyclerview.expandable_recycler_view.OmegaExpandableRecyclerView
         android:id="@+id/recyclerview"
@@ -14,23 +61,4 @@
         app:childAnimation="Dropdown"
         app:expandMode="single"/>
 
-    <RadioGroup
-        android:id="@+id/radiogroup"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_gravity="center_horizontal|bottom">
-        <RadioButton
-            android:id="@+id/radiobutton_fade"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/button_use_fade"
-            android:checked="true"/>
-        <RadioButton
-            android:id="@+id/radiobutton_dropdown"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/button_use_dropdown"/>
-    </RadioGroup>
-
-</FrameLayout>
+</LinearLayout>

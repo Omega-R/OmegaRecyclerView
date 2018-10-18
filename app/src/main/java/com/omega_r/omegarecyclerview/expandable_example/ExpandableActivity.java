@@ -50,6 +50,9 @@ public class ExpandableActivity extends AppCompatActivity implements CompoundBut
     private void setupRadioButtons() {
         RadioButton dropdownRB = findViewById(R.id.radiobutton_dropdown);
         RadioButton fadeRB = findViewById(R.id.radiobutton_fade);
+        RadioButton singleRB = findViewById(R.id.radiobutton_single);
+        RadioButton multipleRB = findViewById(R.id.radiobutton_multiple);
+
         switch (mRecyclerView.getChildAnimInt()) {
             case OmegaExpandableRecyclerView.CHILD_ANIM_DROPDOWN:
                 dropdownRB.setChecked(true);
@@ -58,8 +61,20 @@ public class ExpandableActivity extends AppCompatActivity implements CompoundBut
                 fadeRB.setChecked(true);
                 break;
         }
+
+        switch (mRecyclerView.getChildAnimInt()) {
+            case OmegaExpandableRecyclerView.CHILD_ANIM_DROPDOWN:
+                dropdownRB.setChecked(true);
+                break;
+            case OmegaExpandableRecyclerView.CHILD_ANIM_FADE:
+                fadeRB.setChecked(true);
+                break;
+        }
+
         dropdownRB.setOnCheckedChangeListener(this);
         fadeRB.setOnCheckedChangeListener(this);
+        singleRB.setOnCheckedChangeListener(this);
+        multipleRB.setOnCheckedChangeListener(this);
     }
 
     @Override
@@ -71,6 +86,12 @@ public class ExpandableActivity extends AppCompatActivity implements CompoundBut
                     break;
                 case R.id.radiobutton_dropdown:
                     mRecyclerView.setItemAnimator(DROPDOWN_ANIMATOR);
+                    break;
+                case R.id.radiobutton_single:
+                    mRecyclerView.setExpandMode(OmegaExpandableRecyclerView.EXPAND_MODE_SINGLE);
+                    break;
+                case R.id.radiobutton_multiple:
+                    mRecyclerView.setExpandMode(OmegaExpandableRecyclerView.EXPAND_MODE_MULTIPLE);
                     break;
             }
         }
