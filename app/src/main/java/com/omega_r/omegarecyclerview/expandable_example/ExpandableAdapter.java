@@ -1,19 +1,12 @@
 package com.omega_r.omegarecyclerview.expandable_example;
 
-import android.graphics.Color;
-import android.graphics.ColorSpace;
-import android.os.Build;
-import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.OmegaExpandableRecyclerView;
 import com.omega_r.omegarecyclerview.R;
-
-import java.util.Random;
 
 public class ExpandableAdapter extends OmegaExpandableRecyclerView.Adapter<String, String> {
 
