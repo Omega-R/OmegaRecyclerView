@@ -20,6 +20,7 @@ public class ExpandableActivity extends AppCompatActivity implements CompoundBut
     private static final ExpandableItemAnimator DROPDOWN_ANIMATOR = new DropDownItemAnimator();
 
     private OmegaExpandableRecyclerView mRecyclerView;
+    private ExpandableAdapter mAdapter = new ExpandableAdapter();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,10 +28,9 @@ public class ExpandableActivity extends AppCompatActivity implements CompoundBut
         setContentView(R.layout.activity_expandable);
 
         mRecyclerView = findViewById(R.id.recyclerview);
-        ExpandableAdapter adapter = new ExpandableAdapter();
-        mRecyclerView.setAdapter(adapter);
+        mRecyclerView.setAdapter(mAdapter);
 
-        adapter.setItems(
+        mAdapter.setItems(
                 SimpleData.from(getString(R.string.group_text_1), getString(R.string.child_text_1)),
                 SimpleData.from(getString(R.string.group_text_2), getString(R.string.child_text_2)),
                 SimpleData.from(getString(R.string.group_text_3),
@@ -45,6 +45,18 @@ public class ExpandableActivity extends AppCompatActivity implements CompoundBut
         );
 
         setupRadioButtons();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        mAdapter.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        mAdapter.onRestoreInstanceState(savedInstanceState);
     }
 
     private void setupRadioButtons() {

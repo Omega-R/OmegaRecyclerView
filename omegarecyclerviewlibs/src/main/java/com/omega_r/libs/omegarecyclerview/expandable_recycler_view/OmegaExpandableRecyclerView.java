@@ -3,6 +3,7 @@ package com.omega_r.libs.omegarecyclerview.expandable_recycler_view;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.annotation.IntRange;
 import android.support.annotation.LayoutRes;
@@ -139,6 +140,7 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
     public int getExpandMode() {
         return mExpandMode;
     }
+
     // endregion
 
     //region Adapter
@@ -293,6 +295,15 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
                 expand(group);
                 viewHolder.onExpand(viewHolder, items.getGroupIndex(group));
             }
+        }
+
+        public void onSaveInstanceState(Bundle savedInstanceState) {
+            items.onSaveInstanceState(savedInstanceState);
+        }
+
+        public void onRestoreInstanceState(Bundle savedInstanceState) {
+            items.onRestoreInstanceState(savedInstanceState);
+            tryNotifyDataSetChanged();
         }
 
         public abstract class GroupViewHolder extends BaseViewHolder<G> {
