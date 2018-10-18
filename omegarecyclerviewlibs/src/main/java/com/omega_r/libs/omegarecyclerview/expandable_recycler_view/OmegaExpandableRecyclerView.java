@@ -323,7 +323,7 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
 
         public abstract class ChildViewHolder extends BaseViewHolder<CH> {
 
-            public AnimationHelper animationHelper = new AnimationHelper();
+            public final AnimationHelper animationHelper = new AnimationHelper();
 
             public ChildViewHolder(ViewGroup parent, @LayoutRes int res) {
                 super(parent, res);
