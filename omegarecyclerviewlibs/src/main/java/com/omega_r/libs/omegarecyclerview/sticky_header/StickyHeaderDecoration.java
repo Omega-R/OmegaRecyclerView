@@ -2,12 +2,11 @@ package com.omega_r.libs.omegarecyclerview.sticky_header;
 
 import android.graphics.Canvas;
 import android.graphics.Rect;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
-
-import com.omega_r.libs.omegarecyclerview.header.HeaderFooterWrapperAdapter;
 
 public class StickyHeaderDecoration extends RecyclerView.ItemDecoration {
 
@@ -32,7 +31,7 @@ public class StickyHeaderDecoration extends RecyclerView.ItemDecoration {
     }
 
     @Override
-    public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+    public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
         int position = parent.getChildAdapterPosition(view);
         int headerHeight = 0;
 
@@ -85,7 +84,7 @@ public class StickyHeaderDecoration extends RecyclerView.ItemDecoration {
     }
 
     @Override
-    public void onDrawOver(Canvas canvas, RecyclerView parent, RecyclerView.State state) {
+    public void onDrawOver(@NonNull Canvas canvas, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
         int count = parent.getChildCount();
         long previousHeaderId = -1;
 
@@ -152,8 +151,7 @@ public class StickyHeaderDecoration extends RecyclerView.ItemDecoration {
         return Math.max(0, top);
     }
 
-    private int calculateOffset(RecyclerView parent, int headerHeight,
-                                long currentHeaderId, int nextPosition) {
+    private int calculateOffset(RecyclerView parent, int headerHeight, long currentHeaderId, int nextPosition) {
         int adapterPosHere = parent.getChildAdapterPosition(parent.getChildAt(nextPosition));
         if (adapterPosHere != RecyclerView.NO_POSITION) {
             long nextId = mAdapter.getHeaderId(adapterPosHere);

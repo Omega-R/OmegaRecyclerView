@@ -33,12 +33,10 @@ public class ExpandableAdapter extends OmegaExpandableRecyclerView.Adapter<Quote
 
         @Override
         protected void onExpand(GroupViewHolder viewHolder, int groupIndex) {
-            Toast.makeText(getContext(), "onExpand " + groupIndex, Toast.LENGTH_SHORT).show();
         }
 
         @Override
         protected void onCollapse(GroupViewHolder viewHolder, int groupIndex) {
-            Toast.makeText(getContext(), "onCollapse " + groupIndex, Toast.LENGTH_SHORT).show();
         }
 
         @Override

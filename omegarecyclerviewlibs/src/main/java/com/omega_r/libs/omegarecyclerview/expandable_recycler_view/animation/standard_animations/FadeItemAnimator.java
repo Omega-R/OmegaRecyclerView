@@ -27,7 +27,7 @@ public final class FadeItemAnimator extends ExpandableItemAnimator {
 
     @Override
     protected void onRemoveEnd(ViewPropertyAnimator animation, final OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder) {
-        holder.itemView.setAlpha(1f);
+        holder.contentView.setAlpha(1f);
     }
 
     @Override
@@ -49,7 +49,7 @@ public final class FadeItemAnimator extends ExpandableItemAnimator {
 
     @Override
     protected void onAddEnd(ViewPropertyAnimator animation, final OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder) {
-        holder.itemView.setAlpha(1f);
+        holder.contentView.setAlpha(1f);
     }
 
     @Override

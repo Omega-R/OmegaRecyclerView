@@ -271,7 +271,7 @@ public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
 
     private void animateRemoveChild(final OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder) {
         onRemoveStart(holder);
-        final ViewPropertyAnimator animation = holder.itemView.animate();
+        final ViewPropertyAnimator animation = holder.contentView.animate();
         setupRemoveAnimation(animation, holder);
         animation
                 .setListener(new AnimatorListenerAdapter() {
@@ -297,10 +297,20 @@ public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
 
     @Override
     public boolean animateAdd(final ViewHolder holder) {
-        holder.itemView.setAlpha(0f);
+        makeHolderInvisible(holder);
         endAnimation(holder);
         mPendingChanges.additions.add(holder);
         return true;
+    }
+
+    private void makeHolderInvisible(ViewHolder holder) {
+        if (holder instanceof OmegaExpandableRecyclerView.Adapter.ChildViewHolder) {
+            OmegaExpandableRecyclerView.Adapter.ChildViewHolder cvh = (OmegaExpandableRecyclerView.Adapter.ChildViewHolder) holder;
+            cvh.contentView.setAlpha(0f);
+            cvh.itemView.setAlpha(1f);
+        } else {
+            holder.itemView.setAlpha(0f);
+        }
     }
 
     private void runAddAnimation(final ViewHolder holder) {
@@ -313,7 +323,6 @@ public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
     }
 
     private void animateAddGroup(final ViewHolder holder) {
-        holder.itemView.setAlpha(0f);
         final ViewPropertyAnimator animation = holder.itemView.animate();
         animation
                 .alpha(1f)
@@ -343,26 +352,22 @@ public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
 
     private void animateAddChild(final OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder) {
         onAddStart(holder);
-
-        final ViewPropertyAnimator animation = holder.itemView.animate();
+        final ViewPropertyAnimator animation = holder.contentView.animate();
         setupAddAnimation(animation, holder);
         animation
                 .setListener(new AnimatorListenerAdapter() {
                     public void onAnimationStart(Animator animator) {
                         dispatchAddStarting(holder);
-                        holder.itemView.setAlpha(1f);
                     }
 
                     @Override
                     public void onAnimationCancel(Animator animator) {
                         onAddCancel(animation, holder);
-                        holder.itemView.setAlpha(1f);
                     }
 
                     public void onAnimationEnd(Animator animator) {
                         animation.setListener(null);
                         onAddEnd(animation, holder);
-                        holder.itemView.setAlpha(1f);
                         dispatchAddFinished(holder);
                         mAddAnimations.remove(holder);
                         dispatchFinishedWhenDone();
@@ -454,7 +459,7 @@ public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
                 endAnimation(newHolder);
                 newHolder.itemView.setTranslationX((float) (-deltaX));
                 newHolder.itemView.setTranslationY((float) (-deltaY));
-                newHolder.itemView.setAlpha(0.0F);
+                makeHolderInvisible(newHolder);
             }
 
             mPendingChanges.changes.add(new AnimationHelper.ChangeInfo(oldHolder, newHolder, fromX, fromY, toX, toY));

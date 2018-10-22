@@ -6,7 +6,7 @@
     android:orientation="horizontal"
     android:padding="16dp"
     android:gravity="center"
-    android:background="@color/white_two">
+    android:background="@color/colorAccent">
 
     <ImageView
         android:layout_width="wrap_content"

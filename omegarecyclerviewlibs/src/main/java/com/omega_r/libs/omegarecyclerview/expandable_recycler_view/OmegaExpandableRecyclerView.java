@@ -14,8 +14,10 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 
 import com.omega_r.libs.omegarecyclerview.OmegaRecyclerView;
 import com.omega_r.libs.omegarecyclerview.R;
@@ -171,7 +173,7 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
                 super.onRestoreInstanceState(bundle.getParcelable(KEY_RECYCLER_DATA));
             }
             if (bundle.containsKey(KEY_ADAPTER_DATA) && getAdapter() != null) {
-                ((Adapter)getAdapter()).onRestoreInstanceState(bundle.getBundle(KEY_ADAPTER_DATA));
+                ((Adapter) getAdapter()).onRestoreInstanceState(bundle.getBundle(KEY_ADAPTER_DATA));
             }
         } else {
             super.onRestoreInstanceState(state);
@@ -251,11 +253,6 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
         @Override
         public void onBindViewHolder(@NonNull BaseViewHolder baseViewHolder, int position) {
             baseViewHolder.bind(items.get(position));
-        }
-
-        @Override
-        public void onViewRecycled(@NonNull BaseViewHolder holder) {
-            super.onViewRecycled(holder);
         }
 
         @Override
@@ -379,10 +376,19 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
 
         public abstract class ChildViewHolder extends BaseViewHolder<CH> {
 
+            public View contentView;
+
             public final AnimationHelper animationHelper = new AnimationHelper();
 
             public ChildViewHolder(ViewGroup parent, @LayoutRes int res) {
-                super(parent, res);
+                this(LayoutInflater.from(parent.getContext()).inflate(res, parent, false));
+            }
+
+            private ChildViewHolder(View view) {
+                super(new MaskView(view.getContext()));
+                itemView.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT));
+                ((ViewGroup) itemView).addView(view);
+                contentView = view;
             }
 
             @Override
@@ -400,6 +406,10 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
 
         BaseViewHolder(ViewGroup parent, @LayoutRes int res) {
             super(parent, res);
+        }
+
+        BaseViewHolder(View view) {
+            super(view);
         }
 
         protected void bind(T item) {
