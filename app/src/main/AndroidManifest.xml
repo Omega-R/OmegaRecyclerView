@@ -25,6 +25,7 @@
         <activity android:name=".expandable_example.core.ExpandableActivity" />
         <activity android:name=".expandable_example.support_sticky.DefaultStickyExpandableActivity" />
         <activity android:name=".expandable_example.ChooseExpandableActivity" />
+        <activity android:name=".expandable_example.sticky_groups.StickyGroupsActivity"></activity>
     </application>
 
 </manifest>

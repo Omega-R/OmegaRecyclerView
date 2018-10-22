@@ -1,9 +1,8 @@
 package com.omega_r.omegarecyclerview.expandable_example;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.Toast;
 
 import com.omega_r.libs.omegaintentbuilder.AppOmegaIntentBuilder;
 import com.omega_r.omegarecyclerview.R;
@@ -41,7 +40,11 @@ public class ChooseExpandableActivity extends AppCompatActivity implements View.
                         .startActivity();
                 break;
             case R.id.button_group_sticky:
-                Toast.makeText(this, "Coming soon", Toast.LENGTH_SHORT).show();
+                AppOmegaIntentBuilder.from(this)
+                        .appActivities()
+                        .stickyGroupsActivity()
+                        .createIntentHandler()
+                        .startActivity();
                 break;
         }
     }

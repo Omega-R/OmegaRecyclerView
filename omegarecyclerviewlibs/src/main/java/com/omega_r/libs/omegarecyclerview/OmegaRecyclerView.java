@@ -24,9 +24,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.omega_r.libs.omegarecyclerview.header.HeaderFooterWrapperAdapter;
-import com.omega_r.libs.omegarecyclerview.pagination.PaginationAdapter;
 import com.omega_r.libs.omegarecyclerview.pagination.OnPageRequestListener;
 import com.omega_r.libs.omegarecyclerview.pagination.PageRequester;
+import com.omega_r.libs.omegarecyclerview.pagination.PaginationAdapter;
 import com.omega_r.libs.omegarecyclerview.pagination.WrapperAdapter;
 import com.omega_r.libs.omegarecyclerview.sticky_header.StickyHeaderAdapter;
 import com.omega_r.libs.omegarecyclerview.sticky_header.StickyHeaderDecoration;
@@ -196,7 +196,7 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
         if (currentAdapter != null) {
             currentAdapter.unregisterAdapterDataObserver(mEmptyObserver);
             if (currentAdapter instanceof HeaderFooterWrapperAdapter) {
-               ((HeaderFooterWrapperAdapter) currentAdapter).getWrappedAdapter().unregisterAdapterDataObserver(mHeaderObserver);
+                ((HeaderFooterWrapperAdapter) currentAdapter).getWrappedAdapter().unregisterAdapterDataObserver(mHeaderObserver);
             }
         }
         mEmptyObserver.onChanged();
@@ -229,7 +229,7 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
             }
             if (stickyHeaderAdapter != null) {
                 if (mStickyHeaderDecoration == null) {
-                    mStickyHeaderDecoration = new StickyHeaderDecoration(stickyHeaderAdapter);
+                    mStickyHeaderDecoration = provideStickyHeaderDecoration(stickyHeaderAdapter);
                     mStickyHeaderDecoration.setItemSpace(mItemSpace);
                     addItemDecoration(mStickyHeaderDecoration);
                 } else {
@@ -238,6 +238,10 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
                 }
             }
         }
+    }
+
+    protected StickyHeaderDecoration provideStickyHeaderDecoration(StickyHeaderAdapter adapter) {
+        return new StickyHeaderDecoration(adapter);
     }
 
     @Override
@@ -688,7 +692,7 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
             if (parent instanceof OmegaRecyclerView) {
                 RecyclerView.Adapter adapter = parent.getAdapter();
                 if (adapter instanceof HeaderFooterWrapperAdapter) {
-                    return  ((HeaderFooterWrapperAdapter) adapter).applyChildPositionToRealPosition(childPosition);
+                    return ((HeaderFooterWrapperAdapter) adapter).applyChildPositionToRealPosition(childPosition);
                 }
             }
 

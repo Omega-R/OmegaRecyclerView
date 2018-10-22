@@ -29,6 +29,10 @@ import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.data.FlatGrou
 import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.data.GroupProvider;
 import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.data.Range;
 import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.layout_manager.ExpandableLayoutManager;
+import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.sticky.StickyGroupsAdapter;
+import com.omega_r.libs.omegarecyclerview.sticky_header.StickyHeaderOnlyTopDecoration;
+import com.omega_r.libs.omegarecyclerview.sticky_header.StickyHeaderAdapter;
+import com.omega_r.libs.omegarecyclerview.sticky_header.StickyHeaderDecoration;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -183,6 +187,15 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
             }
         } else {
             super.onRestoreInstanceState(state);
+        }
+    }
+
+    @Override
+    protected StickyHeaderDecoration provideStickyHeaderDecoration(StickyHeaderAdapter adapter) {
+        if (getAdapter() instanceof StickyGroupsAdapter) {
+            return new StickyHeaderOnlyTopDecoration(adapter);
+        } else {
+            return super.provideStickyHeaderDecoration(adapter);
         }
     }
 
@@ -400,7 +413,7 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
             }
 
             @Override
-            protected void bind(CH item) {
+            public void bind(CH item) {
                 super.bind(item);
                 animationHelper.visibleAdapterPosition = getAdapterPosition();
             }
@@ -420,7 +433,7 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
             super(view);
         }
 
-        protected void bind(T item) {
+        public void bind(T item) {
             this.item = item;
             onBind(item);
         }

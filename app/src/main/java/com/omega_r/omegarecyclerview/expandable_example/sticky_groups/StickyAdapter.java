@@ -1,18 +1,15 @@
-package com.omega_r.omegarecyclerview.expandable_example.support_sticky;
+package com.omega_r.omegarecyclerview.expandable_example.sticky_groups;
 
 import android.support.annotation.NonNull;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.omega_r.libs.omegarecyclerview.OmegaRecyclerView;
-import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.OmegaExpandableRecyclerView;
-import com.omega_r.libs.omegarecyclerview.sticky_header.StickyHeaderAdapter;
-import com.omega_r.libs.omegarecyclerview.sticky_header.StickyHeaderDecoration;
+import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.sticky.StickyGroupsAdapter;
 import com.omega_r.omegarecyclerview.R;
 import com.omega_r.omegarecyclerview.expandable_example.core.QuoteGlobalInfo;
 
-public class DefaultStickyAdapter extends OmegaExpandableRecyclerView.Adapter<QuoteGlobalInfo, String> implements StickyHeaderAdapter<DefaultStickyAdapter.StickyViewHolder> {
+public class StickyAdapter extends StickyGroupsAdapter<QuoteGlobalInfo, String> {
 
     @Override
     protected ExGroupViewHolder provideGroupViewHolder(@NonNull ViewGroup viewGroup) {
@@ -22,22 +19,6 @@ public class DefaultStickyAdapter extends OmegaExpandableRecyclerView.Adapter<Qu
     @Override
     protected ExChildViewHolder provideChildViewHolder(@NonNull ViewGroup viewGroup) {
         return new ExChildViewHolder(viewGroup);
-    }
-
-    @Override
-    public long getHeaderId(int position) {
-        Integer providedId = getItem(position).getStickyId();
-        return providedId == null ? StickyHeaderDecoration.NO_HEADER_ID : providedId;
-    }
-
-    @Override
-    public StickyViewHolder onCreateHeaderViewHolder(ViewGroup parent) {
-        return new StickyViewHolder(parent);
-    }
-
-    @Override
-    public void onBindHeaderViewHolder(StickyViewHolder viewHolder, int position) {
-        viewHolder.bind(getItem(position).getGroup().getYear());
     }
 
     class ExGroupViewHolder extends GroupViewHolder {
@@ -77,16 +58,6 @@ public class DefaultStickyAdapter extends OmegaExpandableRecyclerView.Adapter<Qu
         @Override
         protected void onBind(String item) {
             textView.setText(item);
-        }
-    }
-
-    class StickyViewHolder extends OmegaRecyclerView.ViewHolder {
-        StickyViewHolder(ViewGroup parent) {
-            super(parent, R.layout.sticky_header_test);
-        }
-
-        void bind(int year) {
-            ((TextView)itemView).setText(String.valueOf(year));
         }
     }
 }

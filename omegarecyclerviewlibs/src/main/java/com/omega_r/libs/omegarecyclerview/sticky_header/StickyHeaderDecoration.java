@@ -12,7 +12,7 @@ public class StickyHeaderDecoration extends RecyclerView.ItemDecoration {
 
     public static final long NO_HEADER_ID = -1L;
 
-    private StickyHeaderAdapter mAdapter;
+    StickyHeaderAdapter mAdapter;
     private boolean mRenderInline;
 
     private int mItemSpace;
@@ -58,11 +58,11 @@ public class StickyHeaderDecoration extends RecyclerView.ItemDecoration {
         }
     }
 
-    private boolean hasHeader(int position) {
+    boolean hasHeader(int position) {
         return mAdapter.getHeaderId(position) != NO_HEADER_ID;
     }
 
-    private RecyclerView.ViewHolder getHeader(RecyclerView parent, int position) {
+    RecyclerView.ViewHolder getHeader(RecyclerView parent, int position) {
         RecyclerView.ViewHolder holder = mAdapter.onCreateHeaderViewHolder(parent);
         View header = holder.itemView;
 
@@ -99,9 +99,9 @@ public class StickyHeaderDecoration extends RecyclerView.ItemDecoration {
         }
     }
 
-    private long calculateHeaderIdAndDrawHeader(Canvas canvas, RecyclerView parent,
-                                                boolean isReverseLayout,
-                                                int layoutPos, long previousHeaderId) {
+    long calculateHeaderIdAndDrawHeader(Canvas canvas, RecyclerView parent,
+                                        boolean isReverseLayout,
+                                        int layoutPos, long previousHeaderId) {
         View child = parent.getChildAt(layoutPos);
         int adapterPos = parent.getChildAdapterPosition(child);
 
@@ -127,7 +127,7 @@ public class StickyHeaderDecoration extends RecyclerView.ItemDecoration {
         return previousHeaderId;
     }
 
-    private int getHeaderTop(RecyclerView parent, boolean isReverseLayout, View child, View header, int adapterPos, int layoutPos) {
+    int getHeaderTop(RecyclerView parent, boolean isReverseLayout, View child, View header, int adapterPos, int layoutPos) {
         int childCount = parent.getChildCount();
         int headerHeight = getHeaderHeightForLayout(header);
         int top = ((int) child.getY()) - headerHeight;
