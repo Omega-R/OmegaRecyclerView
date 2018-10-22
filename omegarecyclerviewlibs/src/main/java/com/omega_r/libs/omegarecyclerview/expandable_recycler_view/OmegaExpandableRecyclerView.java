@@ -6,7 +6,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.os.SystemClock;
-import android.support.annotation.IntRange;
+import android.support.annotation.IntDef;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -30,6 +30,8 @@ import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.data.GroupPro
 import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.data.Range;
 import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.layout_manager.ExpandableLayoutManager;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -48,8 +50,11 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
     private static final String KEY_ADAPTER_DATA = "OmegaExpandableRecyclerView.KEY_ADAPTER_DATA";
     private static final String KEY_RECYCLER_DATA = "OmegaExpandableRecyclerView.KEY_RECYCLER_DATA";
 
+    @ExpandMode
     private int mExpandMode = EXPAND_MODE_SINGLE;
-    private int mChildAnimInt = CHILD_ANIM_DEFAULT;
+
+    @ExpandAnimation
+    private int mChildExpandAnimation = CHILD_ANIM_DEFAULT;
 
     //region Recycler
 
@@ -83,7 +88,7 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
 
     @Nullable
     private ItemAnimator requestItemAnimator() {
-        switch (mChildAnimInt) {
+        switch (mChildExpandAnimation) {
             case CHILD_ANIM_DEFAULT:
                 return new DefaultItemAnimator();
             case CHILD_ANIM_DROPDOWN:
@@ -93,7 +98,6 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
                     Log.e(TAG, "DropDownItemAnimator supported only since Lollipop");
                     return new DefaultItemAnimator();
                 }
-
             case CHILD_ANIM_FADE:
                 return new FadeItemAnimator();
         }
@@ -104,7 +108,7 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
         TypedArray attrs = getContext().getTheme()
                 .obtainStyledAttributes(attributeSet, R.styleable.OmegaExpandableRecyclerView, defStyleAttr, 0);
         try {
-            mChildAnimInt = attrs.getInteger(R.styleable.OmegaExpandableRecyclerView_childAnimation, CHILD_ANIM_DEFAULT);
+            mChildExpandAnimation = attrs.getInteger(R.styleable.OmegaExpandableRecyclerView_childAnimation, CHILD_ANIM_DEFAULT);
             mExpandMode = attrs.getInteger(R.styleable.OmegaExpandableRecyclerView_expandMode, EXPAND_MODE_SINGLE);
         } finally {
             attrs.recycle();
@@ -134,20 +138,22 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
         super.setAdapter(adapter);
     }
 
-    public int getChildAnimInt() {
-        return mChildAnimInt;
+    @ExpandAnimation
+    public int getChildExpandAnimation() {
+        return mChildExpandAnimation;
     }
 
-    public void setChildAnimInt(@IntRange(from = CHILD_ANIM_DEFAULT, to = CHILD_ANIM_DROPDOWN) int childAnimInt) {
-        mChildAnimInt = childAnimInt;
+    public void setChildExpandAnimation(@ExpandAnimation int childExpandAnimation) {
+        mChildExpandAnimation = childExpandAnimation;
         setItemAnimator(requestItemAnimator());
     }
 
+    @ExpandMode
     public int getExpandMode() {
         return mExpandMode;
     }
 
-    public void setExpandMode(@IntRange(from = EXPAND_MODE_SINGLE, to = EXPAND_MODE_MULTIPLE) int expandMode) {
+    public void setExpandMode(@ExpandMode int expandMode) {
         mExpandMode = expandMode;
     }
 
@@ -344,7 +350,11 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
             return items.getItems();
         }
 
-        public ExpandableViewData<G, CH> getDataAtPosition(int visiblePosition) {
+        public ExpandableViewData<G, CH> getItem(int position) {
+            return getItems().get(position);
+        }
+
+        public ExpandableViewData<G, CH> getItemAtVisiblePosition(int visiblePosition) {
             return items.getDataAtVisiblePosition(visiblePosition);
         }
 
@@ -385,8 +395,10 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
             }
 
             private ChildViewHolder(View view) {
-                super(new MaskView(view.getContext()));
-                itemView.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT));
+                super(new ChildClippingFrameLayout(view.getContext()));
+                itemView.setLayoutParams(new FrameLayout.LayoutParams(
+                        FrameLayout.LayoutParams.MATCH_PARENT,
+                        FrameLayout.LayoutParams.WRAP_CONTENT));
                 ((ViewGroup) itemView).addView(view);
                 contentView = view;
             }
@@ -426,4 +438,16 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
     }
 
     //endregion
+
+    @IntDef({CHILD_ANIM_DEFAULT, CHILD_ANIM_FADE, CHILD_ANIM_DROPDOWN})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface ExpandAnimation {
+        // nothing
+    }
+
+    @IntDef({EXPAND_MODE_SINGLE, EXPAND_MODE_MULTIPLE})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface ExpandMode {
+        // nothing
+    }
 }

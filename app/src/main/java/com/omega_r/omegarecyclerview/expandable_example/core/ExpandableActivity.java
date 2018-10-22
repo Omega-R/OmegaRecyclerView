@@ -58,33 +58,33 @@ public class ExpandableActivity extends AppCompatActivity implements CompoundBut
     }
 
     protected void setupRadioButtons() {
-        RadioButton dropdownRB = findViewById(R.id.radiobutton_dropdown);
-        RadioButton fadeRB = findViewById(R.id.radiobutton_fade);
-        RadioButton singleRB = findViewById(R.id.radiobutton_single);
-        RadioButton multipleRB = findViewById(R.id.radiobutton_multiple);
+        RadioButton dropdownRadioButton = findViewById(R.id.radiobutton_dropdown);
+        RadioButton fadeRadioButton = findViewById(R.id.radiobutton_fade);
+        RadioButton singleRadioButton = findViewById(R.id.radiobutton_single);
+        RadioButton multipleRadioButton = findViewById(R.id.radiobutton_multiple);
 
-        switch (mRecyclerView.getChildAnimInt()) {
+        switch (mRecyclerView.getChildExpandAnimation()) {
             case OmegaExpandableRecyclerView.CHILD_ANIM_DROPDOWN:
-                dropdownRB.setChecked(true);
+                dropdownRadioButton.setChecked(true);
                 break;
             case OmegaExpandableRecyclerView.CHILD_ANIM_FADE:
-                fadeRB.setChecked(true);
+                fadeRadioButton.setChecked(true);
                 break;
         }
 
-        switch (mRecyclerView.getChildAnimInt()) {
+        switch (mRecyclerView.getChildExpandAnimation()) {
             case OmegaExpandableRecyclerView.CHILD_ANIM_DROPDOWN:
-                dropdownRB.setChecked(true);
+                dropdownRadioButton.setChecked(true);
                 break;
             case OmegaExpandableRecyclerView.CHILD_ANIM_FADE:
-                fadeRB.setChecked(true);
+                fadeRadioButton.setChecked(true);
                 break;
         }
 
-        dropdownRB.setOnCheckedChangeListener(this);
-        fadeRB.setOnCheckedChangeListener(this);
-        singleRB.setOnCheckedChangeListener(this);
-        multipleRB.setOnCheckedChangeListener(this);
+        dropdownRadioButton.setOnCheckedChangeListener(this);
+        fadeRadioButton.setOnCheckedChangeListener(this);
+        singleRadioButton.setOnCheckedChangeListener(this);
+        multipleRadioButton.setOnCheckedChangeListener(this);
     }
 
     @Override
