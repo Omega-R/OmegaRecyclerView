@@ -351,11 +351,7 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
         }
 
         public ExpandableViewData<G, CH> getItem(int position) {
-            return getItems().get(position);
-        }
-
-        public ExpandableViewData<G, CH> getItemAtVisiblePosition(int visiblePosition) {
-            return items.getDataAtVisiblePosition(visiblePosition);
+            return items.getDataAtVisiblePosition(position);
         }
 
         public abstract class GroupViewHolder extends BaseViewHolder<G> {
