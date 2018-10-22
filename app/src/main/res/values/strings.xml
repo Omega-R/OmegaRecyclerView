@@ -27,4 +27,9 @@
     <string name="group_text_5">Section 1.10.33 of "de Finibus Bonorum et Malorum", 1914 translation by H. Rackham</string>
     <string name="button_use_fade">Fade</string>
     <string name="button_use_dropdown">Dropdown</string>
+    <string name="button_use_multiple">Multiple</string>
+    <string name="button_use_single">Single</string>
+    <string name="button_core">Core</string>
+    <string name="button_support_sticky">Sticky header support</string>
+    <string name="button_group_sticky">Group as sticky header</string>
 </resources>

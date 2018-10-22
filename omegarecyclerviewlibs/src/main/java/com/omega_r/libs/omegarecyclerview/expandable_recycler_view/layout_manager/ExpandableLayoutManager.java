@@ -73,7 +73,7 @@ public class ExpandableLayoutManager extends LinearLayoutManager {
             }
             int adapterPosition = holder.getAdapterPosition();
             if (mAddedRange.contains(adapterPosition)) {
-                child.setAlpha(0f);
+                ((OmegaExpandableRecyclerView.Adapter.ChildViewHolder) holder).contentView.setAlpha(0f);
             }
         }
         super.addView(child);

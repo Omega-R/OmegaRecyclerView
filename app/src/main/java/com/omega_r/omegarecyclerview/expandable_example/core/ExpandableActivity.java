@@ -1,4 +1,4 @@
-package com.omega_r.omegarecyclerview.expandable_example;
+package com.omega_r.omegarecyclerview.expandable_example.core;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -20,46 +20,71 @@ public class ExpandableActivity extends AppCompatActivity implements CompoundBut
     private static final ExpandableItemAnimator DROPDOWN_ANIMATOR = new DropDownItemAnimator();
 
     private OmegaExpandableRecyclerView mRecyclerView;
-    private ExpandableAdapter mAdapter = new ExpandableAdapter();
+    private OmegaExpandableRecyclerView.Adapter mAdapter = provideAdapter();
+
+    protected OmegaExpandableRecyclerView.Adapter provideAdapter() {
+        return new ExpandableAdapter();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_expandable);
 
+        setupRecyclerView();
+        setupRadioButtons();
+        fillAdapter();
+    }
+
+    protected void setupRecyclerView() {
         mRecyclerView = findViewById(R.id.recyclerview);
         mRecyclerView.setAdapter(mAdapter);
+    }
 
+    protected void fillAdapter() {
         mAdapter.setItems(
-                SimpleData.from(getString(R.string.group_text_1), getString(R.string.child_text_1)),
-                SimpleData.from(getString(R.string.group_text_2), getString(R.string.child_text_2)),
-                SimpleData.from(getString(R.string.group_text_3),
+                SimpleData.from(new QuoteGlobalInfo(getString(R.string.group_text_1), 1500), getString(R.string.child_text_1)),
+                SimpleData.from(new QuoteGlobalInfo(getString(R.string.group_text_2), 1500), getString(R.string.child_text_2)),
+                SimpleData.from(new QuoteGlobalInfo(getString(R.string.group_text_3), 1914),
                         getString(R.string.child_text_3),
                         getString(R.string.child_text_5)),
-                SimpleData.from(getString(R.string.group_text_4),
+                SimpleData.from(new QuoteGlobalInfo(getString(R.string.group_text_5), 1914),
                         getString(R.string.child_text_1),
                         getString(R.string.child_text_2),
                         getString(R.string.child_text_3),
                         getString(R.string.child_text_4),
                         getString(R.string.child_text_5))
         );
-
-        setupRadioButtons();
     }
 
-    private void setupRadioButtons() {
-        RadioButton dropdownRB = findViewById(R.id.radiobutton_dropdown);
-        RadioButton fadeRB = findViewById(R.id.radiobutton_fade);
-        switch (mRecyclerView.getChildAnimInt()) {
+    protected void setupRadioButtons() {
+        RadioButton dropdownRadioButton = findViewById(R.id.radiobutton_dropdown);
+        RadioButton fadeRadioButton = findViewById(R.id.radiobutton_fade);
+        RadioButton singleRadioButton = findViewById(R.id.radiobutton_single);
+        RadioButton multipleRadioButton = findViewById(R.id.radiobutton_multiple);
+
+        switch (mRecyclerView.getChildExpandAnimation()) {
             case OmegaExpandableRecyclerView.CHILD_ANIM_DROPDOWN:
-                dropdownRB.setChecked(true);
+                dropdownRadioButton.setChecked(true);
                 break;
             case OmegaExpandableRecyclerView.CHILD_ANIM_FADE:
-                fadeRB.setChecked(true);
+                fadeRadioButton.setChecked(true);
                 break;
         }
-        dropdownRB.setOnCheckedChangeListener(this);
-        fadeRB.setOnCheckedChangeListener(this);
+
+        switch (mRecyclerView.getChildExpandAnimation()) {
+            case OmegaExpandableRecyclerView.CHILD_ANIM_DROPDOWN:
+                dropdownRadioButton.setChecked(true);
+                break;
+            case OmegaExpandableRecyclerView.CHILD_ANIM_FADE:
+                fadeRadioButton.setChecked(true);
+                break;
+        }
+
+        dropdownRadioButton.setOnCheckedChangeListener(this);
+        fadeRadioButton.setOnCheckedChangeListener(this);
+        singleRadioButton.setOnCheckedChangeListener(this);
+        multipleRadioButton.setOnCheckedChangeListener(this);
     }
 
     @Override
@@ -71,6 +96,12 @@ public class ExpandableActivity extends AppCompatActivity implements CompoundBut
                     break;
                 case R.id.radiobutton_dropdown:
                     mRecyclerView.setItemAnimator(DROPDOWN_ANIMATOR);
+                    break;
+                case R.id.radiobutton_single:
+                    mRecyclerView.setExpandMode(OmegaExpandableRecyclerView.EXPAND_MODE_SINGLE);
+                    break;
+                case R.id.radiobutton_multiple:
+                    mRecyclerView.setExpandMode(OmegaExpandableRecyclerView.EXPAND_MODE_MULTIPLE);
                     break;
             }
         }

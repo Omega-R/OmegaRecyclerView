@@ -3,6 +3,7 @@ package com.omega_r.libs.omegarecyclerview.expandable_recycler_view.animation;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.support.v7.widget.SimpleItemAnimator;
@@ -132,25 +133,41 @@ public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
     }
 
     private void runAddActions(boolean hasRemovals, boolean hasMoves, boolean hasChanges) {
-        final ArrayList<ViewHolder> additions = new ArrayList<>(mPendingChanges.additions);
-        mAdditionsList.add(additions);
-        Runnable adder = new Runnable() {
-            public void run() {
-                proceedWithAnimationHelper(additions, new UnVoidFunction<ViewHolder>() {
-                    @Override
-                    public void apply(ViewHolder param) {
-                        runAddAnimation(param);
-                    }
-                }, true);
-                mAdditionsList.remove(additions);
+        final ArrayList<ViewHolder> groupAdditions = new ArrayList<>();
+        final ArrayList<ViewHolder> childAdditions = new ArrayList<>();
+        for (ViewHolder addition : mPendingChanges.additions) {
+            if (addition instanceof OmegaExpandableRecyclerView.Adapter.ChildViewHolder) {
+                childAdditions.add(addition);
+            } else {
+                groupAdditions.add(addition);
             }
-        };
-        if (hasRemovals || hasMoves || hasChanges) {
-            View view = additions.get(0).itemView;
-            long totalDelay = getTotalDelay(hasRemovals, hasMoves, hasChanges);
-            ViewCompat.postOnAnimationDelayed(view, adder, isNeedAddingDelay() ? totalDelay : 0L);
-        } else {
-            adder.run();
+        }
+
+        scheduleAddAnimation(groupAdditions, true, hasRemovals, hasMoves, hasChanges);
+        scheduleAddAnimation(childAdditions, false, hasRemovals, hasMoves, hasChanges);
+    }
+
+    private void scheduleAddAnimation(final ArrayList<ViewHolder> additions, boolean forceDelay, boolean hasRemovals, boolean hasMoves, boolean hasChanges) {
+        if (!additions.isEmpty()) {
+            mAdditionsList.add(additions);
+            Runnable adder = new Runnable() {
+                public void run() {
+                    proceedWithAnimationHelper(additions, new UnVoidFunction<ViewHolder>() {
+                        @Override
+                        public void apply(ViewHolder param) {
+                            runAddAnimation(param);
+                        }
+                    }, true);
+                    mAdditionsList.remove(additions);
+                }
+            };
+            if (hasRemovals || hasMoves || hasChanges) {
+                View view = additions.get(0).itemView;
+                long totalDelay = getTotalDelay(hasRemovals, hasMoves, hasChanges);
+                ViewCompat.postOnAnimationDelayed(view, adder, forceDelay || isNeedAddingDelay() ? totalDelay : 0L);
+            } else {
+                adder.run();
+            }
         }
     }
 
@@ -176,11 +193,11 @@ public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
                 childViewHolder.animationHelper.setPendingChanges(mPendingChanges);
 
                 if (isAdding) {
-                    childViewHolder.animationHelper.lowerViewHolder = i < holders.size() - 1 ? holders.get(i + 1) : null;
-                    childViewHolder.animationHelper.upperViewHolder = i > 0 ? holders.get(i - 1) : null;
+                    childViewHolder.animationHelper.lowerViewHolder = i < holders.size() - 1 ? tryGetChildViewHolder(holders, i + 1) : null;
+                    childViewHolder.animationHelper.upperViewHolder = i > 0 ? tryGetChildViewHolder(holders, i - 1) : null;
                 } else {
-                    childViewHolder.animationHelper.upperViewHolder = i < holders.size() - 1 ? holders.get(i + 1) : null;
-                    childViewHolder.animationHelper.lowerViewHolder = i > 0 ? holders.get(i - 1) : null;
+                    childViewHolder.animationHelper.upperViewHolder = i < holders.size() - 1 ? tryGetChildViewHolder(holders, i + 1) : null;
+                    childViewHolder.animationHelper.lowerViewHolder = i > 0 ? tryGetChildViewHolder(holders, i - 1) : null;
                 }
 
                 childChangesCount++;
@@ -196,6 +213,13 @@ public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
                 applyViewHolder(holders.get(i), func, childChangesCount, i);
             }
         }
+    }
+
+    @Nullable
+    private OmegaExpandableRecyclerView.Adapter.ChildViewHolder tryGetChildViewHolder(List<ViewHolder> holders, int index) {
+        if (index < 0 || index > holders.size() - 1) return null;
+        ViewHolder vh = holders.get(index);
+        return vh instanceof OmegaExpandableRecyclerView.Adapter.ChildViewHolder ? (OmegaExpandableRecyclerView.Adapter.ChildViewHolder) vh : null;
     }
 
     private void applyViewHolder(ViewHolder holder, UnVoidFunction<ViewHolder> func, int childChangesCount, int positionInChanges) {
@@ -247,7 +271,7 @@ public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
 
     private void animateRemoveChild(final OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder) {
         onRemoveStart(holder);
-        final ViewPropertyAnimator animation = holder.itemView.animate();
+        final ViewPropertyAnimator animation = holder.contentView.animate();
         setupRemoveAnimation(animation, holder);
         animation
                 .setListener(new AnimatorListenerAdapter() {
@@ -273,9 +297,20 @@ public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
 
     @Override
     public boolean animateAdd(final ViewHolder holder) {
+        makeHolderInvisible(holder);
         endAnimation(holder);
         mPendingChanges.additions.add(holder);
         return true;
+    }
+
+    private void makeHolderInvisible(ViewHolder holder) {
+        if (holder instanceof OmegaExpandableRecyclerView.Adapter.ChildViewHolder) {
+            OmegaExpandableRecyclerView.Adapter.ChildViewHolder cvh = (OmegaExpandableRecyclerView.Adapter.ChildViewHolder) holder;
+            cvh.contentView.setAlpha(0f);
+            cvh.itemView.setAlpha(1f);
+        } else {
+            holder.itemView.setAlpha(0f);
+        }
     }
 
     private void runAddAnimation(final ViewHolder holder) {
@@ -288,7 +323,6 @@ public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
     }
 
     private void animateAddGroup(final ViewHolder holder) {
-        holder.itemView.setAlpha(0f);
         final ViewPropertyAnimator animation = holder.itemView.animate();
         animation
                 .alpha(1f)
@@ -318,26 +352,22 @@ public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
 
     private void animateAddChild(final OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder) {
         onAddStart(holder);
-
-        final ViewPropertyAnimator animation = holder.itemView.animate();
+        final ViewPropertyAnimator animation = holder.contentView.animate();
         setupAddAnimation(animation, holder);
         animation
                 .setListener(new AnimatorListenerAdapter() {
                     public void onAnimationStart(Animator animator) {
                         dispatchAddStarting(holder);
-                        holder.itemView.setAlpha(1f);
                     }
 
                     @Override
                     public void onAnimationCancel(Animator animator) {
                         onAddCancel(animation, holder);
-                        holder.itemView.setAlpha(1f);
                     }
 
                     public void onAnimationEnd(Animator animator) {
                         animation.setListener(null);
                         onAddEnd(animation, holder);
-                        holder.itemView.setAlpha(1f);
                         dispatchAddFinished(holder);
                         mAddAnimations.remove(holder);
                         dispatchFinishedWhenDone();
@@ -429,7 +459,7 @@ public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
                 endAnimation(newHolder);
                 newHolder.itemView.setTranslationX((float) (-deltaX));
                 newHolder.itemView.setTranslationY((float) (-deltaY));
-                newHolder.itemView.setAlpha(0.0F);
+                makeHolderInvisible(newHolder);
             }
 
             mPendingChanges.changes.add(new AnimationHelper.ChangeInfo(oldHolder, newHolder, fromX, fromY, toX, toY));

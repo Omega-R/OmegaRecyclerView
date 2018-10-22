@@ -4,14 +4,20 @@ import android.animation.ValueAnimator;
 import android.annotation.TargetApi;
 import android.os.Build;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.view.ViewPropertyAnimator;
 
+import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.ChildClippingFrameLayout;
 import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.OmegaExpandableRecyclerView;
 import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.animation.ExpandableItemAnimator;
 import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.layout_manager.ExpandableLayoutManager;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public final class DropDownItemAnimator extends ExpandableItemAnimator {
+    private static final String TAG = DropDownItemAnimator.class.getName();
 
     private static final long COLLAPSE_DELAY = 110L;
     private static final long COLLAPSE_DURATION_LONG = 320L;
@@ -27,14 +33,16 @@ public final class DropDownItemAnimator extends ExpandableItemAnimator {
 
     @Override
     protected void onRemoveStart(final OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder) {
-        holder.itemView.setTranslationY(0f);
+        holder.contentView.setTranslationY(0f);
         resolveRemovingZ(holder);
+        setupMask(holder);
     }
 
     @Override
     protected void setupRemoveAnimation(ViewPropertyAnimator animator, final OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder) {
         animator.setStartDelay(COLLAPSE_DELAY);
-        animator.setDuration(holder.animationHelper.havePendingAdditions() ? COLLAPSE_DURATION_LONG : COLLAPSE_DURATION_SHORT);
+        long duration = holder.animationHelper.havePendingAdditions() ? COLLAPSE_DURATION_LONG : COLLAPSE_DURATION_SHORT;
+        animator.setDuration(duration);
 
         if (holder.animationHelper.lowerViewHolder == null) {
             animator.translationY(getHiddenOffset(holder));
@@ -42,9 +50,21 @@ public final class DropDownItemAnimator extends ExpandableItemAnimator {
             animator.setUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override
                 public void onAnimationUpdate(ValueAnimator animation) {
-                    holder.itemView.setTranslationY(holder.animationHelper.lowerViewHolder.itemView.getTranslationY());
+                    holder.contentView.setTranslationY(holder.animationHelper.lowerViewHolder.contentView.getTranslationY());
                 }
             });
+        }
+
+        if (holder.animationHelper.havePendingAdditions()) {
+            float deltaHeight = 0f;
+            for (RecyclerView.ViewHolder viewHolder : holder.animationHelper.getPendingChanges().additions) {
+                if (viewHolder.getAdapterPosition() < holder.animationHelper.visibleAdapterPosition) {
+                    deltaHeight += viewHolder.itemView.getHeight();
+                }
+            }
+            if (deltaHeight > 0) {
+                ((ChildClippingFrameLayout) holder.itemView).animateClipAboveDecreasing(deltaHeight, duration, COLLAPSE_DELAY);
+            }
         }
     }
 
@@ -60,8 +80,11 @@ public final class DropDownItemAnimator extends ExpandableItemAnimator {
 
     @Override
     protected void onAddStart(final OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder) {
-        holder.itemView.setTranslationY(getHiddenOffsetReversed(holder));
+        holder.itemView.setAlpha(1f);
+        holder.contentView.setAlpha(1f);
+        holder.contentView.setTranslationY(getHiddenOffsetReversed(holder));
         resolveAddingZ(holder);
+        setupMask(holder);
     }
 
     @Override
@@ -73,7 +96,7 @@ public final class DropDownItemAnimator extends ExpandableItemAnimator {
             animator.setUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override
                 public void onAnimationUpdate(ValueAnimator animation) {
-                    holder.itemView.setTranslationY(holder.animationHelper.upperViewHolder.itemView.getTranslationY());
+                    holder.contentView.setTranslationY(holder.animationHelper.upperViewHolder.contentView.getTranslationY());
                 }
             });
         }
@@ -94,8 +117,9 @@ public final class DropDownItemAnimator extends ExpandableItemAnimator {
         animator.setStartDelay(0);
 
         holder.itemView.setTranslationZ(ExpandableLayoutManager.DEFAULT_CHILD_Z);
-        holder.itemView.setAlpha(1f);
-        holder.itemView.setTranslationY(0f);
+        holder.contentView.setTranslationY(0f);
+
+        ((ChildClippingFrameLayout) holder.itemView).invalidateClipping();
     }
 
     @Override
@@ -114,31 +138,21 @@ public final class DropDownItemAnimator extends ExpandableItemAnimator {
     }
 
     private int getHiddenOffset(OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder) {
-        int offset = -holder.itemView.getHeight();
-        RecyclerView.ViewHolder vh = holder.animationHelper.upperViewHolder;
+        int offset = -holder.contentView.getHeight();
+        OmegaExpandableRecyclerView.Adapter.ChildViewHolder vh = holder.animationHelper.upperViewHolder;
         while (vh != null) {
-            if (vh instanceof OmegaExpandableRecyclerView.Adapter.ChildViewHolder) {
-                OmegaExpandableRecyclerView.Adapter.ChildViewHolder cvh = (OmegaExpandableRecyclerView.Adapter.ChildViewHolder) vh;
-                offset -= cvh.itemView.getHeight();
-                vh = cvh.animationHelper.upperViewHolder;
-            } else {
-                vh = null;
-            }
+            offset -= vh.contentView.getHeight();
+            vh = vh.animationHelper.upperViewHolder;
         }
         return offset;
     }
 
     private int getHiddenOffsetReversed(OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder) {
-        int offset = -holder.itemView.getHeight();
-        RecyclerView.ViewHolder vh = holder.animationHelper.lowerViewHolder;
+        int offset = -holder.contentView.getHeight();
+        OmegaExpandableRecyclerView.Adapter.ChildViewHolder vh = holder.animationHelper.lowerViewHolder;
         while (vh != null) {
-            if (vh instanceof OmegaExpandableRecyclerView.Adapter.ChildViewHolder) {
-                OmegaExpandableRecyclerView.Adapter.ChildViewHolder cvh = (OmegaExpandableRecyclerView.Adapter.ChildViewHolder) vh;
-                offset -= cvh.itemView.getHeight();
-                vh = cvh.animationHelper.lowerViewHolder;
-            } else {
-                vh = null;
-            }
+            offset -= vh.contentView.getHeight();
+            vh = vh.animationHelper.lowerViewHolder;
         }
         return offset;
     }
@@ -148,7 +162,7 @@ public final class DropDownItemAnimator extends ExpandableItemAnimator {
             if (removal instanceof OmegaExpandableRecyclerView.Adapter.ChildViewHolder) {
                 OmegaExpandableRecyclerView.Adapter.ChildViewHolder cvh = (OmegaExpandableRecyclerView.Adapter.ChildViewHolder) removal;
                 if (cvh.animationHelper.visibleAdapterPosition < holder.getAdapterPosition()) {
-                    removal.itemView.setTranslationZ(holder.itemView.getTranslationZ() + 1);
+                    cvh.itemView.setTranslationZ(holder.itemView.getTranslationZ() + 1);
                 }
             }
         }
@@ -159,9 +173,27 @@ public final class DropDownItemAnimator extends ExpandableItemAnimator {
             if (addition instanceof OmegaExpandableRecyclerView.Adapter.ChildViewHolder) {
                 OmegaExpandableRecyclerView.Adapter.ChildViewHolder cvh = (OmegaExpandableRecyclerView.Adapter.ChildViewHolder) addition;
                 if (cvh.getAdapterPosition() < holder.animationHelper.visibleAdapterPosition) {
-                    addition.itemView.setTranslationZ(holder.itemView.getTranslationZ() + 1);
+                    cvh.itemView.setTranslationZ(holder.itemView.getTranslationZ() + 1);
                 }
             }
         }
+    }
+
+    private void setupMask(OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder) {
+        List<View> viewsAbove = new ArrayList<>();
+        List<View> viewsBelow = new ArrayList<>();
+
+        OmegaExpandableRecyclerView.Adapter.ChildViewHolder tmpCvh = holder.animationHelper.upperViewHolder;
+        while (tmpCvh != null) {
+            viewsAbove.add(tmpCvh.contentView);
+            tmpCvh = tmpCvh.animationHelper.upperViewHolder;
+        }
+        tmpCvh = holder.animationHelper.lowerViewHolder;
+        while (tmpCvh != null) {
+            viewsAbove.add(tmpCvh.contentView);
+            tmpCvh = tmpCvh.animationHelper.lowerViewHolder;
+        }
+
+        ((ChildClippingFrameLayout) holder.itemView).setupClipping(viewsAbove, viewsBelow);
     }
 }
