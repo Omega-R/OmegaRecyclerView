@@ -1,8 +1,11 @@
 package com.omega_r.libs.omegarecyclerview.sticky_header;
 
 import android.graphics.Canvas;
+import android.graphics.Rect;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+
+import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.OmegaExpandableRecyclerView;
 
 public class StickyHeaderOnlyTopDecoration extends StickyHeaderDecoration {
 
@@ -20,7 +23,8 @@ public class StickyHeaderOnlyTopDecoration extends StickyHeaderDecoration {
 
             if (headerId != previousHeaderId) {
                 previousHeaderId = headerId;
-                View header = getHeader(parent, adapterPos).itemView;
+                RecyclerView.ViewHolder headerHolder = getHeader(parent, adapterPos);
+                View header = headerHolder.itemView;
 
                 int left = child.getLeft();
                 int top = getHeaderTop(parent, isReverseLayout, child, header, adapterPos, layoutPos);
@@ -31,10 +35,19 @@ public class StickyHeaderOnlyTopDecoration extends StickyHeaderDecoration {
                     header.setTranslationY(top);
                     header.draw(canvas);
                     canvas.restore();
+                    notifyParentHeaderShown(parent, headerHolder, new Rect(left, top, header.getWidth(), header.getHeight()));
                 }
             }
         }
 
         return previousHeaderId;
+    }
+
+    private void notifyParentHeaderShown(RecyclerView parent, RecyclerView.ViewHolder headerHolder, Rect viewRect) {
+        if (parent instanceof OmegaExpandableRecyclerView &&
+                headerHolder instanceof OmegaExpandableRecyclerView.Adapter.GroupViewHolder) {
+            OmegaExpandableRecyclerView recyclerView = (OmegaExpandableRecyclerView) parent;
+            recyclerView.notifyHeaderPosition((OmegaExpandableRecyclerView.Adapter.GroupViewHolder) headerHolder, viewRect);
+        }
     }
 }

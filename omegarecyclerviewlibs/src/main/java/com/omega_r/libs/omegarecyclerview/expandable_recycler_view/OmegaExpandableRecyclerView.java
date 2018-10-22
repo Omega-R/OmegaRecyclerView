@@ -2,6 +2,7 @@ package com.omega_r.libs.omegarecyclerview.expandable_recycler_view;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -15,6 +16,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -30,9 +32,9 @@ import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.data.GroupPro
 import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.data.Range;
 import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.layout_manager.ExpandableLayoutManager;
 import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.sticky.StickyGroupsAdapter;
-import com.omega_r.libs.omegarecyclerview.sticky_header.StickyHeaderOnlyTopDecoration;
 import com.omega_r.libs.omegarecyclerview.sticky_header.StickyHeaderAdapter;
 import com.omega_r.libs.omegarecyclerview.sticky_header.StickyHeaderDecoration;
+import com.omega_r.libs.omegarecyclerview.sticky_header.StickyHeaderOnlyTopDecoration;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -59,6 +61,12 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
 
     @ExpandAnimation
     private int mChildExpandAnimation = CHILD_ANIM_DEFAULT;
+
+    @Nullable
+    private Rect mHeaderRect;
+
+    @Nullable
+    private Adapter.GroupViewHolder mHeaderViewHolder;
 
     //region Recycler
 
@@ -199,6 +207,27 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
         }
     }
 
+    public void notifyHeaderPosition(Adapter.GroupViewHolder headerHolder, Rect viewRect) {
+        mHeaderViewHolder = headerHolder;
+        mHeaderRect = viewRect;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (mHeaderRect != null && mHeaderViewHolder != null && getAdapter() != null) {
+            switch (ev.getAction()) {
+                case MotionEvent.ACTION_UP:
+                    if (ev.getX() >= mHeaderRect.left && ev.getX() <= mHeaderRect.right &&
+                            ev.getY() >= mHeaderRect.top && ev.getY() <= mHeaderRect.bottom) {
+                        ((Adapter) getAdapter()).notifyExpandFired(mHeaderViewHolder);
+                        return true;
+                    }
+                    break;
+            }
+        }
+        return super.dispatchTouchEvent(ev);
+    }
     // endregion
 
     //region Adapter
