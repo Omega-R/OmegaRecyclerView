@@ -193,7 +193,6 @@ public final class DropDownItemAnimator extends ExpandableItemAnimator {
             viewsAbove.add(tmpCvh.contentView);
             tmpCvh = tmpCvh.animationHelper.lowerViewHolder;
         }
-
         ((MaskView) holder.itemView).setupMask(viewsAbove, viewsBelow);
     }
 }
