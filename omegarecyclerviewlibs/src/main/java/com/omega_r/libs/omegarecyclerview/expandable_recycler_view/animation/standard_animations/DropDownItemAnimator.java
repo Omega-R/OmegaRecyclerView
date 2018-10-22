@@ -7,7 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewPropertyAnimator;
 
-import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.MaskView;
+import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.ChildClippingFrameLayout;
 import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.OmegaExpandableRecyclerView;
 import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.animation.ExpandableItemAnimator;
 import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.layout_manager.ExpandableLayoutManager;
@@ -63,7 +63,7 @@ public final class DropDownItemAnimator extends ExpandableItemAnimator {
                 }
             }
             if (deltaHeight > 0) {
-                ((MaskView) holder.itemView).animateMaskAboveDecreasing(deltaHeight, duration, COLLAPSE_DELAY);
+                ((ChildClippingFrameLayout) holder.itemView).animateClipAboveDecreasing(deltaHeight, duration, COLLAPSE_DELAY);
             }
         }
     }
@@ -119,7 +119,7 @@ public final class DropDownItemAnimator extends ExpandableItemAnimator {
         holder.itemView.setTranslationZ(ExpandableLayoutManager.DEFAULT_CHILD_Z);
         holder.contentView.setTranslationY(0f);
 
-        ((MaskView) holder.itemView).invalidateMask();
+        ((ChildClippingFrameLayout) holder.itemView).invalidateClipping();
     }
 
     @Override
@@ -193,6 +193,7 @@ public final class DropDownItemAnimator extends ExpandableItemAnimator {
             viewsAbove.add(tmpCvh.contentView);
             tmpCvh = tmpCvh.animationHelper.lowerViewHolder;
         }
-        ((MaskView) holder.itemView).setupMask(viewsAbove, viewsBelow);
+
+        ((ChildClippingFrameLayout) holder.itemView).setupClipping(viewsAbove, viewsBelow);
     }
 }
