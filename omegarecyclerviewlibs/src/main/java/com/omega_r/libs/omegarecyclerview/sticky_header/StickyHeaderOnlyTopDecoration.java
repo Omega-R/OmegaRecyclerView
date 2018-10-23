@@ -9,6 +9,8 @@ import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.OmegaExpandab
 
 public class StickyHeaderOnlyTopDecoration extends StickyHeaderDecoration {
 
+    private Rect mViewRect = new Rect();
+
     public StickyHeaderOnlyTopDecoration(StickyHeaderAdapter adapter) {
         super(adapter, true);
     }
@@ -29,18 +31,38 @@ public class StickyHeaderOnlyTopDecoration extends StickyHeaderDecoration {
                 int left = child.getLeft();
                 int top = getHeaderTop(parent, isReverseLayout, child, header, adapterPos, layoutPos);
                 if (top <= 0) {
+                    if (top == 0) {
+                        int calcOffset = getFixedCalcOffset(parent, header, headerId, isReverseLayout, layoutPos);
+                        if (calcOffset < 0) {
+                            top = calcOffset;
+                        }
+                    }
                     canvas.save();
                     canvas.translate(left, top);
                     header.setTranslationX(left);
                     header.setTranslationY(top);
                     header.draw(canvas);
                     canvas.restore();
-                    notifyParentHeaderShown(parent, headerHolder, new Rect(left, top, header.getWidth(), header.getHeight()));
+
+                    mViewRect.set(left, top, left + header.getWidth(), top + header.getHeight());
+                    notifyParentHeaderShown(parent, headerHolder, mViewRect);
                 }
             }
+
         }
 
         return previousHeaderId;
+    }
+
+    private int getFixedCalcOffset(RecyclerView parent, View header, long headerId, boolean isReverseLayout, int layoutPos) {
+        int calcOffset = 0;
+        int headerHeightForLayout = getHeaderHeightForLayout(header);
+        if (isReverseLayout && layoutPos != parent.getChildCount() - 1 && layoutPos - 1 > 0) {
+            calcOffset = calculateOffset(parent, headerHeightForLayout, headerId, layoutPos - 1);
+        } else if (!isReverseLayout && layoutPos != 0 && layoutPos < parent.getChildCount()) {
+            calcOffset = calculateOffset(parent, headerHeightForLayout, headerId, layoutPos + 1);
+        }
+        return calcOffset;
     }
 
     private void notifyParentHeaderShown(RecyclerView parent, RecyclerView.ViewHolder headerHolder, Rect viewRect) {

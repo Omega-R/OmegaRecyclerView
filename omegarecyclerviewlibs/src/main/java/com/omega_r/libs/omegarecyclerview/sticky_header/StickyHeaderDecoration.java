@@ -151,7 +151,7 @@ public class StickyHeaderDecoration extends RecyclerView.ItemDecoration {
         return Math.max(0, top);
     }
 
-    private int calculateOffset(RecyclerView parent, int headerHeight, long currentHeaderId, int nextPosition) {
+    int calculateOffset(RecyclerView parent, int headerHeight, long currentHeaderId, int nextPosition) {
         int adapterPosHere = parent.getChildAdapterPosition(parent.getChildAt(nextPosition));
         if (adapterPosHere != RecyclerView.NO_POSITION) {
             long nextId = mAdapter.getHeaderId(adapterPosHere);
@@ -167,7 +167,7 @@ public class StickyHeaderDecoration extends RecyclerView.ItemDecoration {
         mItemSpace = itemSpace;
     }
 
-    private int getHeaderHeightForLayout(View header) {
+    int getHeaderHeightForLayout(View header) {
         return mRenderInline ? 0 : header.getHeight();
     }
 
