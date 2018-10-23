@@ -391,6 +391,10 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
             }
         }
 
+        public boolean isExpanded(G group) {
+            return items.isExpanded(group);
+        }
+
         protected Parcelable onSaveInstanceState() {
             return items.onSaveInstanceState();
         }
