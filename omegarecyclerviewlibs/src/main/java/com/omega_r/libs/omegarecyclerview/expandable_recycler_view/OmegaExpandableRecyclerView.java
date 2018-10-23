@@ -68,6 +68,8 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
     @Nullable
     private Adapter.GroupViewHolder mHeaderViewHolder;
 
+    private boolean mIsTouchEventStartsInStickyHeader;
+
     //region Recycler
 
     public OmegaExpandableRecyclerView(Context context) {
@@ -218,15 +220,25 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
         if (mHeaderRect != null && mHeaderViewHolder != null && getAdapter() != null) {
             switch (ev.getAction()) {
                 case MotionEvent.ACTION_UP:
-                    if (ev.getX() >= mHeaderRect.left && ev.getX() <= mHeaderRect.right &&
-                            ev.getY() >= mHeaderRect.top && ev.getY() <= mHeaderRect.bottom) {
+                    boolean shouldReturn = false;
+                    if (isEventInRect(ev, mHeaderRect) && mIsTouchEventStartsInStickyHeader) {
                         ((Adapter) getAdapter()).notifyExpandFired(mHeaderViewHolder);
-                        return true;
+                        shouldReturn = true;
                     }
+                    mIsTouchEventStartsInStickyHeader = false;
+                    if (shouldReturn) return true;
+                    break;
+                case MotionEvent.ACTION_DOWN:
+                    mIsTouchEventStartsInStickyHeader = isEventInRect(ev, mHeaderRect);
                     break;
             }
         }
         return super.dispatchTouchEvent(ev);
+    }
+
+    private boolean isEventInRect(MotionEvent ev, Rect rect) {
+        return ev.getX() >= rect.left && ev.getX() <= rect.right &&
+                ev.getY() >= rect.top && ev.getY() <= rect.bottom;
     }
     // endregion
 
