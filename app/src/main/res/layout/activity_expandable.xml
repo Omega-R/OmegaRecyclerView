@@ -59,6 +59,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:childAnimation="Dropdown"
-        app:expandMode="single"/>
+        app:expandMode="single"
+        app:stickyGroups="true" />
 
 </LinearLayout>

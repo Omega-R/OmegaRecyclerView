@@ -1,6 +1,7 @@
 package com.omega_r.omegarecyclerview.expandable_example.core;
 
 import android.os.Bundle;
+import android.support.annotation.LayoutRes;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
@@ -26,10 +27,15 @@ public class ExpandableActivity extends AppCompatActivity implements CompoundBut
         return new ExpandableAdapter();
     }
 
+    @LayoutRes
+    protected int provideContentLayoutRes() {
+        return R.layout.activity_expandable;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_expandable);
+        setContentView(provideContentLayoutRes());
 
         setupRecyclerView();
         setupRadioButtons();

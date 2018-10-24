@@ -8,7 +8,7 @@ import android.widget.Toast;
 import com.omega_r.libs.omegarecyclerview.OmegaRecyclerView;
 import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.OmegaExpandableRecyclerView;
 import com.omega_r.libs.omegarecyclerview.sticky_header.StickyHeaderAdapter;
-import com.omega_r.libs.omegarecyclerview.sticky_header.StickyHeaderDecoration;
+import com.omega_r.libs.omegarecyclerview.sticky_header.BaseStickyHeaderDecoration;
 import com.omega_r.omegarecyclerview.R;
 import com.omega_r.omegarecyclerview.expandable_example.core.QuoteGlobalInfo;
 
@@ -26,8 +26,8 @@ public class DefaultStickyAdapter extends OmegaExpandableRecyclerView.Adapter<Qu
 
     @Override
     public long getHeaderId(int position) {
-        Integer providedId = getItemAtVisiblePosition(position).getStickyId();
-        return providedId == null ? StickyHeaderDecoration.NO_HEADER_ID : providedId;
+        Integer providedId = getItem(position).getStickyId();
+        return providedId == null ? BaseStickyHeaderDecoration.NO_HEADER_ID : providedId;
     }
 
     @Override
@@ -37,7 +37,7 @@ public class DefaultStickyAdapter extends OmegaExpandableRecyclerView.Adapter<Qu
 
     @Override
     public void onBindHeaderViewHolder(StickyViewHolder viewHolder, int position) {
-        viewHolder.bind(getItemAtVisiblePosition(position).getGroup().getYear());
+        viewHolder.bind(getItem(position).getGroup().getYear());
     }
 
     class ExGroupViewHolder extends GroupViewHolder {

@@ -43,12 +43,31 @@ public class ExpandableViewData<G, CH> {
 
     @NonNull
     public static <G, CH> ExpandableViewData<G, CH> of(G group, @Nullable Integer stickyId, List<CH> childs) {
-        return new ExpandableViewData<G, CH>(group, childs, stickyId);
+        return new ExpandableViewData<>(group, childs, stickyId);
     }
 
     @SafeVarargs
     @NonNull
     public static <G, CH> ExpandableViewData<G, CH> of(G group, @Nullable Integer stickyId, CH... childs) {
-        return new ExpandableViewData<G, CH>(group, Arrays.asList(childs), stickyId);
+        return new ExpandableViewData<>(group, Arrays.asList(childs), stickyId);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ExpandableViewData)) return false;
+        ExpandableViewData<?, ?> that = (ExpandableViewData<?, ?>) o;
+        return areObjectsEqual(mGroup, that.mGroup) &&
+                areObjectsEqual(mChilds, that.mChilds) &&
+                areObjectsEqual(mStickyId, that.mStickyId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(new Object[]{mGroup, mChilds, mStickyId});
+    }
+
+    private boolean areObjectsEqual(Object a, Object b) {
+        return (a == b) || (a != null && a.equals(b));
     }
 }
