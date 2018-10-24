@@ -69,6 +69,12 @@ public class FlatGroupingList<G, CH> {
         return expandableViewData.get(positionData);
     }
 
+    public G getGroupOfPosition(int visiblePosition) {
+        PositionData positionData = mPositions.get(visiblePosition);
+        ExpandableViewData<G, CH> expandableViewData = mItems.get(positionData.groupIndex);
+        return expandableViewData.getGroup();
+    }
+
     public int getGroupIndex(G group) {
         for (int i = 0; i < mItems.size(); i++) {
             if (mItems.get(i).getGroup().equals(group)) return i;

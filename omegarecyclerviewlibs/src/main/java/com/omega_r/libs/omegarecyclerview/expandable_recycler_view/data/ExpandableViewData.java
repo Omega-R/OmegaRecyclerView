@@ -43,13 +43,13 @@ public class ExpandableViewData<G, CH> {
 
     @NonNull
     public static <G, CH> ExpandableViewData<G, CH> of(G group, @Nullable Integer stickyId, List<CH> childs) {
-        return new ExpandableViewData<G, CH>(group, childs, stickyId);
+        return new ExpandableViewData<>(group, childs, stickyId);
     }
 
     @SafeVarargs
     @NonNull
     public static <G, CH> ExpandableViewData<G, CH> of(G group, @Nullable Integer stickyId, CH... childs) {
-        return new ExpandableViewData<G, CH>(group, Arrays.asList(childs), stickyId);
+        return new ExpandableViewData<>(group, Arrays.asList(childs), stickyId);
     }
 
     @Override

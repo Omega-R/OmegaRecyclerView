@@ -20,10 +20,4 @@
         android:layout_height="wrap_content"
         android:text="@string/button_support_sticky"/>
 
-    <Button
-        android:id="@+id/button_group_sticky"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/button_group_sticky"/>
-
 </LinearLayout>

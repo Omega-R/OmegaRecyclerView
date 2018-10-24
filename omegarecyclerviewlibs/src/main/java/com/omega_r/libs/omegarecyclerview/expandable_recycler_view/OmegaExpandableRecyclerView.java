@@ -30,11 +30,10 @@ import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.data.Expandab
 import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.data.FlatGroupingList;
 import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.data.GroupProvider;
 import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.data.Range;
+import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.data.UniqueIdProvider;
 import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.layout_manager.ExpandableLayoutManager;
-import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.sticky.StickyGroupsAdapter;
 import com.omega_r.libs.omegarecyclerview.sticky_header.StickyHeaderAdapter;
 import com.omega_r.libs.omegarecyclerview.sticky_header.StickyHeaderDecoration;
-import com.omega_r.libs.omegarecyclerview.sticky_header.StickyHeaderOnlyTopDecoration;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -61,6 +60,8 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
 
     @ExpandAnimation
     private int mChildExpandAnimation = CHILD_ANIM_DEFAULT;
+
+    private boolean mShouldUseStickyGroups;
 
     @Nullable
     private Rect mHeaderRect;
@@ -124,10 +125,10 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
         try {
             mChildExpandAnimation = attrs.getInteger(R.styleable.OmegaExpandableRecyclerView_childAnimation, CHILD_ANIM_DEFAULT);
             mExpandMode = attrs.getInteger(R.styleable.OmegaExpandableRecyclerView_expandMode, EXPAND_MODE_SINGLE);
+            mShouldUseStickyGroups = attrs.getBoolean(R.styleable.OmegaExpandableRecyclerView_stickyGroups, false);
         } finally {
             attrs.recycle();
         }
-
     }
 
     @Override
@@ -200,12 +201,13 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
         }
     }
 
+    @Nullable
     @Override
-    protected StickyHeaderDecoration provideStickyHeaderDecoration(StickyHeaderAdapter adapter) {
-        if (getAdapter() instanceof StickyGroupsAdapter) {
-            return new StickyHeaderOnlyTopDecoration(adapter);
+    protected StickyHeaderDecoration provideStickyHeaderDecoration(@Nullable StickyHeaderAdapter adapter, @Nullable Adapter expandableAdapter) {
+        if (mShouldUseStickyGroups) {
+            return new ExpandableStickyHeaderDecoration(adapter, expandableAdapter);
         } else {
-            return super.provideStickyHeaderDecoration(adapter);
+            return super.provideStickyHeaderDecoration(adapter, expandableAdapter);
         }
     }
 
@@ -245,8 +247,8 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
     //region Adapter
     public static abstract class Adapter<G, CH> extends OmegaRecyclerView.Adapter<BaseViewHolder> {
 
-        private static final int VH_TYPE_GROUP = 238956;
-        private static final int VH_TYPE_CHILD = 238957;
+        static final int VH_TYPE_GROUP = 238956;
+        static final int VH_TYPE_CHILD = 238957;
 
         private static final long ANTI_SPAM_DELAY = 400;
 
@@ -313,6 +315,11 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
         @Override
         public void onBindViewHolder(@NonNull BaseViewHolder baseViewHolder, int position) {
             baseViewHolder.bind(items.get(position));
+        }
+
+        @SuppressWarnings("unchecked")
+        public void bindGroupViewHolder(@NonNull BaseViewHolder baseViewHolder, int position) {
+            baseViewHolder.bind(items.getGroupOfPosition(position));
         }
 
         @Override
@@ -412,6 +419,19 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
             return items.getDataAtVisiblePosition(position);
         }
 
+        public long getGroupUniqueId(int position) {
+            G group = getItem(position).getGroup();
+            if (group instanceof UniqueIdProvider) {
+                return ((UniqueIdProvider) group).provideUniqueId();
+            } else {
+                return group.hashCode();
+            }
+        }
+
+        public int getAdapterLength() {
+            return items.getItems().size();
+        }
+
         public abstract class GroupViewHolder extends BaseViewHolder<G> {
 
             private View currentExpandFiringView = itemView;
@@ -467,7 +487,7 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
     //endregion
 
     //region ViewHolders
-    private static abstract class BaseViewHolder<T> extends OmegaRecyclerView.ViewHolder {
+    static abstract class BaseViewHolder<T> extends OmegaRecyclerView.ViewHolder {
         private T item;
 
         BaseViewHolder(ViewGroup parent, @LayoutRes int res) {

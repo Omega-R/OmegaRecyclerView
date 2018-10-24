@@ -69,6 +69,7 @@
             <enum name="single" value="0" />
             <enum name="multiple" value="1" />
         </attr>
+        <attr name="stickyGroups" format="boolean" />
     </declare-styleable>
 
 </resources>

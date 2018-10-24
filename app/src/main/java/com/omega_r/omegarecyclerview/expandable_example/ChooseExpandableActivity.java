@@ -19,7 +19,6 @@ public class ChooseExpandableActivity extends AppCompatActivity implements View.
 
         findViewById(R.id.button_core).setOnClickListener(this);
         findViewById(R.id.button_sticky_support).setOnClickListener(this);
-        findViewById(R.id.button_group_sticky).setOnClickListener(this);
     }
 
     @Override
@@ -36,13 +35,6 @@ public class ChooseExpandableActivity extends AppCompatActivity implements View.
                 AppOmegaIntentBuilder.from(this)
                         .appActivities()
                         .defaultStickyExpandableActivity()
-                        .createIntentHandler()
-                        .startActivity();
-                break;
-            case R.id.button_group_sticky:
-                AppOmegaIntentBuilder.from(this)
-                        .appActivities()
-                        .stickyGroupsActivity()
                         .createIntentHandler()
                         .startActivity();
                 break;

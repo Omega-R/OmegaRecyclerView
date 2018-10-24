@@ -23,11 +23,14 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.OmegaExpandableRecyclerView;
 import com.omega_r.libs.omegarecyclerview.header.HeaderFooterWrapperAdapter;
 import com.omega_r.libs.omegarecyclerview.pagination.OnPageRequestListener;
 import com.omega_r.libs.omegarecyclerview.pagination.PageRequester;
 import com.omega_r.libs.omegarecyclerview.pagination.PaginationAdapter;
 import com.omega_r.libs.omegarecyclerview.pagination.WrapperAdapter;
+import com.omega_r.libs.omegarecyclerview.sticky_header.BaseStickyHeaderDecoration;
+import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.ExpandableStickyHeaderDecoration;
 import com.omega_r.libs.omegarecyclerview.sticky_header.StickyHeaderAdapter;
 import com.omega_r.libs.omegarecyclerview.sticky_header.StickyHeaderDecoration;
 import com.omega_r.libs.omegarecyclerview.swipe_menu.SwipeMenuHelper;
@@ -215,6 +218,8 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
             if (mStickyHeaderDecoration != null) removeItemDecoration(mStickyHeaderDecoration);
         } else {
             StickyHeaderAdapter stickyHeaderAdapter = null;
+            OmegaExpandableRecyclerView.Adapter expandableAdapter = null;
+
             if (adapter instanceof WrapperAdapter) {
                 RecyclerView.Adapter wrappedAdapter = ((WrapperAdapter) adapter).getLastWrappedAdapter();
                 if (wrappedAdapter instanceof StickyHeaderAdapter) {
@@ -227,21 +232,31 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
             } else if (adapter instanceof StickyHeaderAdapter) {
                 stickyHeaderAdapter = (StickyHeaderAdapter) adapter;
             }
-            if (stickyHeaderAdapter != null) {
-                if (mStickyHeaderDecoration == null) {
-                    mStickyHeaderDecoration = provideStickyHeaderDecoration(stickyHeaderAdapter);
-                    mStickyHeaderDecoration.setItemSpace(mItemSpace);
-                    addItemDecoration(mStickyHeaderDecoration);
-                } else {
-                    mStickyHeaderDecoration.setAdapter(stickyHeaderAdapter);
-                    invalidateItemDecorations();
+
+            if (adapter instanceof OmegaExpandableRecyclerView.Adapter) {
+                expandableAdapter = (OmegaExpandableRecyclerView.Adapter) adapter;
+            }
+
+            if (mStickyHeaderDecoration == null) {
+                mStickyHeaderDecoration = provideStickyHeaderDecoration(stickyHeaderAdapter, expandableAdapter);
+                if (mStickyHeaderDecoration == null) return;
+                mStickyHeaderDecoration.setItemSpace(mItemSpace);
+                addItemDecoration(mStickyHeaderDecoration);
+            } else {
+                mStickyHeaderDecoration.setStickyHeaderAdapter(stickyHeaderAdapter);
+                if (mStickyHeaderDecoration instanceof ExpandableStickyHeaderDecoration) {
+                    ((ExpandableStickyHeaderDecoration) mStickyHeaderDecoration).setExpandableAdapter(expandableAdapter);
                 }
+                invalidateItemDecorations();
             }
         }
     }
 
-    protected StickyHeaderDecoration provideStickyHeaderDecoration(StickyHeaderAdapter adapter) {
-        return new StickyHeaderDecoration(adapter);
+    @Nullable
+    protected StickyHeaderDecoration provideStickyHeaderDecoration(@Nullable StickyHeaderAdapter adapter,
+                                                                   @Nullable OmegaExpandableRecyclerView.Adapter expandableAdapter) {
+        if (adapter == null) return null;
+        return new BaseStickyHeaderDecoration(adapter);
     }
 
     @Override
@@ -254,7 +269,7 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
             Integer integer = sectionState.position;
             view.setTag(R.id.section_show_divider, sectionState.showDivider);
 
-            if (integer == null || integer == 0) {
+            if (integer == 0) {
                 mHeadersList.add(view);
             } else {
                 mFooterList.add(view);

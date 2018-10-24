@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import com.omega_r.libs.omegarecyclerview.OmegaRecyclerView;
 import com.omega_r.libs.omegarecyclerview.R;
 import com.omega_r.libs.omegarecyclerview.sticky_header.StickyHeaderAdapter;
-import com.omega_r.libs.omegarecyclerview.sticky_header.StickyHeaderDecoration;
+import com.omega_r.libs.omegarecyclerview.sticky_header.BaseStickyHeaderDecoration;
 
 import java.util.List;
 
@@ -187,16 +187,16 @@ public class HeaderFooterWrapperAdapter<T extends RecyclerView.Adapter> extends 
     @Override
     public long getHeaderId(int position) {
         if (position < 0 || mRealAdapter.getItemCount() <= position) {
-            return StickyHeaderDecoration.NO_HEADER_ID;
+            return BaseStickyHeaderDecoration.NO_HEADER_ID;
         }
         StickyHeaderAdapter stickyHeaderAdapter = getStickyHeaderAdapter();
         if (stickyHeaderAdapter == null) {
-            return StickyHeaderDecoration.NO_HEADER_ID;
+            return BaseStickyHeaderDecoration.NO_HEADER_ID;
         }
 
         int realAdapterItemCount = mRealAdapter.getItemCount();
         if (realAdapterItemCount == 0) {
-            return StickyHeaderDecoration.NO_HEADER_ID;
+            return BaseStickyHeaderDecoration.NO_HEADER_ID;
         }
         if (isHeaderPosition(position)) {
             return stickyHeaderAdapter.getHeaderId(0);
