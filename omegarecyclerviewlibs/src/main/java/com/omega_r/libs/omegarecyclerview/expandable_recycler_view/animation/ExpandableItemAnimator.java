@@ -37,6 +37,12 @@ public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
     private ArrayList<ViewHolder> mRemoveAnimations = new ArrayList<>();
     private ArrayList<ViewHolder> mChangeAnimations = new ArrayList<>();
 
+    @Nullable
+    private OnAnimationEndListener mOnRemoveAnimationEndListener;
+
+    @Nullable
+    private OnAnimationEndListener mOnAddAnimationEndListener;
+
     protected abstract void onRemoveStart(final OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder);
 
     protected abstract void setupRemoveAnimation(ViewPropertyAnimator animation, final OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder);
@@ -290,6 +296,11 @@ public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
                         dispatchRemoveFinished(holder);
                         mRemoveAnimations.remove(holder);
                         dispatchFinishedWhenDone();
+
+                        if (mOnRemoveAnimationEndListener != null) {
+                            mOnRemoveAnimationEndListener.onAnimationEnd();
+                            mOnRemoveAnimationEndListener = null;
+                        }
                     }
                 })
                 .start();
@@ -371,6 +382,11 @@ public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
                         dispatchAddFinished(holder);
                         mAddAnimations.remove(holder);
                         dispatchFinishedWhenDone();
+
+                        if (mOnAddAnimationEndListener != null) {
+                            mOnAddAnimationEndListener.onAnimationEnd();
+                            mOnAddAnimationEndListener = null;
+                        }
                     }
                 })
                 .start();
@@ -726,6 +742,14 @@ public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
         for (int i = viewHolders.size() - 1; i >= 0; i--) {
             ViewCompat.animate(viewHolders.get(i).itemView).cancel();
         }
+    }
+
+    public void setOnRemoveAnimationEndListener(@Nullable OnAnimationEndListener onRemoveAnimationEndListener) {
+        mOnRemoveAnimationEndListener = onRemoveAnimationEndListener;
+    }
+
+    public void setOnAddAnimationEndListener(@Nullable OnAnimationEndListener onAddAnimationEndListener) {
+        mOnAddAnimationEndListener = onAddAnimationEndListener;
     }
 
     private interface UnVoidFunction<PAR> {

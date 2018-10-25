@@ -146,4 +146,20 @@ public class FlatGroupingList<G, CH> {
     public ExpandableViewData<G, CH> getDataAtVisiblePosition(int pos) {
         return mItems.get(mPositions.get(pos).groupIndex);
     }
+
+    public ChildPosition getChildPositionAt(int visiblePosition) {
+        PositionData positionData = mPositions.get(visiblePosition);
+        ExpandableViewData<G, CH> data = mItems.get(positionData.groupIndex);
+        if (positionData.childIndex == data.getChilds().size() - 1) {
+            return ChildPosition.LAST;
+        } else if (positionData.childIndex == 0) {
+            return ChildPosition.FIRST;
+        } else {
+            return ChildPosition.OTHER;
+        }
+    }
+
+    public enum ChildPosition {
+        FIRST, LAST, OTHER
+    }
 }

@@ -60,6 +60,9 @@
         android:layout_height="match_parent"
         app:childAnimation="Dropdown"
         app:expandMode="single"
-        app:stickyGroups="true" />
+        app:backgroundGroupExpanded="@drawable/group_expanded"
+        app:backgroundGroupCollapsed="@drawable/group_collapsed"
+        app:backgroundChild="@drawable/child_bg"
+        app:backgroundLastChild="@drawable/child_last"/>
 
 </LinearLayout>
