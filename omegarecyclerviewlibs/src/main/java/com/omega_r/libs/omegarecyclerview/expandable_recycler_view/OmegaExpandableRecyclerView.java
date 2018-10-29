@@ -45,7 +45,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
@@ -314,14 +313,14 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
     private void subscribeOnRemoveItemAnimationEnd(OnAnimationEndListener listener) {
         ItemAnimator itemAnimator = getItemAnimator();
         if (itemAnimator instanceof ExpandableItemAnimator) {
-            ((ExpandableItemAnimator) itemAnimator).setOnRemoveAnimationEndListener(listener);
+            ((ExpandableItemAnimator) itemAnimator).subscribeOnRemoveAnimationEnd(listener);
         }
     }
 
     private void subscribeOnAddItemAnimationEnd(OnAnimationEndListener listener) {
         ItemAnimator itemAnimator = getItemAnimator();
         if (itemAnimator instanceof ExpandableItemAnimator) {
-            ((ExpandableItemAnimator) itemAnimator).setOnAddAnimationEndListener(listener);
+            ((ExpandableItemAnimator) itemAnimator).subscribeOnAddAnimationEnd(listener);
         }
     }
     // endregion

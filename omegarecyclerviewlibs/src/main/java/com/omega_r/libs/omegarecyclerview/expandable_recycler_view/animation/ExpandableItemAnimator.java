@@ -37,12 +37,8 @@ public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
     private ArrayList<ViewHolder> mMoveAnimations = new ArrayList<>();
     private ArrayList<ViewHolder> mRemoveAnimations = new ArrayList<>();
     private ArrayList<ViewHolder> mChangeAnimations = new ArrayList<>();
-
-    @Nullable
-    private OnAnimationEndListener mOnRemoveAnimationEndListener;
-
-    @Nullable
-    private OnAnimationEndListener mOnAddAnimationEndListener;
+    private List<OnAnimationEndListener> mOnRemoveAnimationEndListeners = new ArrayList<>();
+    private List<OnAnimationEndListener> mOnAddAnimationEndListeners = new ArrayList<>();
 
     protected abstract void onRemoveStart(final OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder);
 
@@ -308,14 +304,17 @@ public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
                         dispatchRemoveFinished(holder);
                         mRemoveAnimations.remove(holder);
                         dispatchFinishedWhenDone();
-
-                        if (mOnRemoveAnimationEndListener != null) {
-                            mOnRemoveAnimationEndListener.onAnimationEnd();
-                            mOnRemoveAnimationEndListener = null;
-                        }
+                        notifyRemoveAnimationEnds();
                     }
                 })
                 .start();
+    }
+
+    private void notifyRemoveAnimationEnds() {
+        for (OnAnimationEndListener listener : mOnRemoveAnimationEndListeners) {
+            listener.onAnimationEnd();
+        }
+        mOnRemoveAnimationEndListeners.clear();
     }
 
     @Override
@@ -394,14 +393,17 @@ public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
                         dispatchAddFinished(holder);
                         mAddAnimations.remove(holder);
                         dispatchFinishedWhenDone();
-
-                        if (mOnAddAnimationEndListener != null) {
-                            mOnAddAnimationEndListener.onAnimationEnd();
-                            mOnAddAnimationEndListener = null;
-                        }
+                        notifyAddAnimationEnds();
                     }
                 })
                 .start();
+    }
+
+    private void notifyAddAnimationEnds() {
+        for (OnAnimationEndListener listener : mOnAddAnimationEndListeners) {
+            listener.onAnimationEnd();
+        }
+        mOnAddAnimationEndListeners.clear();
     }
 
     @Override
@@ -756,12 +758,12 @@ public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
         }
     }
 
-    public void setOnRemoveAnimationEndListener(@Nullable OnAnimationEndListener onRemoveAnimationEndListener) {
-        mOnRemoveAnimationEndListener = onRemoveAnimationEndListener;
+    public void subscribeOnRemoveAnimationEnd(@NonNull OnAnimationEndListener onRemoveAnimationEndListener) {
+        mOnRemoveAnimationEndListeners.add(onRemoveAnimationEndListener);
     }
 
-    public void setOnAddAnimationEndListener(@Nullable OnAnimationEndListener onAddAnimationEndListener) {
-        mOnAddAnimationEndListener = onAddAnimationEndListener;
+    public void subscribeOnAddAnimationEnd(@NonNull OnAnimationEndListener onAddAnimationEndListener) {
+        mOnAddAnimationEndListeners.add(onAddAnimationEndListener);
     }
 
     private interface UnVoidFunction<PAR> {
