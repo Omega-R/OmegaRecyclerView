@@ -81,7 +81,6 @@ public final class DropDownItemAnimator extends ExpandableItemAnimator {
     @Override
     protected void onAddStart(final OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder) {
         holder.itemView.setAlpha(1f);
-        holder.contentView.setAlpha(1f);
         holder.contentView.setTranslationY(getHiddenOffsetReversed(holder));
         resolveAddingZ(holder);
         setupMask(holder);
@@ -90,6 +89,7 @@ public final class DropDownItemAnimator extends ExpandableItemAnimator {
     @Override
     protected void setupAddAnimation(ViewPropertyAnimator animator, final OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder) {
         animator.setDuration(holder.animationHelper.havePendingRemovals() ? EXPAND_DURATION_LONG : EXPAND_DURATION_SHORT);
+        animator.alpha(1f);
         if (holder.animationHelper.upperViewHolder == null) {
             animator.translationY(0f);
         } else {
@@ -190,7 +190,7 @@ public final class DropDownItemAnimator extends ExpandableItemAnimator {
         }
         tmpCvh = holder.animationHelper.lowerViewHolder;
         while (tmpCvh != null) {
-            viewsAbove.add(tmpCvh.contentView);
+            viewsBelow.add(tmpCvh.contentView);
             tmpCvh = tmpCvh.animationHelper.lowerViewHolder;
         }
 
