@@ -70,11 +70,7 @@
             <enum name="multiple" value="1" />
         </attr>
         <attr name="stickyGroups" format="boolean" />
-        <attr name="backgroundGroupCollapsed" format="reference" />
-        <attr name="backgroundGroupExpanded" format="reference" />
-        <attr name="backgroundChild" format="reference" />
-        <attr name="backgroundLastChild" format="reference" />
-        <attr name="backgroundFirstChild" format="reference" />
+        <attr name="backgrounds" format="reference" />
     </declare-styleable>
 
 </resources>

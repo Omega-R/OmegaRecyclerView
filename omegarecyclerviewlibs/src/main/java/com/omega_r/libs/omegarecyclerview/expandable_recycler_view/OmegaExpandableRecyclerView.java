@@ -1,6 +1,7 @@
 package com.omega_r.libs.omegarecyclerview.expandable_recycler_view;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
@@ -79,19 +80,7 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
     private boolean mIsTouchEventStartsInStickyHeader;
 
     @DrawableRes
-    private int mGroupCollapsedBackgroundDrawableRes;
-
-    @DrawableRes
-    private int mGroupExpandedBackgroundDrawableRes;
-
-    @DrawableRes
-    private int mChildBackgroundDrawableRes;
-
-    @DrawableRes
-    private int mLastChildBackgroundDrawableRes;
-
-    @DrawableRes
-    private int mFirstChildBackgroundDrawableRes;
+    private int mItemsBackgroundRes;
 
     //region Recycler
 
@@ -148,11 +137,7 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
             mChildExpandAnimation = attrs.getInteger(R.styleable.OmegaExpandableRecyclerView_childAnimation, CHILD_ANIM_DEFAULT);
             mExpandMode = attrs.getInteger(R.styleable.OmegaExpandableRecyclerView_expandMode, EXPAND_MODE_SINGLE);
             mShouldUseStickyGroups = attrs.getBoolean(R.styleable.OmegaExpandableRecyclerView_stickyGroups, false);
-            mGroupCollapsedBackgroundDrawableRes = attrs.getResourceId(R.styleable.OmegaExpandableRecyclerView_backgroundGroupCollapsed, NO_RESOURCE);
-            mGroupExpandedBackgroundDrawableRes = attrs.getResourceId(R.styleable.OmegaExpandableRecyclerView_backgroundGroupExpanded, NO_RESOURCE);
-            mChildBackgroundDrawableRes = attrs.getResourceId(R.styleable.OmegaExpandableRecyclerView_backgroundChild, NO_RESOURCE);
-            mFirstChildBackgroundDrawableRes = attrs.getResourceId(R.styleable.OmegaExpandableRecyclerView_backgroundFirstChild, NO_RESOURCE);
-            mLastChildBackgroundDrawableRes = attrs.getResourceId(R.styleable.OmegaExpandableRecyclerView_backgroundLastChild, NO_RESOURCE);
+            mItemsBackgroundRes = attrs.getResourceId(R.styleable.OmegaExpandableRecyclerView_backgrounds, NO_RESOURCE);
         } finally {
             attrs.recycle();
         }
@@ -270,44 +255,13 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
                 ev.getY() >= rect.top && ev.getY() <= rect.bottom;
     }
 
-    public int getGroupCollapsedBackgroundDrawableRes() {
-        return mGroupCollapsedBackgroundDrawableRes;
+    @DrawableRes
+    public int getItemsBackgroundRes() {
+        return mItemsBackgroundRes;
     }
 
-    public void setGroupCollapsedBackgroundDrawableRes(int groupCollapsedBackgroundDrawableRes) {
-        mGroupCollapsedBackgroundDrawableRes = groupCollapsedBackgroundDrawableRes;
-    }
-
-    public int getGroupExpandedBackgroundDrawableRes() {
-        return mGroupExpandedBackgroundDrawableRes;
-    }
-
-    public void setGroupExpandedBackgroundDrawableRes(int groupExpandedBackgroundDrawableRes) {
-        mGroupExpandedBackgroundDrawableRes = groupExpandedBackgroundDrawableRes;
-    }
-
-    public int getChildBackgroundDrawableRes() {
-        return mChildBackgroundDrawableRes;
-    }
-
-    public void setChildBackgroundDrawableRes(int childBackgroundDrawableRes) {
-        mChildBackgroundDrawableRes = childBackgroundDrawableRes;
-    }
-
-    public int getLastChildBackgroundDrawableRes() {
-        return mLastChildBackgroundDrawableRes;
-    }
-
-    public void setLastChildBackgroundDrawableRes(int lastChildBackgroundDrawableRes) {
-        mLastChildBackgroundDrawableRes = lastChildBackgroundDrawableRes;
-    }
-
-    public int getFirstChildBackgroundDrawableRes() {
-        return mFirstChildBackgroundDrawableRes;
-    }
-
-    public void setFirstChildBackgroundDrawableRes(int firstChildBackgroundDrawableRes) {
-        mFirstChildBackgroundDrawableRes = firstChildBackgroundDrawableRes;
+    public void setItemsBackgroundRes(@DrawableRes int itemsBackgroundRes) {
+        mItemsBackgroundRes = itemsBackgroundRes;
     }
 
     private void subscribeOnRemoveItemAnimationEnd(OnAnimationEndListener listener) {
@@ -408,28 +362,22 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
                     attachedGroupViewHolders.put(groupViewHolder, groupViewHolder.getItem());
                     break;
                 case CHILD:
-                    ((ChildViewHolder) baseViewHolder).bindWithBackground((CH) items.get(position), getChildDrawable(position));
+                    ((ChildViewHolder) baseViewHolder).bindWithBackground(
+                            (CH) items.get(position),
+                            recyclerView.mItemsBackgroundRes,
+                            getChildDrawableLevel(position));
                     break;
             }
         }
 
-        @DrawableRes
-        private int getChildDrawable(int position) {
+        private int getChildDrawableLevel(int position) {
             switch (items.getChildPositionAt(position)) {
                 case LAST:
-                    int lastDrawable = recyclerView.getLastChildBackgroundDrawableRes();
-                    if (lastDrawable != NO_RESOURCE) {
-                        return lastDrawable;
-                    }
-                    break;
+                    return getResources().getInteger(R.integer.backgroundLastChild);
                 case FIRST:
-                    int firstDrawable = recyclerView.getFirstChildBackgroundDrawableRes();
-                    if (firstDrawable != NO_RESOURCE) {
-                        return firstDrawable;
-                    }
-                    break;
+                    return getResources().getInteger(R.integer.backgroundFirstChild);
             }
-            return recyclerView.getChildBackgroundDrawableRes();
+            return getResources().getInteger(R.integer.backgroundChild);
         }
 
         @SuppressWarnings("unchecked")
@@ -561,7 +509,18 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
             }
         }
 
+        public Context getContext() {
+            return recyclerView.getContext();
+        }
+
+        public Resources getResources() {
+            return getContext().getResources();
+        }
+
         public abstract class GroupViewHolder extends BaseViewHolder<G> implements OnAnimationEndListener {
+
+            private final int expandedResLevel;
+            private final int collapsedResLevel;
 
             private View currentExpandFiringView = itemView;
             private final OnClickListener clickListener = new OnClickListener() {
@@ -577,6 +536,8 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
 
             public GroupViewHolder(ViewGroup parent, @LayoutRes int res) {
                 super(parent, res);
+                expandedResLevel = getResources().getInteger(R.integer.backgroundGroupExpanded);
+                collapsedResLevel = getResources().getInteger(R.integer.backgroundGroupCollapsed);
                 setExpandFiringView(itemView);
             }
 
@@ -595,9 +556,9 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
 
             private void updateBackground() {
                 if (isExpanded()) {
-                    changeBackground(itemView, defaultGroupDrawable, recyclerView.getGroupExpandedBackgroundDrawableRes());
+                    changeBackground(itemView, defaultGroupDrawable, recyclerView.mItemsBackgroundRes, expandedResLevel);
                 } else {
-                    changeBackground(itemView, defaultGroupDrawable, recyclerView.getGroupCollapsedBackgroundDrawableRes());
+                    changeBackground(itemView, defaultGroupDrawable, recyclerView.mItemsBackgroundRes, collapsedResLevel);
                 }
             }
 
@@ -633,9 +594,9 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
                 if (defaultChildDrawable == null) defaultChildDrawable = contentView.getBackground();
             }
 
-            private void bindWithBackground(CH item, @DrawableRes int backgroundDrawableRes) {
+            private void bindWithBackground(CH item, @DrawableRes int backgroundsRes, int backgroundDrawableLevel) {
                 bind(item);
-                changeBackground(contentView, defaultChildDrawable, backgroundDrawableRes);
+                changeBackground(contentView, defaultChildDrawable, backgroundsRes, backgroundDrawableLevel);
             }
         }
     }
@@ -666,15 +627,21 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
 
         protected abstract void onBind(T item);
 
-        void changeBackground(View view, Drawable defaultDrawable, @DrawableRes int drawableRes) {
-            if (drawableRes == NO_RESOURCE) {
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-                    view.setBackgroundDrawable(defaultDrawable);
-                } else {
-                    view.setBackground(defaultDrawable);
-                }
+        void changeBackground(View view, Drawable defaultDrawable, @DrawableRes int backgroundsRes, int drawableLevel) {
+            if (backgroundsRes == NO_RESOURCE) {
+                setBackground(view, defaultDrawable);
             } else {
-                view.setBackgroundResource(drawableRes);
+                Drawable drawable = getResources().getDrawable(backgroundsRes);
+                drawable.setLevel(drawableLevel);
+                setBackground(view, drawable);
+            }
+        }
+
+        private void setBackground(View view, Drawable defaultDrawable) {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+                view.setBackgroundDrawable(defaultDrawable);
+            } else {
+                view.setBackground(defaultDrawable);
             }
         }
     }
