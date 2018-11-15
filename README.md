@@ -289,6 +289,119 @@ setLongClickListener(@Nullable OnItemLongClickListener<T> longClickListener)
 ```
 You can subscribe to this event on the fly - all view holders will be notified.
 
+## Expandable
+<img src="/images/exp_fade_single.gif?raw=true" width="250" height="400" />    <img src="/images/exp_dd_single.gif?raw=true" width="250" height="400" />    <img src="/images/exp_dd_multi.gif?raw=true" width="250" height="400" />
+
+Adding OmegaExpandableRecyclerView to layout:
+```
+<com.omega_r.libs.omegarecyclerview.expandable_recycler_view.OmegaExpandableRecyclerView
+        android:id="@+id/recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:childAnimation="Dropdown"
+        app:expandMode="single"/>
+```
+
+Create adapter like following:
+```
+public class ExpandableAdapter extends OmegaExpandableRecyclerView.Adapter<QuoteGlobalInfo, String> {
+
+    @Override
+    protected ExGroupViewHolder provideGroupViewHolder(@NonNull ViewGroup viewGroup) {
+        return new ExGroupViewHolder(viewGroup);
+    }
+
+    @Override
+    protected ExChildViewHolder provideChildViewHolder(@NonNull ViewGroup viewGroup) {
+        return new ExChildViewHolder(viewGroup);
+    }
+
+    class ExGroupViewHolder extends GroupViewHolder {
+
+        private TextView textView;
+
+        ExGroupViewHolder(ViewGroup parent) {
+            super(parent, R.layout.item_exp_group);
+            textView = findViewById(R.id.textview_group_name);
+        }
+
+        @Override
+        protected void onExpand(GroupViewHolder viewHolder, int groupIndex) {
+            // nothing
+        }
+
+        @Override
+        protected void onCollapse(GroupViewHolder viewHolder, int groupIndex) {
+            // nothing
+        }
+
+        @Override
+        protected void onBind(QuoteGlobalInfo item) {
+            textView.setText(item.getTitle());
+        }
+    }
+
+    class ExChildViewHolder extends ChildViewHolder {
+
+        private TextView textView;
+
+        ExChildViewHolder(ViewGroup parent) {
+            super(parent, R.layout.item_exp_child);
+            textView = findViewById(R.id.textview_child_content);
+        }
+
+        @Override
+        protected void onBind(String item) {
+            textView.setText(item);
+        }
+    }
+}
+```
+
+Use one of the following methods to set items for adapter or use adapter constructors:
+```
+void setItems(@NonNull List<ExpandableViewData<G, CH>> expandableViewData)
+void setItems(ExpandableViewData<G, CH>... expandableViewData)
+void setItems(GroupProvider<G, CH>... groupProviders)
+```
+
+You can set expandMode and childAnimation both with xml attr and programmatically
+
+*Available expandModes are single and multiple*
+
+*Available childAnimations are Dropdown and Fade*
+
+You can simply create your own animations by extending ```ExpandableItemAnimator``` class and then just set it to RecyclerView ```recyclerView.setItemAnimator```
+
+<img src="/images/exp_bg.gif?raw=true" width="250" height="400" />
+
+It is possible to emulate background expanding using "app:backgrounds" attribute.
+
+Create LevelListDrawable in res/drawable folder
+
+*expandable_backgrounds.xml*
+```
+<?xml version="1.0" encoding="utf-8"?>
+<level-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:maxLevel="@integer/backgroundGroupCollapsed" android:drawable="@drawable/group_collapsed" />
+    <item android:maxLevel="@integer/backgroundGroupExpanded" android:drawable="@drawable/group_expanded" />
+    <item android:maxLevel="@integer/backgroundFirstChild" android:drawable="@drawable/child_bg" />
+    <item android:maxLevel="@integer/backgroundLastChild" android:drawable="@drawable/child_last" />
+    <item android:maxLevel="@integer/backgroundChild" android:drawable="@drawable/child_bg" />
+</level-list>
+```
+
+And then just add ```app:backgrounds="@drawable/expandable_backgrounds"``` attribute to your OmegaExpandableRecyclerView
+
+<img src="/images/exp_sticky_sup.gif?raw=true" width="250" height="400" />   <img src="/images/exp_sticky_group.gif?raw=true" width="250" height="400" />
+
+OmegaExpandableRecyclerView have 2 ways of using Sticky Header feature: Default (that is described above in StickyHeader section) and StickyGroups. Last one is the way to make GroupViewHolders work as StickyHeaders.
+
+To do that just add ```app:stickyGroups="true"``` attribute to your OmegaExpandableRecyclerView and be sure that you set items providing unique ```stickyId``` for each group.
+
+And, of course, you CAN use both sticky behaviors at the same time
+
+
 # License
 ```
 The MIT License
