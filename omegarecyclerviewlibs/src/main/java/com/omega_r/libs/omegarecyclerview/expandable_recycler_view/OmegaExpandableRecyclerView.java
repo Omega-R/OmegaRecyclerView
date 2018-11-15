@@ -435,18 +435,22 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
                 tryNotifyItemRangeInserted(positionStart, childsCount);
             }
 
-            GroupViewHolder groupViewHolder = getViewHolderOf(group);
-            if (groupViewHolder != null) {
-                groupViewHolder.onCollapse(groupViewHolder, items.getGroupIndex(group));
-                groupViewHolder.onAnimationEnd(); // don't subscribe - expand background ASAP
+            List<GroupViewHolder> groupViewHolders = getViewHoldersOf(group);
+            if (groupViewHolders != null) {
+                for (GroupViewHolder holder : groupViewHolders) {
+                    holder.onCollapse(holder, items.getGroupIndex(group));
+                    holder.onAnimationEnd(); // don't subscribe - expand background ASAP
+                }
             }
         }
 
         public void collapse(G group) {
-            GroupViewHolder groupViewHolder = getViewHolderOf(group);
-            if (groupViewHolder != null) {
-                recyclerView.subscribeOnRemoveItemAnimationEnd(groupViewHolder);
-                groupViewHolder.onExpand(groupViewHolder, items.getGroupIndex(group));
+            List<GroupViewHolder> groupViewHolders = getViewHoldersOf(group);
+            if (groupViewHolders != null) {
+                for (GroupViewHolder holder : groupViewHolders) {
+                    recyclerView.subscribeOnRemoveItemAnimationEnd(holder);
+                    holder.onExpand(holder, items.getGroupIndex(group));
+                }
             }
 
             items.onExpandStateChanged(group, false);
@@ -457,13 +461,15 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
             }
         }
 
+        // there is possible situation, when exists two viewHolders (oldState and newState) for one item while in animation transition. We need to handle both.
         @Nullable
-        private GroupViewHolder getViewHolderOf(G group) {
+        private List<GroupViewHolder> getViewHoldersOf(G group) {
+            List<GroupViewHolder> result = new ArrayList<>();
             if (!attachedGroupViewHolders.containsValue(group)) return null;
             for (Map.Entry<GroupViewHolder, G> entry : attachedGroupViewHolders.entrySet()) {
-                if (entry.getValue().equals(group)) return entry.getKey();
+                if (entry.getValue().equals(group)) result.add(entry.getKey());
             }
-            return null;
+            return result;
         }
 
         private void notifyExpandFired(GroupViewHolder viewHolder) {
@@ -522,6 +528,8 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
             private final int expandedResLevel;
             private final int collapsedResLevel;
 
+            private boolean isBackgroundSet = false;
+
             private View currentExpandFiringView = itemView;
             private final OnClickListener clickListener = new OnClickListener() {
                 @Override
@@ -551,15 +559,23 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
             @Override
             public void bind(G item) {
                 super.bind(item);
+                isBackgroundSet = false;
                 if (defaultGroupDrawable == null) defaultGroupDrawable = itemView.getBackground();
             }
 
             private void updateBackground() {
-                if (isExpanded()) {
-                    changeBackground(itemView, defaultGroupDrawable, recyclerView.mItemsBackgroundRes, expandedResLevel);
+                if (isBackgroundSet) {
+                    Drawable background = itemView.getBackground();
+                    background.setLevel(isExpanded() ? expandedResLevel : collapsedResLevel);
                 } else {
-                    changeBackground(itemView, defaultGroupDrawable, recyclerView.mItemsBackgroundRes, collapsedResLevel);
+                    if (isExpanded()) {
+                        changeBackground(itemView, defaultGroupDrawable, recyclerView.mItemsBackgroundRes, expandedResLevel);
+                    } else {
+                        changeBackground(itemView, defaultGroupDrawable, recyclerView.mItemsBackgroundRes, collapsedResLevel);
+                    }
                 }
+
+                isBackgroundSet = true;
             }
 
             @Override
