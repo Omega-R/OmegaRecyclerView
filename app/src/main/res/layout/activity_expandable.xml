@@ -60,6 +60,6 @@
         android:layout_height="match_parent"
         app:childAnimation="Dropdown"
         app:expandMode="single"
-        app:stickyGroups="true" />
+        app:backgrounds="@drawable/expandable_backgrounds"/>
 
 </LinearLayout>

@@ -1,10 +1,10 @@
 package com.omega_r.libs.omegarecyclerview.expandable_recycler_view;
 
 import android.animation.ValueAnimator;
-import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Path;
 import android.graphics.RectF;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -22,9 +22,32 @@ public class ChildClippingFrameLayout extends FrameLayout {
     private float mClipHeightAbove;
     private float mClipHeightBelow;
 
-    public ChildClippingFrameLayout(Context context) {
-        super(context);
+    public ChildClippingFrameLayout(View contentView) {
+        super(contentView.getContext());
         setWillNotDraw(false);
+
+        addView(contentView);
+        setupLayoutParams(contentView);
+    }
+
+    private void setupLayoutParams(@NonNull View contentView) {
+        MarginLayoutParams contentMarginLp = (MarginLayoutParams) contentView.getLayoutParams();
+        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT,
+                FrameLayout.LayoutParams.WRAP_CONTENT);
+
+        lp.topMargin = contentMarginLp.topMargin;
+        lp.bottomMargin = contentMarginLp.bottomMargin;
+        lp.leftMargin = contentMarginLp.leftMargin;
+        lp.rightMargin = contentMarginLp.rightMargin;
+
+        contentMarginLp.leftMargin = 0;
+        contentMarginLp.rightMargin = 0;
+        contentMarginLp.topMargin = 0;
+        contentMarginLp.bottomMargin = 0;
+
+        setLayoutParams(lp);
+        contentView.setLayoutParams(contentMarginLp);
     }
 
     public void setupClipping(@Nullable List<View> includedViewsAbove, @Nullable List<View> includedViewsBelow) {

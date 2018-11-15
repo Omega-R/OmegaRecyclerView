@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.support.v7.widget.SimpleItemAnimator;
 import android.view.View;
@@ -36,6 +37,8 @@ public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
     private ArrayList<ViewHolder> mMoveAnimations = new ArrayList<>();
     private ArrayList<ViewHolder> mRemoveAnimations = new ArrayList<>();
     private ArrayList<ViewHolder> mChangeAnimations = new ArrayList<>();
+    private List<OnAnimationEndListener> mOnRemoveAnimationEndListeners = new ArrayList<>();
+    private List<OnAnimationEndListener> mOnAddAnimationEndListeners = new ArrayList<>();
 
     protected abstract void onRemoveStart(final OmegaExpandableRecyclerView.Adapter.ChildViewHolder holder);
 
@@ -192,13 +195,8 @@ public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
                 childViewHolder.animationHelper.width = childViewHolder.itemView.getWidth();
                 childViewHolder.animationHelper.setPendingChanges(mPendingChanges);
 
-                if (isAdding) {
-                    childViewHolder.animationHelper.lowerViewHolder = i < holders.size() - 1 ? tryGetChildViewHolder(holders, i + 1) : null;
-                    childViewHolder.animationHelper.upperViewHolder = i > 0 ? tryGetChildViewHolder(holders, i - 1) : null;
-                } else {
-                    childViewHolder.animationHelper.upperViewHolder = i < holders.size() - 1 ? tryGetChildViewHolder(holders, i + 1) : null;
-                    childViewHolder.animationHelper.lowerViewHolder = i > 0 ? tryGetChildViewHolder(holders, i - 1) : null;
-                }
+                childViewHolder.animationHelper.upperViewHolder = tryGetOffsettedViewHolder(holders, childViewHolder, -1);
+                childViewHolder.animationHelper.lowerViewHolder = tryGetOffsettedViewHolder(holders, childViewHolder, 1);
 
                 childChangesCount++;
             }
@@ -216,10 +214,26 @@ public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
     }
 
     @Nullable
-    private OmegaExpandableRecyclerView.Adapter.ChildViewHolder tryGetChildViewHolder(List<ViewHolder> holders, int index) {
-        if (index < 0 || index > holders.size() - 1) return null;
-        ViewHolder vh = holders.get(index);
-        return vh instanceof OmegaExpandableRecyclerView.Adapter.ChildViewHolder ? (OmegaExpandableRecyclerView.Adapter.ChildViewHolder) vh : null;
+    private OmegaExpandableRecyclerView.Adapter.ChildViewHolder tryGetOffsettedViewHolder(
+            List<ViewHolder> holders,
+            OmegaExpandableRecyclerView.Adapter.ChildViewHolder forHolder,
+            int offset) {
+        int adapterPosition = forHolder.getAdapterPosition();
+        int targetAdapterPosition =
+                (adapterPosition == RecyclerView.NO_POSITION ? forHolder.animationHelper.visibleAdapterPosition : adapterPosition)
+                        + offset;
+        for (ViewHolder holder : holders) {
+            if (holder instanceof OmegaExpandableRecyclerView.Adapter.ChildViewHolder) {
+                OmegaExpandableRecyclerView.Adapter.ChildViewHolder cvh = (OmegaExpandableRecyclerView.Adapter.ChildViewHolder) holder;
+                int holderAdapterPosition = cvh.getAdapterPosition() == RecyclerView.NO_POSITION ?
+                        cvh.animationHelper.visibleAdapterPosition :
+                        cvh.getAdapterPosition();
+                if (holderAdapterPosition == targetAdapterPosition) {
+                    return cvh;
+                }
+            }
+        }
+        return null;
     }
 
     private void applyViewHolder(ViewHolder holder, UnVoidFunction<ViewHolder> func, int childChangesCount, int positionInChanges) {
@@ -290,9 +304,17 @@ public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
                         dispatchRemoveFinished(holder);
                         mRemoveAnimations.remove(holder);
                         dispatchFinishedWhenDone();
+                        notifyRemoveAnimationEnds();
                     }
                 })
                 .start();
+    }
+
+    private void notifyRemoveAnimationEnds() {
+        for (OnAnimationEndListener listener : mOnRemoveAnimationEndListeners) {
+            listener.onAnimationEnd();
+        }
+        mOnRemoveAnimationEndListeners.clear();
     }
 
     @Override
@@ -371,9 +393,17 @@ public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
                         dispatchAddFinished(holder);
                         mAddAnimations.remove(holder);
                         dispatchFinishedWhenDone();
+                        notifyAddAnimationEnds();
                     }
                 })
                 .start();
+    }
+
+    private void notifyAddAnimationEnds() {
+        for (OnAnimationEndListener listener : mOnAddAnimationEndListeners) {
+            listener.onAnimationEnd();
+        }
+        mOnAddAnimationEndListeners.clear();
     }
 
     @Override
@@ -726,6 +756,14 @@ public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
         for (int i = viewHolders.size() - 1; i >= 0; i--) {
             ViewCompat.animate(viewHolders.get(i).itemView).cancel();
         }
+    }
+
+    public void subscribeOnRemoveAnimationEnd(@NonNull OnAnimationEndListener onRemoveAnimationEndListener) {
+        mOnRemoveAnimationEndListeners.add(onRemoveAnimationEndListener);
+    }
+
+    public void subscribeOnAddAnimationEnd(@NonNull OnAnimationEndListener onAddAnimationEndListener) {
+        mOnAddAnimationEndListeners.add(onAddAnimationEndListener);
     }
 
     private interface UnVoidFunction<PAR> {

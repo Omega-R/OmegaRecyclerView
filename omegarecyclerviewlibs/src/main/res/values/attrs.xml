@@ -70,6 +70,7 @@
             <enum name="multiple" value="1" />
         </attr>
         <attr name="stickyGroups" format="boolean" />
+        <attr name="backgrounds" format="reference" />
     </declare-styleable>
 
 </resources>

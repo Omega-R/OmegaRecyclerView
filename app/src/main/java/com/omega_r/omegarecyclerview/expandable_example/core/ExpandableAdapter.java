@@ -33,10 +33,12 @@ public class ExpandableAdapter extends OmegaExpandableRecyclerView.Adapter<Quote
 
         @Override
         protected void onExpand(GroupViewHolder viewHolder, int groupIndex) {
+            // nothing
         }
 
         @Override
         protected void onCollapse(GroupViewHolder viewHolder, int groupIndex) {
+            // nothing
         }
 
         @Override
