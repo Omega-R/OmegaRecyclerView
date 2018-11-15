@@ -566,7 +566,9 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
             private void updateBackground() {
                 if (isBackgroundSet) {
                     Drawable background = itemView.getBackground();
-                    background.setLevel(isExpanded() ? expandedResLevel : collapsedResLevel);
+                    if (background != null) {
+                        background.setLevel(isExpanded() ? expandedResLevel : collapsedResLevel);
+                    }
                 } else {
                     if (isExpanded()) {
                         changeBackground(itemView, defaultGroupDrawable, recyclerView.mItemsBackgroundRes, expandedResLevel);
