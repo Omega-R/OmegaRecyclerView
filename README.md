@@ -393,7 +393,7 @@ Create LevelListDrawable in res/drawable folder
 
 And then just add ```app:backgrounds="@drawable/expandable_backgrounds"``` attribute to your OmegaExpandableRecyclerView
 
-<img src="/images/exp_sticky_sup.gif?raw=true" width="250" height="400" />   <img src="/images/exp_sticky_group.gif?raw=true" width="250" height="400" />
+<img src="/images/exp_sticky_sup.gif?raw=true" width="250" height="400" />   <img src="/images/exp_sticky_group.gif?raw=true" width="250" height="400" />   <img src="/images/exp_sticky_all.gif?raw=true" width="250" height="400" />
 
 OmegaExpandableRecyclerView have 2 ways of using Sticky Header feature: Default (that is described above in StickyHeader section) and StickyGroups. Last one is the way to make GroupViewHolders work as StickyHeaders.
 
