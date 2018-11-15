@@ -365,6 +365,26 @@ void setItems(ExpandableViewData<G, CH>... expandableViewData)
 void setItems(GroupProvider<G, CH>... groupProviders)
 ```
 
+Your view data (group and childs) should be wrapped with ```ExpandableViewData``` using one of the following ways:
+```
+ExpandableViewData(G group, List<CH> childs, @Nullable Integer stickyId) // constructor
+
+static <G, CH> ExpandableViewData<G, CH> of(G group, @Nullable Integer stickyId, List<CH> childs)
+static <G, CH> ExpandableViewData<G, CH> of(G group, @Nullable Integer stickyId, CH... childs)
+```
+
+Or it should implement interface 
+```
+public interface GroupProvider<G, CH> {
+    G provideGroup();
+
+    List<CH> provideChilds();
+
+    @Nullable
+    Integer provideStickyId();
+}
+```
+
 You can set expandMode and childAnimation both with xml attr and programmatically
 
 *Available expandModes are single and multiple*
