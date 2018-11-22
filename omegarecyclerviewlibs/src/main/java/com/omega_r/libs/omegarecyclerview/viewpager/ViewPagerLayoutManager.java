@@ -767,7 +767,7 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
         float distanceFromCenter = mOrientationHelper.getDistanceFromCenter(mRecyclerCenterPoint,
                 getDecoratedLeft(v) + mChildHalfWidth,
                 getDecoratedTop(v) + mChildHalfHeight);
-        return Math.min(Math.max(-1f, distanceFromCenter / maxDistance), 1f);
+        return distanceFromCenter / maxDistance;
     }
 
     private int checkNewOnFlingPositionIsInBounds(int position) {
