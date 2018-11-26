@@ -503,7 +503,7 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
             return true;
         } else {
             startSmoothPendingScroll();
-            return false;
+            return !mPendingScrollEnabled;
         }
     }
 
