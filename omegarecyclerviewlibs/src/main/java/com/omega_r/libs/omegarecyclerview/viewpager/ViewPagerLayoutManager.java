@@ -86,7 +86,6 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
     private Interpolator mInterpolator;
     private int mOrientation;
     private boolean mIsInfinite;
-    private boolean mPendingScrollEnabled = true;
 
     ViewPagerLayoutManager(@NonNull Context context,
                            @Nullable AttributeSet attrs, int defStyleAttr,
@@ -257,10 +256,8 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
                 //Layout current
                 layoutView(recycler, mCurrentPosition, mCurrentViewCenterPoint);
             }
-
             layoutViews(recycler, Direction.START, endBound); //Layout items before the current item
             layoutViews(recycler, Direction.END, endBound); //Layout items after the current item
-
         }
 
         recycleDetachedViewsAndClearCache(recycler);
@@ -527,9 +524,6 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
     }
 
     protected void onFling(int velocityX, int velocityY) {
-        if (!mPendingScrollEnabled) {
-            return;
-        }
         int velocity = mOrientationHelper.getFlingVelocity(velocityX, velocityY);
         int throttleValue = mShouldSlideOnFling ? Math.abs(velocity / mFlingThreshold) : 1;
         int newPosition = mCurrentPosition + Direction.fromDelta(velocity).applyTo(throttleValue);
@@ -576,9 +570,6 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
     }
 
     private void startSmoothPendingScroll() {
-        if (!mPendingScrollEnabled) {
-            return;
-        }
         LinearSmoothScroller scroller = new DiscreteLinearSmoothScroller(mContext);
         scroller.setTargetPosition(calculateRealPosition(mCurrentPosition));
         startSmoothScroll(scroller);
@@ -844,18 +835,6 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
 
     public final boolean isInfinite() {
         return mIsInfinite;
-    }
-
-    public int getOrientation() {
-        return mOrientation;
-    }
-
-    public void setPendingScrollEnabled(boolean pendingScrollEnabled) {
-        mPendingScrollEnabled = pendingScrollEnabled;
-    }
-
-    public boolean isPendingScrollEnabled() {
-        return mPendingScrollEnabled;
     }
 
     private class DiscreteLinearSmoothScroller extends LinearSmoothScroller {

@@ -264,12 +264,10 @@ public class OmegaPagerRecyclerView extends OmegaRecyclerView implements ViewPag
     public boolean fling(int velocityX, int velocityY) {
         boolean isFling = super.fling(velocityX, velocityY);
         ViewPagerLayoutManager layoutManager = getLayoutManager();
-        if (layoutManager.isPendingScrollEnabled()) {
-            if (layoutManager != null && isFling) {
-                layoutManager.onFling(velocityX, velocityY);
-            } else if (layoutManager != null) {
-                layoutManager.returnToCurrentPosition();
-            }
+        if (layoutManager != null && isFling) {
+            layoutManager.onFling(velocityX, velocityY);
+        } else if (layoutManager != null) {
+            layoutManager.returnToCurrentPosition();
         }
         return isFling;
     }
@@ -586,14 +584,6 @@ public class OmegaPagerRecyclerView extends OmegaRecyclerView implements ViewPag
         int current = layoutManager.getCurrentPosition();
         RecyclerView.ViewHolder currentHolder = getViewHolder(current);
         notifyCurrentItemChanged(currentHolder, current);
-    }
-
-
-    public void setPendingScrollEnabled(boolean pendingScrollEnabled) {
-        ViewPagerLayoutManager layoutManager = getLayoutManager();
-        if (layoutManager == null) return;
-
-        layoutManager.setPendingScrollEnabled(pendingScrollEnabled);
     }
 
     public interface ScrollStateChangeListener<T extends RecyclerView.ViewHolder> {
