@@ -18,7 +18,7 @@ public class DepthPageTransformer implements ItemTransformer {
     }
 
     @Override
-    public void transformItem(View view, float position, boolean isHorizontal) {
+    public void transformItem(View view, float position, boolean isHorizontal, int scrolled) {
         if (position < 0f) {
             view.setTranslationX(0f);
             view.setTranslationY(0f);

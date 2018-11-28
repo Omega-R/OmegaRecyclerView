@@ -13,7 +13,7 @@ public class TabletTransformer implements ItemTransformer {
     private final float[] mOffset = new float[2];
 
     @Override
-    public void transformItem(View view, float position, boolean isHorizontal) {
+    public void transformItem(View view, float position, boolean isHorizontal, int scrolled) {
         float rotation = (position < 0 ? 30f : -30f) * Math.abs(position);
         int width = view.getWidth();
         int height = view.getHeight();
