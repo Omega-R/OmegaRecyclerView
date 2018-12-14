@@ -187,9 +187,9 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
     private View getMeasuredChildForAdapterPosition(int position, RecyclerView.Recycler recycler) {
         View view = recycler.getViewForPosition(calculateRealPosition(position));
         addView(view);
-
-        int width = getWidth();
-        int height = getHeight();
+        view.measure(0, 0);
+        int width = view.getMeasuredWidth();
+        int height = view.getMeasuredHeight();
         switch (mOrientation) {
             case HORIZONTAL:
                 width *= mPageSize;
