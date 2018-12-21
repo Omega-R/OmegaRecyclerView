@@ -102,15 +102,15 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
 
     public void initItemSpace(TypedArray a) {
         if (a.hasValue(R.styleable.OmegaRecyclerView_itemSpace)) {
-            int showDivider = a.getInt(R.styleable.OmegaRecyclerView_showDivider, DividerItemDecoration.ShowDivider.NONE);
+            int showDivider = a.getInt(R.styleable.OmegaRecyclerView_dividerShow, DividerItemDecoration.ShowDivider.NONE);
             mItemSpace = (int) a.getDimension(R.styleable.OmegaRecyclerView_itemSpace, 0);
             addItemDecoration(new SpaceItemDecoration(showDivider, mItemSpace));
         }
     }
 
     public void initDivider(TypedArray a) {
-        if (a.hasValue(R.styleable.OmegaRecyclerView_showDivider)) {
-            int showDivider = a.getInt(R.styleable.OmegaRecyclerView_showDivider, DividerItemDecoration.ShowDivider.NONE);
+        if (a.hasValue(R.styleable.OmegaRecyclerView_dividerShow)) {
+            int showDivider = a.getInt(R.styleable.OmegaRecyclerView_dividerShow, DividerItemDecoration.ShowDivider.NONE);
             if (showDivider != DividerItemDecoration.ShowDivider.NONE) {
                 Drawable dividerDrawable = a.getDrawable(R.styleable.OmegaRecyclerView_android_divider);
                 if (dividerDrawable == null) {
