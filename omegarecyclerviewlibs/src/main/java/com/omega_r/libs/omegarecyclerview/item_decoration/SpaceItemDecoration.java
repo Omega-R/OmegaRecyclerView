@@ -1,14 +1,12 @@
-package com.omega_r.libs.omegarecyclerview;
+package com.omega_r.libs.omegarecyclerview.item_decoration;
 
 import android.graphics.Rect;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-/**
- * Created by mac on 10.05.17.
- */
-
+import com.omega_r.libs.omegarecyclerview.OmegaRecyclerView;
+import com.omega_r.libs.omegarecyclerview.item_decoration.decoration_helpers.DividerDecorationHelper;
 
 public class SpaceItemDecoration extends OmegaRecyclerView.ItemDecoration {
     private static final boolean DEFAULT_ADD_SPACE_ABOVE_FIRST_ITEM = false;
@@ -30,29 +28,31 @@ public class SpaceItemDecoration extends OmegaRecyclerView.ItemDecoration {
     }
 
     @Override
-    public void getItemOffsets(Rect outRect, View view, RecyclerView parent,
-                               RecyclerView.State state) {
+    public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
         super.getItemOffsets(outRect, view, parent, state);
-        if (space <= 0) {
-            return;
-        }
+        if (space <= 0) return;
+
+        DividerDecorationHelper helper = DividerDecorationHelper.getHelper(getOrientation(parent), parent);
 
         if (addSpaceAboveFirstItem && parent.getChildLayoutPosition(view) < 1
                 || parent.getChildLayoutPosition(view) >= 1) {
-            if (getOrientation(parent) == LinearLayoutManager.VERTICAL) {
-                outRect.top = space;
-            } else {
-                outRect.left = space;
-            }
+            helper.setStart(outRect, space);
+
+//            if (getOrientation(parent) == LinearLayoutManager.VERTICAL) {
+//                outRect.top = space;
+//            } else {
+//                outRect.left = space;
+//            }
         }
 
         if (addSpaceBelowLastItem
                 && getAdapterPosition(parent, view) == getTotalItemCount(parent) - 1) {
-            if (getOrientation(parent) == LinearLayoutManager.VERTICAL) {
-                outRect.bottom = space;
-            } else {
-                outRect.right = space;
-            }
+            helper.setEnd(outRect, space);
+//            if (getOrientation(parent) == LinearLayoutManager.VERTICAL) {
+//                outRect.bottom = space;
+//            } else {
+//                outRect.right = space;
+//            }
         }
     }
 

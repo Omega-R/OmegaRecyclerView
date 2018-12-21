@@ -24,6 +24,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.omega_r.libs.omegarecyclerview.header.HeaderFooterWrapperAdapter;
+import com.omega_r.libs.omegarecyclerview.item_decoration.DividerItemDecoration;
+import com.omega_r.libs.omegarecyclerview.item_decoration.SpaceItemDecoration;
 import com.omega_r.libs.omegarecyclerview.pagination.PaginationAdapter;
 import com.omega_r.libs.omegarecyclerview.pagination.OnPageRequestListener;
 import com.omega_r.libs.omegarecyclerview.pagination.PageRequester;
