@@ -1,6 +1,7 @@
 package com.omega_r.libs.omegarecyclerview.item_decoration;
 
 import android.graphics.Rect;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -8,66 +9,21 @@ import android.view.View;
 import com.omega_r.libs.omegarecyclerview.OmegaRecyclerView;
 import com.omega_r.libs.omegarecyclerview.item_decoration.decoration_helpers.DividerDecorationHelper;
 
-public class SpaceItemDecoration extends OmegaRecyclerView.ItemDecoration {
-    private static final boolean DEFAULT_ADD_SPACE_ABOVE_FIRST_ITEM = false;
-    private static final boolean DEFAULT_ADD_SPACE_BELOW_LAST_ITEM = false;
+public class SpaceItemDecoration extends BaseItemDecoration {
 
     private final int space;
-    private final boolean addSpaceAboveFirstItem;
-    private final boolean addSpaceBelowLastItem;
 
-    public SpaceItemDecoration(int space) {
-        this(space, DEFAULT_ADD_SPACE_ABOVE_FIRST_ITEM, DEFAULT_ADD_SPACE_BELOW_LAST_ITEM);
-    }
-
-    public SpaceItemDecoration(int space, boolean addSpaceAboveFirstItem,
-                               boolean addSpaceBelowLastItem) {
+    public SpaceItemDecoration(int showDivider, int space) {
+        super(showDivider);
         this.space = space;
-        this.addSpaceAboveFirstItem = addSpaceAboveFirstItem;
-        this.addSpaceBelowLastItem = addSpaceBelowLastItem;
     }
 
     @Override
-    public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-        super.getItemOffsets(outRect, view, parent, state);
-        if (space <= 0) return;
-
-        DividerDecorationHelper helper = DividerDecorationHelper.getHelper(getOrientation(parent), parent);
-
-        if (addSpaceAboveFirstItem && parent.getChildLayoutPosition(view) < 1
-                || parent.getChildLayoutPosition(view) >= 1) {
-            helper.setStart(outRect, space);
-
-//            if (getOrientation(parent) == LinearLayoutManager.VERTICAL) {
-//                outRect.top = space;
-//            } else {
-//                outRect.left = space;
-//            }
-        }
-
-        if (addSpaceBelowLastItem
-                && getAdapterPosition(parent, view) == getTotalItemCount(parent) - 1) {
-            helper.setEnd(outRect, space);
-//            if (getOrientation(parent) == LinearLayoutManager.VERTICAL) {
-//                outRect.bottom = space;
-//            } else {
-//                outRect.right = space;
-//            }
-        }
+    void getItemOffset(@NonNull Rect outRect, @NonNull RecyclerView parent,
+                       @NonNull DividerDecorationHelper helper, int position, int itemCount) {
+        if (isShowBeginDivider() && position < 1 || position >= 1) helper.setStart(outRect, space);
+        if (isShowEndDivider() && position == itemCount - 1) helper.setEnd(outRect, space);
     }
 
-    private int getTotalItemCount(RecyclerView parent) {
-        return parent.getAdapter().getItemCount();
-    }
-
-    private int getOrientation(RecyclerView parent) {
-        if (parent.getLayoutManager() instanceof LinearLayoutManager) {
-            return ((LinearLayoutManager) parent.getLayoutManager()).getOrientation();
-        } else {
-            throw new IllegalStateException(
-                    "SpaceItemDecoration can only be used with a LinearLayoutManager.");
-        }
-
-    }
 }
 
