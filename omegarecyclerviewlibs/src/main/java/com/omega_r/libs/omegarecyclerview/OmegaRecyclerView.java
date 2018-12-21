@@ -324,6 +324,7 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
         if (getParent() instanceof ViewGroup) {
             ViewGroup viewGroup = (ViewGroup) getParent();
             mEmptyView = viewGroup.findViewById(mEmptyViewId);
+            mEmptyObserver.onChanged();
         }
     }
 
