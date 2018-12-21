@@ -21,7 +21,6 @@ public class SwipeViewHolder extends OmegaRecyclerView.ViewHolder {
 
     private SwipeHorizontalMenuLayout mSwipeMenuLayout;
 
-
     public SwipeViewHolder(ViewGroup parent, @LayoutRes int contentRes,
                            @LayoutRes int swipeLeftMenuRes, @LayoutRes int swipeRightMenuRes) {
 
@@ -110,7 +109,23 @@ public class SwipeViewHolder extends OmegaRecyclerView.ViewHolder {
         mSwipeMenuLayout.setSwipeEnable(enable);
     }
 
+    public void setLeftSwipeEnable(boolean enable) {
+        mSwipeMenuLayout.setLeftSwipeEnabled(enable);
+    }
+
+    public void setRightSwipeEnable(boolean enable) {
+        mSwipeMenuLayout.setRightSwipeEnabled(enable);
+    }
+
     public boolean isSwipeEnable() {
         return mSwipeMenuLayout.isSwipeEnable();
+    }
+
+    public boolean isLeftSwipeEnable() {
+        return mSwipeMenuLayout.isLeftSwipeEnabled();
+    }
+
+    public boolean isRightSwipeEnable() {
+        return mSwipeMenuLayout.isRightSwipeEnabled();
     }
 }

@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:itemSpace="16dp"
-        app:showDivider="middle"
+        app:dividerShow="middle"
         app:dividerHeight="1dp"
         app:divider="@color/colorAccent"
         app:dividerPaddingStart="32dp"

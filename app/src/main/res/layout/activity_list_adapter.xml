@@ -11,7 +11,7 @@
         android:id="@+id/recyclerview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:showDivider="middle"
+        app:dividerShow="middle"
         app:dividerHeight="1dp"
         app:divider="@color/colorPrimary"
         app:dividerPaddingStart="24dp"
