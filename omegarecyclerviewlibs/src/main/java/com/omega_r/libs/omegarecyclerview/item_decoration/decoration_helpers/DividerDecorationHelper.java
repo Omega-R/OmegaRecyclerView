@@ -46,10 +46,6 @@ public abstract class DividerDecorationHelper {
 
     public abstract int getEnd(Rect rect);
 
-    public abstract int getStartMargin(RecyclerView.LayoutParams params);
-
-    public abstract int getEndMargin(RecyclerView.LayoutParams params);
-
     public int getOffset(int offset) {
         return offset;
     }
@@ -82,16 +78,6 @@ class NormalVerticalDividerDecorationHelper extends DividerDecorationHelper {
         return rect.bottom;
     }
 
-    @Override
-    public int getStartMargin(RecyclerView.LayoutParams params) {
-        return params.topMargin;
-    }
-
-    @Override
-    public int getEndMargin(RecyclerView.LayoutParams params) {
-        return params.bottomMargin;
-    }
-
 }
 
 class ReverseVerticalDividerDecorationHelper extends DividerDecorationHelper {
@@ -118,16 +104,6 @@ class ReverseVerticalDividerDecorationHelper extends DividerDecorationHelper {
     @Override
     public int getEnd(Rect rect) {
         return rect.top;
-    }
-
-    @Override
-    public int getStartMargin(RecyclerView.LayoutParams params) {
-        return params.bottomMargin;
-    }
-
-    @Override
-    public int getEndMargin(RecyclerView.LayoutParams params) {
-        return params.topMargin;
     }
 
     @Override
@@ -163,16 +139,6 @@ class NormalHorizontalDividerDecorationHelper extends DividerDecorationHelper {
         return rect.right;
     }
 
-    @Override
-    public int getStartMargin(RecyclerView.LayoutParams params) {
-        return params.leftMargin;
-    }
-
-    @Override
-    public int getEndMargin(RecyclerView.LayoutParams params) {
-        return params.rightMargin;
-    }
-
 }
 
 class ReverseHorizontalDividerDecorationHelper extends DividerDecorationHelper {
@@ -199,16 +165,6 @@ class ReverseHorizontalDividerDecorationHelper extends DividerDecorationHelper {
     @Override
     public int getEnd(Rect rect) {
         return rect.left;
-    }
-
-    @Override
-    public int getStartMargin(RecyclerView.LayoutParams params) {
-        return params.rightMargin;
-    }
-
-    @Override
-    public int getEndMargin(RecyclerView.LayoutParams params) {
-        return params.leftMargin;
     }
 
     @Override
