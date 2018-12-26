@@ -7,7 +7,8 @@ import com.omega_r.libs.omegarecyclerview.viewpager.transform.ItemTransformer;
 public class FlipTransformer implements ItemTransformer {
 
     @Override
-    public void transformItem(View view, float position, boolean isHorizontal) {
+    public void transformItem(View view, float position, boolean isHorizontal, int scrolled) {
+//        if (-1 > position || position > 1) return;
         float rotation = 180f * position;
         if (isHorizontal) {
             view.setRotationY(rotation);

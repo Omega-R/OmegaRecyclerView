@@ -9,7 +9,7 @@ public class RotateDownTransformer implements ItemTransformer {
     private static final float ROT_MOD = -15f;
 
     @Override
-    public void transformItem(View view, float position, boolean isHorizontal) {
+    public void transformItem(View view, float position, boolean isHorizontal, int scrolled) {
         float rotation;
         float width = view.getWidth();
         float height = view.getHeight();

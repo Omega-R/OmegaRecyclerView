@@ -242,6 +242,53 @@ You could use your owner transformation.
 ### [You could see our otransformations on wiki page.](https://github.com/Omega-R/OmegaRecyclerView/wiki/ViewPager)
 
 
+## BaseListAdapter
+Most common usage of RecyclerView is showing list of items. To simplify adapter creation just use BaseListAdapter:
+```
+// Adapter for List<String>
+public class ListAdapter extends BaseListAdapter<String> {
+
+    @Override
+    protected ViewHolder provideViewHolder(ViewGroup parent) {
+        return new SampleViewHolder(parent);
+    }
+
+    class SampleViewHolder extends ViewHolder {
+
+        private TextView textView;
+
+        // there should be layout setting and binding
+        SampleViewHolder(ViewGroup parent) {
+            super(parent, R.layout.item_string);
+            textView = findViewById(R.id.textview);
+        }
+
+        @Override
+        protected void onBind(String item) {
+            textView.setText(item);
+        }
+    }
+}
+```
+
+Methods to change items:
+ ```
+ setItems(List<T> items)
+ ```
+ ```
+ addItems(List\<T\> items)
+ ```
+Adapter will be automatically safely notified.
+
+BaseListAdapter also have methods to click events handling:
+```
+setClickListener(@Nullable OnItemClickListener<T> clickListener)
+```
+```
+setLongClickListener(@Nullable OnItemLongClickListener<T> longClickListener)
+```
+You can subscribe to this event on the fly - all view holders will be notified.
+
 # License
 ```
 The MIT License

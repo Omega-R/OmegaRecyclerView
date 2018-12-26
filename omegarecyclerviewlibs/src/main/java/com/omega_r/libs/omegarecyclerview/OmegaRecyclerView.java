@@ -7,10 +7,13 @@ import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.ColorInt;
+import android.support.annotation.ColorRes;
 import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.ExpandedRecyclerView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,6 +24,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.omega_r.libs.omegarecyclerview.header.HeaderFooterWrapperAdapter;
+import com.omega_r.libs.omegarecyclerview.item_decoration.DividerItemDecoration;
+import com.omega_r.libs.omegarecyclerview.item_decoration.SpaceItemDecoration;
 import com.omega_r.libs.omegarecyclerview.pagination.PaginationAdapter;
 import com.omega_r.libs.omegarecyclerview.pagination.OnPageRequestListener;
 import com.omega_r.libs.omegarecyclerview.pagination.PageRequester;
@@ -51,7 +56,6 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
     private List<View> mHeadersList = new ArrayList<>();
     private List<View> mFooterList = new ArrayList<>();
     private WeakHashMap<ViewGroup.LayoutParams, SectionState> mLayoutParamCache = new WeakHashMap<>();
-    private int mShowDivider;
     private int mItemSpace;
 
     public OmegaRecyclerView(Context context) {
@@ -98,17 +102,16 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
 
     public void initItemSpace(TypedArray a) {
         if (a.hasValue(R.styleable.OmegaRecyclerView_itemSpace)) {
+            int showDivider = a.getInt(R.styleable.OmegaRecyclerView_dividerShow, DividerItemDecoration.ShowDivider.NONE);
             mItemSpace = (int) a.getDimension(R.styleable.OmegaRecyclerView_itemSpace, 0);
-            boolean addSpaceAboveFirstItem = (mShowDivider & DividerItemDecoration.ShowDivider.BEGINNING) == DividerItemDecoration.ShowDivider.BEGINNING;
-            boolean addSpaceBelowLastItem = (mShowDivider & DividerItemDecoration.ShowDivider.END) == DividerItemDecoration.ShowDivider.END;
-            addItemSpace(mItemSpace, addSpaceAboveFirstItem, addSpaceBelowLastItem);
+            addItemDecoration(new SpaceItemDecoration(showDivider, mItemSpace));
         }
     }
 
     public void initDivider(TypedArray a) {
-        if (a.hasValue(R.styleable.OmegaRecyclerView_showDivider)) {
-            mShowDivider = a.getInt(R.styleable.OmegaRecyclerView_showDivider, DividerItemDecoration.ShowDivider.NONE);
-            if (mShowDivider != DividerItemDecoration.ShowDivider.NONE) {
+        if (a.hasValue(R.styleable.OmegaRecyclerView_dividerShow)) {
+            int showDivider = a.getInt(R.styleable.OmegaRecyclerView_dividerShow, DividerItemDecoration.ShowDivider.NONE);
+            if (showDivider != DividerItemDecoration.ShowDivider.NONE) {
                 Drawable dividerDrawable = a.getDrawable(R.styleable.OmegaRecyclerView_android_divider);
                 if (dividerDrawable == null) {
                     dividerDrawable = a.getDrawable(R.styleable.OmegaRecyclerView_divider);
@@ -125,7 +128,7 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
                 DividerItemDecoration decoration = new DividerItemDecoration(
                         dividerDrawable,
                         (int) dividerHeight,
-                        mShowDivider,
+                        showDivider,
                         itemSpace / 2,
                         alpha
                 );
@@ -321,6 +324,7 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
         if (getParent() instanceof ViewGroup) {
             ViewGroup viewGroup = (ViewGroup) getParent();
             mEmptyView = viewGroup.findViewById(mEmptyViewId);
+            mEmptyObserver.onChanged();
         }
     }
 
@@ -349,10 +353,6 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
         }
 
         return dividerDrawable;
-    }
-
-    public void addItemSpace(int space, boolean addSpaceAboveFirstItem, boolean addSpaceBelowLastItem) {
-        addItemDecoration(new SpaceItemDecoration(space, addSpaceAboveFirstItem, addSpaceBelowLastItem));
     }
 
     @Override
@@ -650,6 +650,15 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
 
         protected final String getString(@StringRes int res) {
             return getResources().getString(res);
+        }
+
+        protected final String getString(@StringRes int res, Object... formatArgs) {
+            return getResources().getString(res, formatArgs);
+        }
+
+        @ColorInt
+        protected final int getColor(@ColorRes int id) {
+            return ContextCompat.getColor(getContext(), id);
         }
     }
 

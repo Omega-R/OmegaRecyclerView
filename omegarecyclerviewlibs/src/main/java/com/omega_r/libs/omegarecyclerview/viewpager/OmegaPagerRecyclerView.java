@@ -54,6 +54,8 @@ public class OmegaPagerRecyclerView extends OmegaRecyclerView implements ViewPag
         }
     };
 
+    private Handler mAutoScrollHandler;
+
     public OmegaPagerRecyclerView(Context context) {
         super(context);
         init(context, null, 0);
@@ -78,6 +80,8 @@ public class OmegaPagerRecyclerView extends OmegaRecyclerView implements ViewPag
             typedArray.recycle();
         }
         mIsOverScrollEnabled = getOverScrollMode() != OVER_SCROLL_NEVER;
+        getAutoScrollHandler().removeCallbacksAndMessages(null);
+
     }
 
     private void initDefaultAdapter(TypedArray typedArray) {
@@ -88,6 +92,7 @@ public class OmegaPagerRecyclerView extends OmegaRecyclerView implements ViewPag
     private void initAutoScroll(TypedArray typedArray) {
         mAutoScrollIntervalInMilliseconds = typedArray.getInt(R.styleable.OmegaPagerRecyclerView_autoScrollInterval, DEFAULT_AUTO_SCROLL_INTERVAL);
         mIsAutoScrollEnabled = typedArray.getBoolean(R.styleable.OmegaPagerRecyclerView_autoScrollEnabled, false);
+        getAutoScrollHandler().removeCallbacksAndMessages(null);
     }
 
     private void initTransformation(TypedArray typedArray) {
@@ -198,35 +203,55 @@ public class OmegaPagerRecyclerView extends OmegaRecyclerView implements ViewPag
     }
 
     private void updateAutoScroll() {
-        Handler handler = getHandler();
-        if (handler == null) return;
-
+        Handler handler = getAutoScrollHandler();
         handler.removeCallbacksAndMessages(null);
         if (mIsAutoScrollEnabled && mAutoScrollIntervalInMilliseconds > 0
                 && getItemCount() > 1 && getLayoutManager() != null) {
-            postDelayed(this, mAutoScrollIntervalInMilliseconds);
+            handler.postDelayed(this, mAutoScrollIntervalInMilliseconds);
         }
+    }
+
+    private Handler getAutoScrollHandler() {
+        if (mAutoScrollHandler == null) {
+            mAutoScrollHandler = new Handler();
+        }
+        return mAutoScrollHandler;
     }
 
     @Override
     public void run() {
-        Handler handler = getHandler();
-        if (handler == null) {
-            return;
-        }
+        Handler handler = getAutoScrollHandler();
+
         ViewPagerLayoutManager layoutManager = getLayoutManager();
         if (layoutManager == null) {
             handler.removeCallbacksAndMessages(null);
             return;
         }
         layoutManager.smoothScrollToNextPosition();
-        postDelayed(this, mAutoScrollIntervalInMilliseconds);
+        handler.postDelayed(this, mAutoScrollIntervalInMilliseconds);
     }
 
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         mFirstLayout = true;
+        updateAutoScroll();
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        getAutoScrollHandler().removeCallbacksAndMessages(null);
+    }
+
+    @Override
+    protected void onVisibilityChanged(@NonNull View changedView, int visibility) {
+        super.onVisibilityChanged(changedView, visibility);
+        if (visibility == View.VISIBLE) {
+            updateAutoScroll();
+        } else {
+            getAutoScrollHandler().removeCallbacksAndMessages(null);
+        }
     }
 
     @Override

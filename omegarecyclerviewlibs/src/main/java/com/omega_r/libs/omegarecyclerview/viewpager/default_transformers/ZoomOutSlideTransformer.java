@@ -22,7 +22,7 @@ public class ZoomOutSlideTransformer implements ItemTransformer {
     }
 
     @Override
-    public void transformItem(View view, float position, boolean isHorizontal) {
+    public void transformItem(View view, float position, boolean isHorizontal, int scrolled) {
         float height = view.getHeight();
         float scaleFactor = Math.max(mMinScale, 1 - Math.abs(position));
         int width = view.getWidth();

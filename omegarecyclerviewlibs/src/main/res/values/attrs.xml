@@ -10,7 +10,7 @@
         <attr name="dividerPadding" format="dimension" />
         <attr name="dividerPaddingStart" format="dimension" />
         <attr name="dividerPaddingEnd" format="dimension" />
-        <attr name="showDivider">
+        <attr name="dividerShow">
             <flag name="none" value="0" />
             <flag name="beginning" value="1" />
             <flag name="middle" value="2" />

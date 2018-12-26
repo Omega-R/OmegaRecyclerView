@@ -7,7 +7,7 @@ import com.omega_r.libs.omegarecyclerview.viewpager.transform.ItemTransformer;
 public class BackgroundToForegroundTransformer implements ItemTransformer {
 
     @Override
-    public void transformItem(View view, float position, boolean isHorizontal) {
+    public void transformItem(View view, float position, boolean isHorizontal, int scrolled) {
         float height = view.getHeight();
         float width = view.getWidth();
         float coefficient = (position < 0) ? 1f : Math.abs(1f - position);
