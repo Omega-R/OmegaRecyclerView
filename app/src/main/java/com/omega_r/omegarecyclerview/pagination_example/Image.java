@@ -1,6 +1,6 @@
 package com.omega_r.omegarecyclerview.pagination_example;
 
-import android.support.annotation.DrawableRes;
+import androidx.annotation.DrawableRes;
 
 import com.omega_r.omegarecyclerview.R;
 

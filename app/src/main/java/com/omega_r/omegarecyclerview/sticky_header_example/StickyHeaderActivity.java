@@ -1,6 +1,6 @@
 package com.omega_r.omegarecyclerview.sticky_header_example;
 
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.omega_r.libs.omegarecyclerview.OmegaRecyclerView;

@@ -1,8 +1,10 @@
-package android.support.v7.widget;
+package androidx.recyclerview.widget;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.util.AttributeSet;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 public class ExpandedRecyclerView extends RecyclerView {
 

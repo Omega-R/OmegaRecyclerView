@@ -1,6 +1,6 @@
 package com.omega_r.libs.omegarecyclerview.viewpager.transform;
 
-import android.support.v4.view.ViewPager;
+import androidx.viewpager.widget.ViewPager;
 import android.view.View;
 
 public class ItemTransformerWrapper implements ItemTransformer {

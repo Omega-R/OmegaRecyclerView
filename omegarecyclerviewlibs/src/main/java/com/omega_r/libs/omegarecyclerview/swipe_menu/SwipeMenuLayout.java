@@ -1,14 +1,13 @@
 package com.omega_r.libs.omegarecyclerview.swipe_menu;
 
 import android.content.Context;
-import android.content.res.TypedArray;
-import android.support.annotation.Nullable;
+
+import androidx.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
-import android.view.animation.AnimationUtils;
 import android.view.animation.Interpolator;
 import android.widget.FrameLayout;
 import android.widget.OverScroller;
@@ -18,7 +17,6 @@ import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.Locale;
 
-import com.omega_r.libs.omegarecyclerview.R;
 import com.omega_r.libs.omegarecyclerview.swipe_menu.listener.SwipeFractionListener;
 import com.omega_r.libs.omegarecyclerview.swipe_menu.listener.SwipeSwitchListener;
 import com.omega_r.libs.omegarecyclerview.swipe_menu.swiper.Swiper;
