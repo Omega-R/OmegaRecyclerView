@@ -19,6 +19,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.button_sections).setOnClickListener(this);
         findViewById(R.id.button_viewpager).setOnClickListener(this);
         findViewById(R.id.button_list_adapter).setOnClickListener(this);
+        findViewById(R.id.button_expandable_recyclerview).setOnClickListener(this);
     }
 
     /**
@@ -27,6 +28,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      */
     @Override
     public void onClick(View view) {
+        
         switch (view.getId()) {
             case R.id.button_swipe_menu:
                 AppOmegaIntentBuilder.from(this)
@@ -67,6 +69,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 AppOmegaIntentBuilder.from(this)
                         .appActivities()
                         .listAdapterActivity()
+                        .createIntentHandler()
+                        .startActivity();
+                break;
+            case R.id.button_expandable_recyclerview:
+                AppOmegaIntentBuilder.from(this)
+                        .appActivities()
+                        .chooseExpandableActivity()
                         .createIntentHandler()
                         .startActivity();
                 break;
