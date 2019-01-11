@@ -2,16 +2,17 @@ package com.omega_r.libs.omegarecyclerview.expandable_recycler_view.layout_manag
 
 import android.content.Context;
 import android.os.Build;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.ExpandedRecyclerView;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.OmegaExpandableRecyclerView;
 import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.data.Range;
+
+import androidx.recyclerview.widget.ExpandedRecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class ExpandableLayoutManager extends LinearLayoutManager {
 

@@ -1,6 +1,6 @@
 package com.omega_r.omegarecyclerview.expandable_example.core;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.data.GroupProvider;
 

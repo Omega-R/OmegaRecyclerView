@@ -1,6 +1,6 @@
 package com.omega_r.omegarecyclerview.expandable_example.support_sticky;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;

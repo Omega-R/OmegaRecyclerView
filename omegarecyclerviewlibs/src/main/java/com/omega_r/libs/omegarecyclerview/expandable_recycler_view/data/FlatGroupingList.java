@@ -2,7 +2,7 @@ package com.omega_r.libs.omegarecyclerview.expandable_recycler_view.data;
 
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
