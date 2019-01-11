@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="backgroundGroupCollapsed">0</integer>
+    <integer name="backgroundGroupExpanded">1</integer>
+    <integer name="backgroundFirstChild">2</integer>
+    <integer name="backgroundLastChild">3</integer>
+    <integer name="backgroundChild">4</integer>
+</resources>

@@ -23,13 +23,16 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.ExpandableStickyHeaderDecoration;
+import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.OmegaExpandableRecyclerView;
 import com.omega_r.libs.omegarecyclerview.header.HeaderFooterWrapperAdapter;
 import com.omega_r.libs.omegarecyclerview.item_decoration.DividerItemDecoration;
 import com.omega_r.libs.omegarecyclerview.item_decoration.SpaceItemDecoration;
-import com.omega_r.libs.omegarecyclerview.pagination.PaginationAdapter;
 import com.omega_r.libs.omegarecyclerview.pagination.OnPageRequestListener;
 import com.omega_r.libs.omegarecyclerview.pagination.PageRequester;
+import com.omega_r.libs.omegarecyclerview.pagination.PaginationAdapter;
 import com.omega_r.libs.omegarecyclerview.pagination.WrapperAdapter;
+import com.omega_r.libs.omegarecyclerview.sticky_header.BaseStickyHeaderDecoration;
 import com.omega_r.libs.omegarecyclerview.sticky_header.StickyHeaderAdapter;
 import com.omega_r.libs.omegarecyclerview.sticky_header.StickyHeaderDecoration;
 import com.omega_r.libs.omegarecyclerview.swipe_menu.SwipeMenuHelper;
@@ -196,7 +199,7 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
         if (currentAdapter != null) {
             currentAdapter.unregisterAdapterDataObserver(mEmptyObserver);
             if (currentAdapter instanceof HeaderFooterWrapperAdapter) {
-               ((HeaderFooterWrapperAdapter) currentAdapter).getWrappedAdapter().unregisterAdapterDataObserver(mHeaderObserver);
+                ((HeaderFooterWrapperAdapter) currentAdapter).getWrappedAdapter().unregisterAdapterDataObserver(mHeaderObserver);
             }
         }
         mEmptyObserver.onChanged();
@@ -215,6 +218,8 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
             if (mStickyHeaderDecoration != null) removeItemDecoration(mStickyHeaderDecoration);
         } else {
             StickyHeaderAdapter stickyHeaderAdapter = null;
+            OmegaExpandableRecyclerView.Adapter expandableAdapter = null;
+
             if (adapter instanceof WrapperAdapter) {
                 RecyclerView.Adapter wrappedAdapter = ((WrapperAdapter) adapter).getLastWrappedAdapter();
                 if (wrappedAdapter instanceof StickyHeaderAdapter) {
@@ -227,17 +232,31 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
             } else if (adapter instanceof StickyHeaderAdapter) {
                 stickyHeaderAdapter = (StickyHeaderAdapter) adapter;
             }
-            if (stickyHeaderAdapter != null) {
-                if (mStickyHeaderDecoration == null) {
-                    mStickyHeaderDecoration = new StickyHeaderDecoration(stickyHeaderAdapter);
-                    mStickyHeaderDecoration.setItemSpace(mItemSpace);
-                    addItemDecoration(mStickyHeaderDecoration);
-                } else {
-                    mStickyHeaderDecoration.setAdapter(stickyHeaderAdapter);
-                    invalidateItemDecorations();
+
+            if (adapter instanceof OmegaExpandableRecyclerView.Adapter) {
+                expandableAdapter = (OmegaExpandableRecyclerView.Adapter) adapter;
+            }
+
+            if (mStickyHeaderDecoration == null) {
+                mStickyHeaderDecoration = provideStickyHeaderDecoration(stickyHeaderAdapter, expandableAdapter);
+                if (mStickyHeaderDecoration == null) return;
+                mStickyHeaderDecoration.setItemSpace(mItemSpace);
+                addItemDecoration(mStickyHeaderDecoration);
+            } else {
+                mStickyHeaderDecoration.setStickyHeaderAdapter(stickyHeaderAdapter);
+                if (mStickyHeaderDecoration instanceof ExpandableStickyHeaderDecoration) {
+                    ((ExpandableStickyHeaderDecoration) mStickyHeaderDecoration).setExpandableAdapter(expandableAdapter);
                 }
+                invalidateItemDecorations();
             }
         }
+    }
+
+    @Nullable
+    protected StickyHeaderDecoration provideStickyHeaderDecoration(@Nullable StickyHeaderAdapter adapter,
+                                                                   @Nullable OmegaExpandableRecyclerView.Adapter expandableAdapter) {
+        if (adapter == null) return null;
+        return new BaseStickyHeaderDecoration(adapter);
     }
 
     @Override
@@ -250,7 +269,7 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
             Integer integer = sectionState.position;
             view.setTag(R.id.section_show_divider, sectionState.showDivider);
 
-            if (integer == null || integer == 0) {
+            if (integer == 0) {
                 mHeadersList.add(view);
             } else {
                 mFooterList.add(view);
@@ -545,6 +564,21 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
             }
         }
 
+        protected void tryNotifyItemChanged(final int position) {
+            if (recyclerView == null) return;
+
+            if (!recyclerView.isComputingLayout()) {
+                notifyItemChanged(position);
+            } else {
+                recyclerView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        tryNotifyItemChanged(position);
+                    }
+                });
+            }
+        }
+
         protected void tryNotifyItemRangeInserted(final int positionStart, final int itemCount) {
             if (recyclerView == null) return;
 
@@ -560,16 +594,16 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
             }
         }
 
-        protected void tryNotifyItemRemoved(final int positionStart, final int itemCount) {
+        protected void tryNotifyItemRemoved(final int position) {
             if (recyclerView == null) return;
 
             if (!recyclerView.isComputingLayout()) {
-                notifyItemRangeRemoved(positionStart, itemCount);
+                notifyItemRemoved(position);
             } else {
                 recyclerView.post(new Runnable() {
                     @Override
                     public void run() {
-                        tryNotifyItemRemoved(positionStart, itemCount);
+                        tryNotifyItemRemoved(position);
                     }
                 });
             }
@@ -621,7 +655,7 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
         }
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends ExpandedRecyclerView.ViewHolder {
 
         public ViewHolder(ViewGroup parent, @LayoutRes int res) {
             this(parent, LayoutInflater.from(parent.getContext()), res);
@@ -670,7 +704,7 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
             if (parent instanceof OmegaRecyclerView) {
                 RecyclerView.Adapter adapter = parent.getAdapter();
                 if (adapter instanceof HeaderFooterWrapperAdapter) {
-                    return  ((HeaderFooterWrapperAdapter) adapter).applyChildPositionToRealPosition(childPosition);
+                    return ((HeaderFooterWrapperAdapter) adapter).applyChildPositionToRealPosition(childPosition);
                 }
             }
 
