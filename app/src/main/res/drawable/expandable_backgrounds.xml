@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<level-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:maxLevel="@integer/backgroundGroupCollapsed" android:drawable="@drawable/group_collapsed" />
+    <item android:maxLevel="@integer/backgroundGroupExpanded" android:drawable="@drawable/group_expanded" />
+    <item android:maxLevel="@integer/backgroundFirstChild" android:drawable="@drawable/child_bg" />
+    <item android:maxLevel="@integer/backgroundLastChild" android:drawable="@drawable/child_last" />
+    <item android:maxLevel="@integer/backgroundChild" android:drawable="@drawable/child_bg" />
+</level-list>

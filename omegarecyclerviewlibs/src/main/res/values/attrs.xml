@@ -54,9 +54,23 @@
             <enum name="ZoomInTransformer" value="13" />
             <enum name="ZoomOutSlideTransformer" value="14" />
         </attr>
-        <attr name="autoScrollInterval" format="integer"/>
-        <attr name="autoScrollEnabled" format="boolean"/>
-        <attr name="useDefaultAdapter" format="boolean"/>
+        <attr name="autoScrollInterval" format="integer" />
+        <attr name="autoScrollEnabled" format="boolean" />
+        <attr name="useDefaultAdapter" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="OmegaExpandableRecyclerView">
+        <attr name="childAnimation" format="enum">
+            <enum name="Default" value="0" />
+            <enum name="Fade" value="1" />
+            <enum name="Dropdown" value="2" />
+        </attr>
+        <attr name="expandMode" format="enum">
+            <enum name="single" value="0" />
+            <enum name="multiple" value="1" />
+        </attr>
+        <attr name="stickyGroups" format="boolean" />
+        <attr name="backgrounds" format="reference" />
     </declare-styleable>
 
 </resources>
