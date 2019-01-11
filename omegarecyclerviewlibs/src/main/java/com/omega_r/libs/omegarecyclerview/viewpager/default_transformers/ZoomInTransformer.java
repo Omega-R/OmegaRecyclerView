@@ -7,7 +7,7 @@ import com.omega_r.libs.omegarecyclerview.viewpager.transform.ItemTransformer;
 public class ZoomInTransformer implements ItemTransformer {
 
     @Override
-    public void transformItem(View view, float position, boolean isHorizontal) {
+    public void transformItem(View view, float position, boolean isHorizontal, int scrolled) {
         final float scale = position < 0 ? position + 1f : Math.abs(1f - position);
         view.setScaleX(scale);
         view.setScaleY(scale);

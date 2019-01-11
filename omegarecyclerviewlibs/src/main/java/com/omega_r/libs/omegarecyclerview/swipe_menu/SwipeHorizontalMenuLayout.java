@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
@@ -20,6 +21,8 @@ public class SwipeHorizontalMenuLayout extends SwipeMenuLayout {
     protected float mPreLeftMenuFraction = -1;
     protected float mPreRightMenuFraction = -1;
     private boolean mDownMenuOpen;
+    private boolean isLeftSwipeEnabled = true;
+    private boolean isRightSwipeEnabled = true;
 
     public SwipeHorizontalMenuLayout(Context context) {
         super(context);
@@ -82,6 +85,10 @@ public class SwipeHorizontalMenuLayout extends SwipeMenuLayout {
                 break;
             case MotionEvent.ACTION_MOVE:
                 if (!isSwipeEnable()) break;
+                float eventX = ev.getX();
+                if (eventX < mLastX && !isRightSwipeEnabled && !isNotInPlace()) break;
+                if (eventX > mLastX && !isLeftSwipeEnabled && !isNotInPlace()) break;
+
                 int disX = (int) (mLastX - ev.getX());
                 int disY = (int) (mLastY - ev.getY());
                 if (!mDragging
@@ -108,7 +115,7 @@ public class SwipeHorizontalMenuLayout extends SwipeMenuLayout {
                         }
                     }
                     scrollBy(disX, 0);
-                    mLastX = (int) ev.getX();
+                    mLastX = (int) eventX;
                     mLastY = (int) ev.getY();
                     shouldResetSwiper = false;
                 }
@@ -358,18 +365,6 @@ public class SwipeHorizontalMenuLayout extends SwipeMenuLayout {
         }
     }
 
-    public void setSwipeEnable(boolean swipeEnable) {
-        this.swipeEnable = swipeEnable;
-    }
-
-    public boolean isSwipeEnable() {
-        return swipeEnable;
-    }
-
-    public void setSwipeListener(SwipeSwitchListener swipeSwitchListener) {
-        mSwipeSwitchListener = swipeSwitchListener;
-    }
-
     protected int getLen() {
         return mCurrentSwiper == null ? 0 : mCurrentSwiper.getMenuWidth();
     }
@@ -377,6 +372,22 @@ public class SwipeHorizontalMenuLayout extends SwipeMenuLayout {
     protected int getMoveLen(MotionEvent ev) {
         int sx = getScrollX();
         return (int) (ev.getX() - sx);
+    }
+
+    public boolean isLeftSwipeEnabled() {
+        return isLeftSwipeEnabled;
+    }
+
+    public void setLeftSwipeEnabled(boolean leftSwipeEnabled) {
+        isLeftSwipeEnabled = leftSwipeEnabled;
+    }
+
+    public boolean isRightSwipeEnabled() {
+        return isRightSwipeEnabled;
+    }
+
+    public void setRightSwipeEnabled(boolean rightSwipeEnabled) {
+        isRightSwipeEnabled = rightSwipeEnabled;
     }
 
 }

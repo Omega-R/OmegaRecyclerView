@@ -7,7 +7,7 @@ import com.omega_r.libs.omegarecyclerview.viewpager.transform.ItemTransformer;
 public class CubeInTransformer implements ItemTransformer {
 
     @Override
-    public void transformItem(View view, float position, boolean isHorizontal) {
+    public void transformItem(View view, float position, boolean isHorizontal, int scrolled) {
         if (isHorizontal) {
             view.setPivotX(position > 0 ? 0 : view.getWidth());
             view.setPivotY(0);

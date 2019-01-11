@@ -9,7 +9,7 @@ public class RotateUpTransformer implements ItemTransformer {
     private static final float ROT_MOD = -15f;
 
     @Override
-    public void transformItem(View view, float position, boolean isHorizontal) {
+    public void transformItem(View view, float position, boolean isHorizontal, int scrolled) {
         float width = view.getWidth();
         int height = view.getHeight();
         float rotation;
