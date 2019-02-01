@@ -7,12 +7,12 @@ import android.widget.Toast;
 
 import com.omega_r.libs.omegarecyclerview.OmegaRecyclerView;
 import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.OmegaExpandableRecyclerView;
-import com.omega_r.libs.omegarecyclerview.sticky_header.StickyHeaderAdapter;
-import com.omega_r.libs.omegarecyclerview.sticky_header.BaseStickyHeaderDecoration;
+import com.omega_r.libs.omegarecyclerview.sticky_decoration.StickyAdapter;
+import com.omega_r.libs.omegarecyclerview.sticky_decoration.StickyHeaderDecoration;
 import com.omega_r.omegarecyclerview.R;
 import com.omega_r.omegarecyclerview.expandable_example.core.QuoteGlobalInfo;
 
-public class DefaultStickyAdapter extends OmegaExpandableRecyclerView.Adapter<QuoteGlobalInfo, String> implements StickyHeaderAdapter<DefaultStickyAdapter.StickyViewHolder> {
+public class DefaultStickyAdapter extends OmegaExpandableRecyclerView.Adapter<QuoteGlobalInfo, String> implements StickyAdapter<DefaultStickyAdapter.StickyViewHolder> {
 
     @Override
     protected ExGroupViewHolder provideGroupViewHolder(@NonNull ViewGroup viewGroup) {
@@ -25,18 +25,18 @@ public class DefaultStickyAdapter extends OmegaExpandableRecyclerView.Adapter<Qu
     }
 
     @Override
-    public long getHeaderId(int position) {
+    public long getStickyId(int position) {
         Integer providedId = getItem(position).getStickyId();
-        return providedId == null ? BaseStickyHeaderDecoration.NO_HEADER_ID : providedId;
+        return providedId == null ? StickyHeaderDecoration.NO_HEADER_ID : providedId;
     }
 
     @Override
-    public StickyViewHolder onCreateHeaderViewHolder(ViewGroup parent) {
+    public StickyViewHolder onCreateStickyViewHolder(ViewGroup parent) {
         return new StickyViewHolder(parent);
     }
 
     @Override
-    public void onBindHeaderViewHolder(StickyViewHolder viewHolder, int position) {
+    public void onBindStickyViewHolder(StickyViewHolder viewHolder, int position) {
         viewHolder.bind(getItem(position).getGroup().getYear());
     }
 
