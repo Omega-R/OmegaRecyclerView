@@ -88,9 +88,7 @@ public abstract class StickyDecoration extends BaseStickyDecoration {
         return getStickerTop(isReverseLayout, child, sticker, layoutPos);
     }
 
-    protected int getStickerTop(boolean isReverseLayout, View child, View sticker, int layoutPos) {
-        return (int) Math.max(0, child.getY());
-    }
+    abstract int getStickerTop(boolean isReverseLayout, View child, View sticker, int layoutPos);
 
     private int calculateOffset(@NonNull RecyclerView parent, int stickerHeight, long currentStickyId, int nextPosition) {
         int adapterPosHere = parent.getChildAdapterPosition(parent.getChildAt(nextPosition));
@@ -116,8 +114,8 @@ public abstract class StickyDecoration extends BaseStickyDecoration {
         //noinspection unchecked
         mStickyAdapter.onBindStickyViewHolder(holder, position);
 
-        int widthSpec = View.MeasureSpec.makeMeasureSpec(parent.getMeasuredWidth(), View.MeasureSpec.EXACTLY);
-        int heightSpec = View.MeasureSpec.makeMeasureSpec(parent.getMeasuredHeight(), View.MeasureSpec.EXACTLY);
+        int widthSpec = View.MeasureSpec.makeMeasureSpec(parent.getMeasuredWidth(), getMeasureStickerWidthMode());
+        int heightSpec = View.MeasureSpec.makeMeasureSpec(parent.getMeasuredHeight(), getMeasureStickerHeightMode());
 
         int childWidth = ViewGroup.getChildMeasureSpec(widthSpec,
                 parent.getPaddingLeft() + parent.getPaddingRight(), header.getLayoutParams().width);
@@ -128,6 +126,14 @@ public abstract class StickyDecoration extends BaseStickyDecoration {
         header.layout(0, 0, header.getMeasuredWidth(), header.getMeasuredHeight());
 
         return holder;
+    }
+
+    protected int getMeasureStickerWidthMode() {
+        return View.MeasureSpec.UNSPECIFIED;
+    }
+
+    protected int getMeasureStickerHeightMode() {
+        return View.MeasureSpec.UNSPECIFIED;
     }
 
 }

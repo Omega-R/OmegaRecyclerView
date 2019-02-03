@@ -21,6 +21,9 @@ public class StickyHeaderDecoration extends StickyDecoration {
     public void getItemOffsets(@NonNull Rect outRect, @NonNull View view,
                                @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
         super.getItemOffsets(outRect, view, parent, state);
+        RecyclerView.Adapter adapter = parent.getAdapter();
+        if (adapter == null) return;
+
         int position = parent.getChildAdapterPosition(view);
         int headerHeight = 0;
         if (position != RecyclerView.NO_POSITION && hasSticker(position)
@@ -29,7 +32,12 @@ public class StickyHeaderDecoration extends StickyDecoration {
             RecyclerView.ViewHolder stickyHolder = getStickyHolder(parent, position);
             if(stickyHolder != null) {
                 View header = stickyHolder.itemView;
-                headerHeight = header.getHeight() - mItemSpace;
+                headerHeight = header.getHeight();
+                if (isReverseLayout(parent)) {
+                    if (position != adapter.getItemCount() - 1) headerHeight -= mItemSpace;
+                } else {
+                    if (position != 0) headerHeight -= mItemSpace;
+                }
             }
         }
         outRect.set(0, headerHeight, 0, 0);
@@ -54,6 +62,16 @@ public class StickyHeaderDecoration extends StickyDecoration {
     int getOffset(@Nullable RecyclerView.ViewHolder stickyHolder, int stickerHeight, View next) {
         if (stickyHolder == null) return 0;
         return ((int) next.getY()) - (stickerHeight + stickyHolder.itemView.getHeight());
+    }
+
+    @Override
+    protected int getStickerTop(boolean isReverseLayout, View child, View sticker, int layoutPos) {
+        return (int) Math.max(0, child.getY() - sticker.getHeight());
+    }
+
+    @Override
+    protected int getMeasureStickerWidthMode() {
+        return View.MeasureSpec.EXACTLY;
     }
 
 }
