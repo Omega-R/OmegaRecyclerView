@@ -5,12 +5,11 @@ import android.widget.TextView;
 
 import com.omega_r.libs.omegarecyclerview.OmegaRecyclerView;
 
-import com.omega_r.libs.omegarecyclerview_fastscroll.SectionAdapter;
 import com.omega_r.omegarecyclerview.R;
 
 import androidx.annotation.NonNull;
 
-public class FastScrollAdapter extends OmegaRecyclerView.Adapter<FastScrollAdapter.ViewHolder> implements SectionAdapter {
+public class FastScrollAdapter extends OmegaRecyclerView.Adapter<FastScrollAdapter.ViewHolder> implements com.omega_r.libs.omegarecyclerview_fastscroll.FastScrollAdapter {
 
     @NonNull
     @Override
@@ -29,7 +28,7 @@ public class FastScrollAdapter extends OmegaRecyclerView.Adapter<FastScrollAdapt
     }
 
     @Override
-    public String getSectionText(int position) {
+    public String getFastScrollSection(int position) {
         return String.valueOf(position);
     }
 

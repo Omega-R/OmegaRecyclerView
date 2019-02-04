@@ -61,7 +61,7 @@ public class OmegaFastScrollerLayout extends LinearLayout {
     private int mViewHeight;
     private boolean mHideScrollbar;
     private boolean mShowBubble;
-    private SectionAdapter mSectionAdapter;
+    private FastScrollAdapter mFastScrollAdapter;
     private ViewPropertyAnimator mScrollbarAnimator;
     private ViewPropertyAnimator mBubbleAnimator;
     private FastScrollStateChangeListener mFastScrollStateChangeListener;
@@ -255,8 +255,8 @@ public class OmegaFastScrollerLayout extends LinearLayout {
         mHandleHeight = mHandleImageView.getMeasuredHeight();
     }
 
-    public final void setSectionIndexer(@Nullable SectionAdapter sectionAdapter) {
-        mSectionAdapter = sectionAdapter;
+    public final void setSectionIndexer(@Nullable FastScrollAdapter fastScrollAdapter) {
+        mFastScrollAdapter = fastScrollAdapter;
     }
 
     public final void attachRecyclerView(RecyclerView recyclerView) {
@@ -353,7 +353,7 @@ public class OmegaFastScrollerLayout extends LinearLayout {
                 if (!isViewVisible(mScrollbarContainer)) {
                     showScrollbar();
                 }
-                if (mShowBubble && mSectionAdapter != null) {
+                if (mShowBubble && mFastScrollAdapter != null) {
                     showBubble();
                 }
                 if (mFastScrollStateChangeListener != null) {
@@ -414,8 +414,8 @@ public class OmegaFastScrollerLayout extends LinearLayout {
         int targetPos = getValueInRange(itemCount - 1, scrolledItemCount);
         layoutManager.scrollToPosition(targetPos);
 
-        if (mShowBubble && mSectionAdapter != null) {
-            mBubbleTextView.setText(mSectionAdapter.getSectionText(targetPos));
+        if (mShowBubble && mFastScrollAdapter != null) {
+            mBubbleTextView.setText(mFastScrollAdapter.getFastScrollSection(targetPos));
         }
     }
 

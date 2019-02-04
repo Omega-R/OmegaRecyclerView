@@ -38,8 +38,8 @@ public class OmegaFastScrollRecyclerView extends OmegaRecyclerView {
     @Override
     public final void setAdapter(RecyclerView.Adapter adapter) {
         super.setAdapter(adapter);
-        if (adapter instanceof SectionAdapter) {
-            setSectionIndexer((SectionAdapter) adapter);
+        if (adapter instanceof FastScrollAdapter) {
+            setSectionIndexer((FastScrollAdapter) adapter);
         } else if (adapter == null) {
             setSectionIndexer(null);
         }
@@ -52,11 +52,11 @@ public class OmegaFastScrollRecyclerView extends OmegaRecyclerView {
     }
 
     /**
-     * Set the [SectionAdapter] for the [FastScroller].
+     * Set the [FastScrollAdapter] for the [FastScroller].
      *
-     * @param indexer The SectionAdapter that provides section text for the FastScroller
+     * @param indexer The FastScrollAdapter that provides section text for the FastScroller
      */
-    public final void setSectionIndexer(SectionAdapter indexer) {
+    public final void setSectionIndexer(FastScrollAdapter indexer) {
         mFastScrollerLayout.setSectionIndexer(indexer);
     }
 
