@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion rootProject.compileSdkVersion
     buildToolsVersion rootProject.buildToolsVersion
     defaultConfig {
         applicationId "com.omega_r.omegarecyclerview"
-        minSdkVersion 16
-        targetSdkVersion 28
+        minSdkVersion rootProject.minSdkVersion
+        targetSdkVersion rootProject.targetSdkVersion
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -23,15 +23,16 @@ android {
 dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha3'
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.appcompat:appcompat:1.1.0-alpha01'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'com.google.android.material:material:1.1.0-alpha03'
+    implementation 'androidx.appcompat:appcompat:' + rootProject.appcompatVersion
+    implementation 'com.google.android.material:material:' + rootProject.materialVersion
 
     implementation 'com.github.Omega-R.OmegaIntentBuilder:core:' + rootProject.omegaIntentBuilder
     implementation 'com.github.Omega-R.OmegaIntentBuilder:annotations:' + rootProject.omegaIntentBuilder
     annotationProcessor 'com.github.Omega-R.OmegaIntentBuilder:processor:' + rootProject.omegaIntentBuilder
 
-    api project(':omegarecyclerviewlibs')
+    implementation project(':omegarecyclerview')
+    implementation project(':omegarecyclerview_fastscroll')
 
     androidTestImplementation('com.android.support.test.espresso:espresso-core:' + rootProject.espressoVersion, {
         exclude group: 'com.android.support', module: 'support-annotations'

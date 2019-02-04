@@ -4,12 +4,13 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.omega_r.libs.omegarecyclerview.OmegaRecyclerView;
-import com.omega_r.libs.omegarecyclerview.fast_scroll.SectionIndexer;
+
+import com.omega_r.libs.omegarecyclerview_fastscroll.SectionAdapter;
 import com.omega_r.omegarecyclerview.R;
 
 import androidx.annotation.NonNull;
 
-public class FastScrollAdapter extends OmegaRecyclerView.Adapter<FastScrollAdapter.ViewHolder> implements SectionIndexer {
+public class FastScrollAdapter extends OmegaRecyclerView.Adapter<FastScrollAdapter.ViewHolder> implements SectionAdapter {
 
     @NonNull
     @Override

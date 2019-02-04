@@ -1,4 +1,4 @@
-package com.omega_r.libs.omegarecyclerview.fast_scroll;
+package com.omega_r.libs.omegarecyclerview_fastscroll;
 
 import android.animation.Animator;
 import android.annotation.SuppressLint;
@@ -34,8 +34,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.omega_r.libs.omegarecyclerview.R;
-
 public class OmegaFastScrollerLayout extends LinearLayout {
 
     private static final AnimatorListener sDefaultAnimatorListener = new AnimatorListener();
@@ -63,7 +61,7 @@ public class OmegaFastScrollerLayout extends LinearLayout {
     private int mViewHeight;
     private boolean mHideScrollbar;
     private boolean mShowBubble;
-    private SectionIndexer mSectionIndexer;
+    private SectionAdapter mSectionAdapter;
     private ViewPropertyAnimator mScrollbarAnimator;
     private ViewPropertyAnimator mBubbleAnimator;
     private FastScrollStateChangeListener mFastScrollStateChangeListener;
@@ -257,8 +255,8 @@ public class OmegaFastScrollerLayout extends LinearLayout {
         mHandleHeight = mHandleImageView.getMeasuredHeight();
     }
 
-    public final void setSectionIndexer(@Nullable SectionIndexer sectionIndexer) {
-        mSectionIndexer = sectionIndexer;
+    public final void setSectionIndexer(@Nullable SectionAdapter sectionAdapter) {
+        mSectionAdapter = sectionAdapter;
     }
 
     public final void attachRecyclerView(RecyclerView recyclerView) {
@@ -355,7 +353,7 @@ public class OmegaFastScrollerLayout extends LinearLayout {
                 if (!isViewVisible(mScrollbarContainer)) {
                     showScrollbar();
                 }
-                if (mShowBubble && mSectionIndexer != null) {
+                if (mShowBubble && mSectionAdapter != null) {
                     showBubble();
                 }
                 if (mFastScrollStateChangeListener != null) {
@@ -416,8 +414,8 @@ public class OmegaFastScrollerLayout extends LinearLayout {
         int targetPos = getValueInRange(itemCount - 1, scrolledItemCount);
         layoutManager.scrollToPosition(targetPos);
 
-        if (mShowBubble && mSectionIndexer != null) {
-            mBubbleTextView.setText(mSectionIndexer.getSectionText(targetPos));
+        if (mShowBubble && mSectionAdapter != null) {
+            mBubbleTextView.setText(mSectionAdapter.getSectionText(targetPos));
         }
     }
 

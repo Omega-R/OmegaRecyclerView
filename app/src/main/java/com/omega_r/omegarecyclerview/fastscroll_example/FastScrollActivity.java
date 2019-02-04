@@ -3,9 +3,9 @@ package com.omega_r.omegarecyclerview.fastscroll_example;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.omega_r.libs.omegarecyclerview.fast_scroll.FastScrollStateChangeListener;
-import com.omega_r.libs.omegarecyclerview.fast_scroll.OmegaFastScrollRecyclerView;
-import com.omega_r.libs.omegarecyclerview.fast_scroll.OmegaFastScrollerLayout;
+import com.omega_r.libs.omegarecyclerview_fastscroll.FastScrollStateChangeListener;
+import com.omega_r.libs.omegarecyclerview_fastscroll.OmegaFastScrollRecyclerView;
+import com.omega_r.libs.omegarecyclerview_fastscroll.OmegaFastScrollerLayout;
 import com.omega_r.omegarecyclerview.R;
 
 import androidx.annotation.Nullable;

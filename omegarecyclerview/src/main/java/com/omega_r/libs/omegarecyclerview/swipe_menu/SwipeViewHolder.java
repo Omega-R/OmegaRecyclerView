@@ -1,7 +1,6 @@
 package com.omega_r.libs.omegarecyclerview.swipe_menu;
 
 import androidx.annotation.LayoutRes;
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;

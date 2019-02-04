@@ -1,4 +1,4 @@
-package com.omega_r.libs.omegarecyclerview.fast_scroll;
+package com.omega_r.libs.omegarecyclerview_fastscroll;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -38,8 +38,8 @@ public class OmegaFastScrollRecyclerView extends OmegaRecyclerView {
     @Override
     public final void setAdapter(RecyclerView.Adapter adapter) {
         super.setAdapter(adapter);
-        if (adapter instanceof SectionIndexer) {
-            setSectionIndexer((SectionIndexer) adapter);
+        if (adapter instanceof SectionAdapter) {
+            setSectionIndexer((SectionAdapter) adapter);
         } else if (adapter == null) {
             setSectionIndexer(null);
         }
@@ -52,11 +52,11 @@ public class OmegaFastScrollRecyclerView extends OmegaRecyclerView {
     }
 
     /**
-     * Set the [SectionIndexer] for the [FastScroller].
+     * Set the [SectionAdapter] for the [FastScroller].
      *
-     * @param indexer The SectionIndexer that provides section text for the FastScroller
+     * @param indexer The SectionAdapter that provides section text for the FastScroller
      */
-    public final void setSectionIndexer(SectionIndexer indexer) {
+    public final void setSectionIndexer(SectionAdapter indexer) {
         mFastScrollerLayout.setSectionIndexer(indexer);
     }
 
