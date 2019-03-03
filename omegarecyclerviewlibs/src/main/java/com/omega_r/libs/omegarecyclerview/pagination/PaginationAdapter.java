@@ -94,6 +94,22 @@ public class PaginationAdapter extends WrapperAdapter {
     }
 
     @Override
+    public boolean isDividerAllowedAbove(int position) {
+        if (position == super.getItemCount()) {
+            return position != 0;
+        }
+        return super.isDividerAllowedAbove(position);
+    }
+
+    @Override
+    public boolean isDividerAllowedBelow(int position) {
+        if (position == super.getItemCount()) {
+            return false;
+        }
+        return super.isDividerAllowedBelow(position);
+    }
+
+    @Override
     public int getItemViewType(int position) {
         if (mShowPagination != null && position == super.getItemCount()) {
             switch (mShowPagination) {

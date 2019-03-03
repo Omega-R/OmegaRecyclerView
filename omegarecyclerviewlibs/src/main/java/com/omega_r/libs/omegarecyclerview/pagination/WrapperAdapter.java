@@ -101,6 +101,22 @@ public class WrapperAdapter<T extends RecyclerView.ViewHolder> extends OmegaRecy
     }
 
     @Override
+    public boolean isDividerAllowedAbove(int position) {
+        if (mChildAdapter instanceof OmegaRecyclerView.Adapter) {
+            return ((OmegaRecyclerView.Adapter) mChildAdapter).isDividerAllowedAbove(position);
+        }
+        return super.isDividerAllowedBelow(position);
+    }
+
+    @Override
+    public boolean isDividerAllowedBelow(int position) {
+        if (mChildAdapter instanceof OmegaRecyclerView.Adapter) {
+            return ((OmegaRecyclerView.Adapter) mChildAdapter).isDividerAllowedBelow(position);
+        }
+        return super.isDividerAllowedBelow(position);
+    }
+
+    @Override
     public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
         mChildAdapter.onDetachedFromRecyclerView(recyclerView);
     }

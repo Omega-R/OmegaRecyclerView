@@ -82,27 +82,30 @@ public abstract class SwipeMenuLayout extends FrameLayout {
         mScaledMaximumFlingVelocity = mViewConfig.getScaledMaximumFlingVelocity();
     }
 
-    public void smoothOpenBeginMenu() {
-        if (mBeginSwiper == null) throw new IllegalArgumentException("No begin menu!");
-        mCurrentSwiper = mBeginSwiper;
+    public void smoothOpenMenu(SwipeDirection direction) {
+        switch (direction) {
+            case LEFT:
+                mCurrentSwiper = mBeginSwiper;
+                break;
+            case RIGHT:
+                mCurrentSwiper = mEndSwiper;
+                break;
+        }
+        if (mCurrentSwiper == null) throw new IllegalArgumentException("No menu!");
+
         smoothOpenMenu();
     }
 
-    public void smoothOpenEndMenu() {
-        if (mEndSwiper == null) throw new IllegalArgumentException("No end menu!");
-        mCurrentSwiper = mEndSwiper;
-        smoothOpenMenu();
-    }
-
-    public void smoothCloseBeginMenu() {
-        if (mBeginSwiper == null) throw new IllegalArgumentException("No begin menu!");
-        mCurrentSwiper = mBeginSwiper;
-        smoothCloseMenu();
-    }
-
-    public void smoothCloseEndMenu() {
-        if (mEndSwiper == null) throw new IllegalArgumentException("No end menu!");
-        mCurrentSwiper = mEndSwiper;
+    public void smoothCloseBeginMenu(SwipeDirection direction) {
+        switch (direction) {
+            case LEFT:
+                mCurrentSwiper = mBeginSwiper;
+                break;
+            case RIGHT:
+                mCurrentSwiper = mEndSwiper;
+                break;
+        }
+        if (mCurrentSwiper == null) throw new IllegalArgumentException("No menu!");
         smoothCloseMenu();
     }
 
@@ -125,6 +128,10 @@ public abstract class SwipeMenuLayout extends FrameLayout {
     public boolean isSwipeEnable() {
         return swipeEnable;
     }
+
+    public abstract void setSwipeEnable(SwipeDirection direction, boolean swipeEnable);
+
+    public abstract boolean isSwipeEnable(SwipeDirection direction);
 
     public void setSwipeListener(SwipeSwitchListener swipeSwitchListener) {
         mSwipeSwitchListener = swipeSwitchListener;
@@ -167,5 +174,13 @@ public abstract class SwipeMenuLayout extends FrameLayout {
         f -= 0.5f; // center the values about 0.
         f *= 0.3f * Math.PI / 2.0f;
         return (float) Math.sin(f);
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        if (isNotInPlace()) {
+            smoothCloseMenu(0);
+        }
     }
 }
