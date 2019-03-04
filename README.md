@@ -24,9 +24,9 @@ allprojects {
 **Step 2.** Add the dependency
 ```
 dependencies {
-    implementation 'com.github.Omega-R:OmegaRecyclerView:1.9.0@aar' // AndroidX
+    implementation 'com.github.Omega-R:OmegaRecyclerView:1.9.1@aar' // AndroidX
     // or
-    // implementation 'com.github.Omega-R:OmegaRecyclerView:1.8.0@aar' // Android Support
+    // implementation 'com.github.Omega-R:OmegaRecyclerView:1.8.2@aar' // Android Support
 }
 ```
 
