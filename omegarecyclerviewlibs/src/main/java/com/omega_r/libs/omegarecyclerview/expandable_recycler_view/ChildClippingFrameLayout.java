@@ -26,8 +26,8 @@ public class ChildClippingFrameLayout extends FrameLayout {
         super(contentView.getContext());
         setWillNotDraw(false);
 
-        addView(contentView);
         setupLayoutParams(contentView);
+        addView(contentView);
     }
 
     private void setupLayoutParams(@NonNull View contentView) {
