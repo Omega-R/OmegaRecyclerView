@@ -669,12 +669,12 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
             super(itemView);
         }
 
-        protected final <T extends View> T findViewById(int id) {
+        public final <T extends View> T findViewById(int id) {
             //noinspection unchecked
             return (T) itemView.findViewById(id);
         }
 
-        protected final Context getContext() {
+        public final Context getContext() {
             return itemView.getContext();
         }
 
