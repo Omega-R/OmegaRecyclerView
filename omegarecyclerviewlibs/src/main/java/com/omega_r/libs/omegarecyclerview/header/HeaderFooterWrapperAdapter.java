@@ -34,6 +34,12 @@ public class HeaderFooterWrapperAdapter<T extends RecyclerView.Adapter> extends 
         super.setHasStableIds(mRealAdapter.hasStableIds());
     }
 
+    @Override
+    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        mRealAdapter.onAttachedToRecyclerView(recyclerView);
+    }
+
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
