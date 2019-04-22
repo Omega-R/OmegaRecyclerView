@@ -12,10 +12,10 @@ import com.omega_r.libs.omegarecyclerview.OmegaRecyclerView;
 import com.omega_r.libs.omegarecyclerview.item_decoration.decoration_helpers.DividerDecorationHelper;
 
 public class DividerItemDecoration extends BaseItemDecoration {
-
-    private final Drawable mDivider;
     private final int mOffset;
-    private final float mDividerAlpha;
+
+    private float mDividerAlpha;
+    private Drawable mDivider;
     private int mDividerSize;
     private int mPaddingStart;
     private int mPaddingEnd;
@@ -49,6 +49,14 @@ public class DividerItemDecoration extends BaseItemDecoration {
         mPaddingEnd = padding;
     }
 
+    public void setDividerAlpha(float dividerAlpha) {
+        this.mDividerAlpha = dividerAlpha;
+    }
+
+    public void setDividerDrawable(@NonNull Drawable dividerDrawable) {
+        mDivider = dividerDrawable;
+    }
+
     private void updateSize() {
         if (mDividerSize < 0) {
             switch (getOrientation()) {
@@ -63,7 +71,7 @@ public class DividerItemDecoration extends BaseItemDecoration {
     }
 
     @Override
-    void getItemOffset(@NonNull Rect outRect, @NonNull RecyclerView parent, @NonNull DividerDecorationHelper helper, int position, int itemCount) {
+    public void getItemOffset(@NonNull Rect outRect, @NonNull RecyclerView parent, @NonNull DividerDecorationHelper helper, int position, int itemCount) {
         if (position == 0 && isShowBeginDivider()) {
             helper.setStart(outRect, mDividerSize);
         }
@@ -86,20 +94,35 @@ public class DividerItemDecoration extends BaseItemDecoration {
         final int childCount = parent.getChildCount();
 
         if (childCount > 0) {
+            c.save();
             DividerDecorationHelper helper = DividerDecorationHelper.getHelper(getOrientation(), parent);
-            
-            mItemRect.set(parent.getPaddingLeft() + mPaddingStart,
-                    parent.getPaddingTop() + mPaddingStart,
-                    parent.getWidth() - parent.getPaddingRight() - mPaddingEnd,
-                    parent.getHeight() - parent.getPaddingBottom() - mPaddingEnd);
 
+            if (parent.getClipToPadding()) {
+                mItemRect.set(parent.getPaddingLeft() + mPaddingStart,
+                        parent.getPaddingTop() + mPaddingStart,
+                        parent.getWidth() - parent.getPaddingRight() - mPaddingEnd,
+                        parent.getHeight() - parent.getPaddingBottom() - mPaddingEnd);
+
+
+                helper.setStart(mItemRect, helper.getStart(mItemRect) - mPaddingStart);
+                helper.setEnd(mItemRect, helper.getEnd(mItemRect) + mPaddingEnd);
+                c.clipRect(mItemRect);
+
+            } else {
+                mItemRect.set(mPaddingStart, mPaddingStart,
+                        parent.getWidth() - mPaddingEnd, parent.getHeight() - mPaddingEnd);
+            }
             View child;
+
+            int offsetIndex = 0;
 
             // show beginning divider
             if (isShowBeginDivider()) {
                 child = parent.getChildAt(0);
-                if (isShowDivider(parent, getAdapterPosition(parent, child))) {
-                    updateViewRect(child);
+                int adapterPosition = getAdapterPosition(parent, child);
+                if (adapterPosition == 0 && isShowDividerAbove(parent, 0)) {
+                    offsetIndex = 1;
+                    updateViewRect(parent, child);
                     helper.setStart(mItemRect, helper.getStart(mViewRect) - helper.getOffset(mOffset));
                     helper.setEnd(mItemRect, helper.getStart(mItemRect) - helper.getOffset(mDividerSize));
                     drawDivider(c, child, mItemRect);
@@ -108,10 +131,10 @@ public class DividerItemDecoration extends BaseItemDecoration {
 
             // show middle dividers
             if (isShowMiddleDivider()) {
-                for (int i = 1; i < childCount; i++) {
+                for (int i = offsetIndex; i < childCount; i++) {
                     child = parent.getChildAt(i);
-                    if (isShowDivider(parent, getAdapterPosition(parent, child))) {
-                        updateViewRect(child);
+                    if (isShowDividerAbove(parent, getAdapterPosition(parent, child))) {
+                        updateViewRect(parent, child);
                         helper.setStart(mItemRect, helper.getStart(mViewRect) - helper.getOffset(mOffset));
                         helper.setEnd(mItemRect, helper.getStart(mItemRect) - helper.getOffset(mDividerSize));
                         drawDivider(c, child, mItemRect);
@@ -122,17 +145,21 @@ public class DividerItemDecoration extends BaseItemDecoration {
             // show end divider
             if (isShowEndDivider()) {
                 child = parent.getChildAt(childCount - 1);
-                if (isShowDivider(parent, childCount - 1)) {
-                    updateViewRect(child);
+                int adapterPosition = getAdapterPosition(parent, child);
+                int adapterCount = parent.getAdapter().getItemCount();
+                if (adapterPosition == adapterCount - 1 && isShowDividerBelow(parent, adapterPosition, adapterCount)) {
+                    updateViewRect(parent, child);
                     helper.setStart(mItemRect, helper.getEnd(mViewRect) + helper.getOffset(mOffset));
                     helper.setEnd(mItemRect, helper.getStart(mItemRect) + helper.getOffset(mDividerSize));
                     drawDivider(c, child, mItemRect);
                 }
             }
+
+            c.restore();
         }
     }
 
-    private void updateViewRect(View view) {
+    private void updateViewRect(RecyclerView parent, View view) {
         view.getHitRect(mViewRect);
         RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) view.getLayoutParams();
         mViewRect.left -= params.leftMargin;
@@ -149,10 +176,31 @@ public class DividerItemDecoration extends BaseItemDecoration {
         divider.draw(canvas);
     }
 
-    private boolean isShowDivider(RecyclerView parent, int index) {
+    private boolean isShowDividerBelow(RecyclerView parent, int adapterPosition, int count) {
         RecyclerView.Adapter adapter = parent.getAdapter();
         if (adapter instanceof OmegaRecyclerView.Adapter) {
-            return ((OmegaRecyclerView.Adapter) adapter).isShowDivided(index);
+            boolean allowedBelow = ((OmegaRecyclerView.Adapter) adapter).isDividerAllowedBelow(adapterPosition);
+            if (allowedBelow) {
+                return (adapterPosition + 1 == count)
+                        || ((OmegaRecyclerView.Adapter) adapter).isDividerAllowedAbove(adapterPosition + 1);
+
+            } else {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean isShowDividerAbove(RecyclerView parent, int adapterPosition) {
+        RecyclerView.Adapter adapter = parent.getAdapter();
+        if (adapter instanceof OmegaRecyclerView.Adapter) {
+            OmegaRecyclerView.Adapter omegaAdapter = (OmegaRecyclerView.Adapter) adapter;
+            boolean allowedBelow = adapterPosition == 0 || omegaAdapter.isDividerAllowedBelow(adapterPosition - 1);
+            if (allowedBelow) {
+                return omegaAdapter.isDividerAllowedAbove(adapterPosition);
+            } else {
+                return false;
+            }
         }
         return true;
     }

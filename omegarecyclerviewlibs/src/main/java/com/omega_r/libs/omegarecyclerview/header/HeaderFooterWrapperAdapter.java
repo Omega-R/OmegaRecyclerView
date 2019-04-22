@@ -76,7 +76,24 @@ public class HeaderFooterWrapperAdapter<T extends RecyclerView.Adapter> extends 
     }
 
     @Override
-    public boolean isShowDivided(int position) {
+    public boolean isDividerAllowedAbove(int position) {
+        SparseArray<View> sectionArray = null;
+        if (isHeaderPosition(position)) sectionArray = mHeaderArray;
+        if (isFooterPosition(position)) sectionArray = mFooterArray;
+
+        if (sectionArray != null) {
+            return true;
+        }
+
+        if (mRealAdapter instanceof OmegaRecyclerView.Adapter) {
+            return ((OmegaRecyclerView.Adapter) mRealAdapter).isDividerAllowedAbove(position - mHeaderArray.size());
+        }
+
+        return super.isDividerAllowedAbove(position);
+    }
+
+    @Override
+    public boolean isDividerAllowedBelow(int position) {
         SparseArray<View> sectionArray = null;
         if (isHeaderPosition(position)) sectionArray = mHeaderArray;
         if (isFooterPosition(position)) sectionArray = mFooterArray;
@@ -86,14 +103,14 @@ public class HeaderFooterWrapperAdapter<T extends RecyclerView.Adapter> extends 
             if (tag instanceof Boolean) {
                 return (boolean) tag;
             }
-            return super.isShowDivided(position);
+            return super.isDividerAllowedBelow(position);
         }
 
         if (mRealAdapter instanceof OmegaRecyclerView.Adapter) {
-            return ((OmegaRecyclerView.Adapter) mRealAdapter).isShowDivided(position - mHeaderArray.size());
+            return ((OmegaRecyclerView.Adapter) mRealAdapter).isDividerAllowedBelow(position - mHeaderArray.size());
         }
 
-        return super.isShowDivided(position);
+        return super.isDividerAllowedBelow(position);
     }
 
     @Override
