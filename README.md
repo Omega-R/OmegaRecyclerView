@@ -24,7 +24,9 @@ allprojects {
 **Step 2.** Add the dependency
 ```
 dependencies {
-    implementation 'com.github.Omega-R:OmegaRecyclerView:1.6.11@aar'
+    implementation 'com.github.Omega-R:OmegaRecyclerView:1.9.4@aar' // AndroidX
+    // or
+    // implementation 'com.github.Omega-R:OmegaRecyclerView:1.8.2@aar' // Android Support
 }
 ```
 
@@ -227,7 +229,7 @@ For usage just add OmegaPagerRecyclerView
 
         // Supported features
         app:infinite="true"   // Infinite scroll
-        app:elementSize="0.8" // set element size 80% of screen
+        app:pageSize="0.8" // set page size 80% of screen
         app:transitionTime="2100"/>
 ```
 

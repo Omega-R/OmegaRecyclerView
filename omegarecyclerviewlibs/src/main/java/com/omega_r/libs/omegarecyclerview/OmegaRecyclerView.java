@@ -259,6 +259,7 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
         return new BaseStickyHeaderDecoration(adapter);
     }
 
+
     @Override
     public void addView(View view, int index, ViewGroup.LayoutParams params) {
         if (mFinishedInflate) {
@@ -400,6 +401,15 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
         return touchView;
     }
 
+    public void setDividerAlpha(float dividerAlpha) {
+        for (int i = 0; i < getItemDecorationCount(); i++) {
+            RecyclerView.ItemDecoration itemDecoration = getItemDecorationAt(i);
+            if (itemDecoration instanceof DividerItemDecoration) {
+                ((DividerItemDecoration) itemDecoration).setDividerAlpha(dividerAlpha);
+            }
+        }
+    }
+
     public void setPaginationCallback(OnPageRequestListener callback) {
         RecyclerView.Adapter adapter = getAdapter();
         if (adapter instanceof HeaderFooterWrapperAdapter) {
@@ -539,7 +549,11 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
 
         private RecyclerView recyclerView;
 
-        public boolean isShowDivided(int position) {
+        public boolean isDividerAllowedAbove(int position) {
+            return true;
+        }
+
+        public boolean isDividerAllowedBelow(int position) {
             return true;
         }
 

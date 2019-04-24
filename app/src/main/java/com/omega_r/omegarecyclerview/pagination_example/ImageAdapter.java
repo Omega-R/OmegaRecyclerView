@@ -39,6 +39,10 @@ public class ImageAdapter extends OmegaRecyclerView.Adapter<ImageAdapter.ViewHol
         notifyItemInserted(mList.size() - list.size());
     }
 
+    @Override
+    public boolean isDividerAllowedBelow(int position) {
+        return super.isDividerAllowedBelow(position) && position % 2 == 0;
+    }
 
     @Override
     public long getItemId(int position) {

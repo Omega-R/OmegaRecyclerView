@@ -1,16 +1,13 @@
 package com.omega_r.libs.omegarecyclerview.swipe_menu.listener;
 
 
+import com.omega_r.libs.omegarecyclerview.swipe_menu.SwipeDirection;
 import com.omega_r.libs.omegarecyclerview.swipe_menu.SwipeMenuLayout;
 
 public interface SwipeSwitchListener {
 
-    void beginMenuClosed(SwipeMenuLayout swipeMenuLayout);
+    void onSwipeMenuOpened(SwipeMenuLayout swipeMenuLayout, SwipeDirection direction);
 
-    void beginMenuOpened(SwipeMenuLayout swipeMenuLayout);
-
-    void endMenuClosed(SwipeMenuLayout swipeMenuLayout);
-
-    void endMenuOpened(SwipeMenuLayout swipeMenuLayout);
+    void onSwipeMenuClosed(SwipeMenuLayout swipeMenuLayout, SwipeDirection direction);
 
 }
