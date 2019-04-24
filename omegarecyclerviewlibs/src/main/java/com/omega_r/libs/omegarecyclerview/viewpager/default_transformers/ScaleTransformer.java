@@ -1,6 +1,6 @@
 package com.omega_r.libs.omegarecyclerview.viewpager.default_transformers;
 
-import android.support.annotation.FloatRange;
+import androidx.annotation.FloatRange;
 import android.view.View;
 
 import com.omega_r.libs.omegarecyclerview.viewpager.transform.ItemTransformer;

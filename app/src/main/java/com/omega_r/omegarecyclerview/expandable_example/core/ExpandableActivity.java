@@ -1,8 +1,8 @@
 package com.omega_r.omegarecyclerview.expandable_example.core;
 
 import android.os.Bundle;
-import android.support.annotation.LayoutRes;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.LayoutRes;
+import androidx.appcompat.app.AppCompatActivity;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
 

@@ -1,6 +1,6 @@
 package com.omega_r.libs.omegarecyclerview.viewpager.default_transformers;
 
-import android.support.annotation.IntDef;
+import androidx.annotation.IntDef;
 import android.view.View;
 
 import java.lang.annotation.Retention;

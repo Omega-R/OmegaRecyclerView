@@ -1,6 +1,6 @@
 package com.omega_r.libs.omegarecyclerview.expandable_recycler_view.data;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import java.io.Serializable;
 import java.util.ArrayList;

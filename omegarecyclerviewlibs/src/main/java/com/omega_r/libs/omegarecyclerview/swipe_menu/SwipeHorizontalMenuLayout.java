@@ -1,15 +1,14 @@
 package com.omega_r.libs.omegarecyclerview.swipe_menu;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.v4.view.ViewCompat;
+import androidx.annotation.NonNull;
+import androidx.core.view.ViewCompat;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewParent;
-import com.omega_r.libs.omegarecyclerview.swipe_menu.listener.SwipeSwitchListener;
+
 import com.omega_r.libs.omegarecyclerview.swipe_menu.swiper.LeftHorizontalSwiper;
 import com.omega_r.libs.omegarecyclerview.swipe_menu.swiper.RightHorizontalSwiper;
 import com.omega_r.libs.omegarecyclerview.swipe_menu.swiper.Swiper;

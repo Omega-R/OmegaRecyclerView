@@ -7,16 +7,16 @@ import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.ColorInt;
-import android.support.annotation.ColorRes;
-import android.support.annotation.IdRes;
-import android.support.annotation.LayoutRes;
-import android.support.annotation.Nullable;
-import android.support.annotation.StringRes;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.ExpandedRecyclerView;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.ColorInt;
+import androidx.annotation.ColorRes;
+import androidx.annotation.IdRes;
+import androidx.annotation.LayoutRes;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.ExpandedRecyclerView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -192,6 +192,20 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
 
         registerObservers(shellAdapter);
         updateStickyHeader(shellAdapter);
+    }
+
+    @Nullable
+    public RecyclerView.Adapter getRealAdapter() {
+        return getRealAdapter(getAdapter());
+    }
+
+    private RecyclerView.Adapter getRealAdapter(RecyclerView.Adapter adapter) {
+        if (adapter instanceof HeaderFooterWrapperAdapter) {
+            return getRealAdapter(((HeaderFooterWrapperAdapter) adapter).getWrappedAdapter());
+        } else if (adapter instanceof WrapperAdapter) {
+            return getRealAdapter(((WrapperAdapter) adapter).getLastWrappedAdapter());
+        }
+        return adapter;
     }
 
     private void unregisterObservers() {

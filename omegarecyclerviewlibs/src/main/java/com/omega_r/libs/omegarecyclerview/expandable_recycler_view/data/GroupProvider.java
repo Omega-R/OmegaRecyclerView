@@ -1,6 +1,6 @@
 package com.omega_r.libs.omegarecyclerview.expandable_recycler_view.data;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import java.util.List;
 

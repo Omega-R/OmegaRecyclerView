@@ -1,15 +1,14 @@
 package com.omega_r.omegarecyclerview.ListAdapterExample;
 
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.widget.Toast;
 
 import com.omega_r.libs.omegarecyclerview.BaseListAdapter;
 import com.omega_r.omegarecyclerview.R;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import omega.com.annotations.OmegaActivity;

@@ -1,7 +1,7 @@
 package com.omega_r.libs.omegarecyclerview.sticky_header;
 
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 public abstract class StickyHeaderDecoration extends RecyclerView.ItemDecoration {
 

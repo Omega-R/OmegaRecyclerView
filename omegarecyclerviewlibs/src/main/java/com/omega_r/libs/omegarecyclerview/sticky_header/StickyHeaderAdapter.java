@@ -1,6 +1,6 @@
 package com.omega_r.libs.omegarecyclerview.sticky_header;
 
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.ViewGroup;
 
 public interface StickyHeaderAdapter<T extends RecyclerView.ViewHolder> {
