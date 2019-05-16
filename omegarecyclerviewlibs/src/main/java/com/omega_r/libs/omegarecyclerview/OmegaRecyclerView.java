@@ -201,6 +201,20 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
         updateStickyDecoration(shellAdapter);
     }
 
+    @Nullable
+    public RecyclerView.Adapter getRealAdapter() {
+        return getRealAdapter(getAdapter());
+    }
+
+    private RecyclerView.Adapter getRealAdapter(RecyclerView.Adapter adapter) {
+        if (adapter instanceof HeaderFooterWrapperAdapter) {
+            return getRealAdapter(((HeaderFooterWrapperAdapter) adapter).getWrappedAdapter());
+        } else if (adapter instanceof WrapperAdapter) {
+            return getRealAdapter(((WrapperAdapter) adapter).getLastWrappedAdapter());
+        }
+        return adapter;
+    }
+
     private void unregisterObservers() {
         RecyclerView.Adapter currentAdapter = super.getAdapter();
         if (currentAdapter != null) {
