@@ -16,7 +16,7 @@
             <flag name="middle" value="2" />
             <flag name="end" value="4" />
         </attr>
-        <attr name="alphaDivider" format="float" />
+        <attr name="dividerAlpha" format="float" />
         <attr name="emptyView" format="reference" />
         <attr name="paginationLayout" format="reference" />
         <attr name="paginationErrorLayout" format="reference" />

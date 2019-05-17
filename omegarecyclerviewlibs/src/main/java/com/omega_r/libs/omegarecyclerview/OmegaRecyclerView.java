@@ -127,7 +127,7 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
 
                 int dividerHeight = (int) a.getDimension(R.styleable.OmegaRecyclerView_dividerHeight,
                         a.getDimension(R.styleable.OmegaRecyclerView_android_dividerHeight, -1));
-                float alpha = a.getFloat(R.styleable.OmegaRecyclerView_alphaDivider, 1);
+                float alpha = a.getFloat(R.styleable.OmegaRecyclerView_dividerAlpha, 1);
 
                 mDividerItemDecoration = new DividerItemDecoration(
                         dividerDrawable,
