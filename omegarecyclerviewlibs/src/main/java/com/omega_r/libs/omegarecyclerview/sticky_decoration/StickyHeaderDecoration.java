@@ -2,6 +2,7 @@ package com.omega_r.libs.omegarecyclerview.sticky_decoration;
 
 import android.graphics.Rect;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.omega_r.libs.omegarecyclerview.utils.ViewUtils;
 
@@ -73,8 +74,15 @@ public class StickyHeaderDecoration extends StickyDecoration {
     @Override
     protected int getStickerTop(boolean isReverseLayout, View child, View sticker, int layoutPos) {
         int stickerHeight = sticker.getHeight();
+
+        int topMargin = 0;
+        ViewGroup.LayoutParams layoutParams = child.getLayoutParams();
+        if (layoutParams instanceof ViewGroup.MarginLayoutParams) {
+            topMargin = ((ViewGroup.MarginLayoutParams) layoutParams).topMargin;
+        }
+
         if (layoutPos == 0) stickerHeight = Math.max(stickerHeight, mItemSpace);
-        return (int) Math.max(0, child.getY() - stickerHeight);
+        return (int) Math.max(0, child.getY() - stickerHeight  - topMargin);
     }
 
     @Override
