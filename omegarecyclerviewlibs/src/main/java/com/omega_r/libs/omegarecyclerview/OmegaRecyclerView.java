@@ -417,7 +417,7 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
     }
 
     public void setDividerAlpha(float dividerAlpha) {
-        if (0 > dividerAlpha && dividerAlpha > 1) return;
+        if (0 > dividerAlpha || dividerAlpha > 1) return;
 
         if (mDividerItemDecoration != null) {
             mDividerItemDecoration.setDividerAlpha(dividerAlpha);
