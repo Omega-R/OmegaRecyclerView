@@ -424,6 +424,21 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
         }
     }
 
+    public void setDividerDrawable(@Nullable Drawable drawable) {
+        for (int i = 0; i < getItemDecorationCount(); i++) {
+            RecyclerView.ItemDecoration itemDecoration = getItemDecorationAt(i);
+            if (itemDecoration instanceof DividerItemDecoration) {
+                if (drawable == null) {
+                    removeItemDecoration(itemDecoration);
+                    break;
+                } else {
+                    ((DividerItemDecoration) itemDecoration).setDividerDrawable(drawable);
+                    invalidateItemDecorations();
+                }
+            }
+        }
+    }
+
     public void setPaginationCallback(OnPageRequestListener callback) {
         RecyclerView.Adapter adapter = getAdapter();
         if (adapter instanceof HeaderFooterWrapperAdapter) {
