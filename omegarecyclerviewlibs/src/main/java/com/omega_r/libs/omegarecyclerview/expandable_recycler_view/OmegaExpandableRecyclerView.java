@@ -514,6 +514,7 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
             return items.getItems();
         }
 
+        @Nullable
         public ExpandableViewData<G, CH> getItem(int position) {
             return items.getDataAtVisiblePosition(position);
         }

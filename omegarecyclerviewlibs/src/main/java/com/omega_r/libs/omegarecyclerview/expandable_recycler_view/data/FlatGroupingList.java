@@ -3,6 +3,7 @@ package com.omega_r.libs.omegarecyclerview.expandable_recycler_view.data;
 import android.os.Bundle;
 import android.os.Parcelable;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -143,7 +144,9 @@ public class FlatGroupingList<G, CH> {
         return mItems;
     }
 
+    @Nullable
     public ExpandableViewData<G, CH> getDataAtVisiblePosition(int pos) {
+        if (0 > pos || pos > mPositions.size() - 1) return null;
         return mItems.get(mPositions.get(pos).groupIndex);
     }
 

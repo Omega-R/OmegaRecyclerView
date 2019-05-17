@@ -62,6 +62,7 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
     private List<View> mFooterList = new ArrayList<>();
     private WeakHashMap<ViewGroup.LayoutParams, SectionState> mLayoutParamCache = new WeakHashMap<>();
     private int mItemSpace;
+    private int mDividerSize;
 
     public OmegaRecyclerView(Context context) {
         super(context);
@@ -126,14 +127,14 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
                     }
                 }
 
-                float dividerHeight = a.getDimension(R.styleable.OmegaRecyclerView_dividerHeight,
+                mDividerSize = (int) a.getDimension(R.styleable.OmegaRecyclerView_dividerHeight,
                         a.getDimension(R.styleable.OmegaRecyclerView_android_dividerHeight, -1));
                 float alpha = a.getFloat(R.styleable.OmegaRecyclerView_alphaDivider, 1);
                 int itemSpace = (int) a.getDimension(R.styleable.OmegaRecyclerView_itemSpace, 0);
 
                 DividerItemDecoration decoration = new DividerItemDecoration(
                         dividerDrawable,
-                        (int) dividerHeight,
+                        mDividerSize,
                         showDivider,
                         itemSpace / 2,
                         alpha
@@ -254,7 +255,7 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
             if (mBaseStickyDecoration == null) {
                 mBaseStickyDecoration = provideStickyDecoration(adapter, stickyAdapter);
                 if (mBaseStickyDecoration == null) return;
-                mBaseStickyDecoration.setItemSpace(mItemSpace);
+                mBaseStickyDecoration.setItemSpace(mItemSpace + mDividerSize);
                 addItemDecoration(mBaseStickyDecoration);
             } else {
                 mBaseStickyDecoration.setStickyAdapter(stickyAdapter);

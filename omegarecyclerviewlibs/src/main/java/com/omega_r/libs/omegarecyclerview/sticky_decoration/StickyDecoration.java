@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import static com.omega_r.libs.omegarecyclerview.utils.ViewUtils.isReverseLayout;
 
-public abstract class StickyDecoration extends BaseStickyDecoration {
+abstract class StickyDecoration extends BaseStickyDecoration {
 
     public StickyDecoration(@Nullable StickyAdapter adapter) {
         super(adapter);
@@ -42,25 +42,49 @@ public abstract class StickyDecoration extends BaseStickyDecoration {
             long currentStickerId = mStickyAdapter.getStickyId(adapterPosition);
 
             if (currentStickerId != previousId) {
-                previousId = currentStickerId;
                 RecyclerView.ViewHolder stickyHolder = getStickyHolder(parent, adapterPosition);
+                previousId = currentStickerId;
 
                 if (stickyHolder != null) {
                     View stickerView = stickyHolder.itemView;
-                    canvas.save();
+                    int top = getStickerTop(isReverseLayout, childView, stickerView, layoutPos + 1);
 
-                    int left = childView.getLeft();
-                    int top = getStickerTop(parent, isReverseLayout, childView, stickerView, adapterPosition, layoutPos);
-                    canvas.translate(left, top);
+                    long previousStickyId = mStickyAdapter.getStickyId(adapterPosition - 1);
 
-                    stickerView.setTranslationX(left);
-                    stickerView.setTranslationY(top);
-                    stickerView.draw(canvas);
-                    canvas.restore();
+                    if (layoutPos == 0 && top > 0 && adapterPosition > 0
+                            && hasSticker(adapterPosition - 1)
+                            && previousStickyId != currentStickerId) {
+
+                        RecyclerView.ViewHolder previousStickyViewHolder = getStickyHolder(parent, adapterPosition - 1);
+
+                        if (previousStickyViewHolder != null) {
+                            int previousTop = top - previousStickyViewHolder.itemView.getHeight();
+                            if (previousTop > 0) previousTop = 0;
+                            drawSticky(canvas, childView, previousStickyViewHolder, previousTop);
+                            drawSticky(canvas, childView, stickyHolder, top);
+                        }
+                    } else {
+                        top = getStickerTop(parent, isReverseLayout, childView, stickerView, adapterPosition, layoutPos);
+                        drawSticky(canvas, childView, stickyHolder, top);
+                    }
                 }
             }
         }
         return previousId;
+    }
+
+    private void drawSticky(Canvas canvas, View childView, RecyclerView.ViewHolder stickyHolder, int top) {
+        if (stickyHolder == null) return;
+
+        View stickerView = stickyHolder.itemView;
+        canvas.save();
+        int left = childView.getLeft();
+        canvas.translate(left, top);
+
+        stickerView.setTranslationX(left);
+        stickerView.setTranslationY(top);
+        stickerView.draw(canvas);
+        canvas.restore();
     }
 
     private int getStickerTop(RecyclerView parent, boolean isReverseLayout, View child, View sticker, int adapterPos, int layoutPos) {

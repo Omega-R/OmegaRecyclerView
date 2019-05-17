@@ -7,6 +7,7 @@ import android.widget.Toast;
 
 import com.omega_r.libs.omegarecyclerview.OmegaRecyclerView;
 import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.OmegaExpandableRecyclerView;
+import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.data.ExpandableViewData;
 import com.omega_r.libs.omegarecyclerview.sticky_decoration.StickyAdapter;
 import com.omega_r.libs.omegarecyclerview.sticky_decoration.StickyHeaderDecoration;
 import com.omega_r.omegarecyclerview.R;
@@ -26,7 +27,9 @@ public class DefaultStickyAdapter extends OmegaExpandableRecyclerView.Adapter<Qu
 
     @Override
     public long getStickyId(int position) {
-        Integer providedId = getItem(position).getStickyId();
+        ExpandableViewData<QuoteGlobalInfo, String> item = getItem(position);
+        if (item == null) return StickyHeaderDecoration.NO_HEADER_ID;
+        Integer providedId = item.getStickyId();
         return providedId == null ? StickyHeaderDecoration.NO_HEADER_ID : providedId;
     }
 
