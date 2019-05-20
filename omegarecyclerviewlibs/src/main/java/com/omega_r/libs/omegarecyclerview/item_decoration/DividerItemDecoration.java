@@ -12,18 +12,21 @@ import com.omega_r.libs.omegarecyclerview.OmegaRecyclerView;
 import com.omega_r.libs.omegarecyclerview.item_decoration.decoration_helpers.DividerDecorationHelper;
 
 public class DividerItemDecoration extends BaseItemDecoration {
-    private final int mOffset;
 
+    private final Rect mViewRect = new Rect();
+    private final Rect mItemRect = new Rect();
+    private final int mOriginalDividerSize;
+    private final int mOffset;
     private float mDividerAlpha;
     private Drawable mDivider;
     private int mDividerSize;
     private int mPaddingStart;
     private int mPaddingEnd;
-    private Rect mViewRect = new Rect();
-    private Rect mItemRect = new Rect();
+
 
     public DividerItemDecoration(Drawable divider, int dividerSize, int showDivider, int offset, float dividerAlpha) {
         super(showDivider);
+        mOriginalDividerSize = dividerSize;
         mDivider = divider;
         mDividerSize = dividerSize;
         mOffset = offset;
@@ -55,6 +58,10 @@ public class DividerItemDecoration extends BaseItemDecoration {
 
     public void setDividerDrawable(@NonNull Drawable dividerDrawable) {
         mDivider = dividerDrawable;
+        if (mOriginalDividerSize < 0) {
+            mDividerSize = mOriginalDividerSize;
+            updateSize();
+        }
     }
 
     private void updateSize() {
