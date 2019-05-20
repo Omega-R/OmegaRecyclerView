@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public abstract class BaseStickyDecoration extends RecyclerView.ItemDecoration {
 
-    public static final long NO_HEADER_ID = -1L;
+    public static final long NO_STICKY_ID = -1L;
 
     @Nullable
     protected StickyAdapter mStickyAdapter;
@@ -27,7 +27,7 @@ public abstract class BaseStickyDecoration extends RecyclerView.ItemDecoration {
 
     protected final boolean hasSticker(int position) {
         if (mStickyAdapter == null) return false;
-        return mStickyAdapter.getStickyId(position) != NO_HEADER_ID;
+        return mStickyAdapter.getStickyId(position) != NO_STICKY_ID;
     }
 
 }

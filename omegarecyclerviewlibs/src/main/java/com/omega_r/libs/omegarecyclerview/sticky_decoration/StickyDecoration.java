@@ -118,7 +118,7 @@ abstract class StickyDecoration extends BaseStickyDecoration {
         int adapterPosHere = parent.getChildAdapterPosition(parent.getChildAt(nextPosition));
         if (mStickyAdapter != null && adapterPosHere != RecyclerView.NO_POSITION) {
             long nextId = mStickyAdapter.getStickyId(adapterPosHere);
-            if (nextId != currentStickyId && nextId != NO_HEADER_ID) {
+            if (nextId != currentStickyId && nextId != NO_STICKY_ID) {
                 View next = parent.getChildAt(nextPosition);
                 RecyclerView.ViewHolder stickyHolder = getStickyHolder(parent, adapterPosHere);
                 return getOffset(stickyHolder, stickerHeight, next);

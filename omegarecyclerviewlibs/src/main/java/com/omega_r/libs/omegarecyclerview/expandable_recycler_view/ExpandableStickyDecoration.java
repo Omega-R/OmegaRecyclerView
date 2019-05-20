@@ -333,7 +333,7 @@ public class ExpandableStickyDecoration extends BaseStickyDecoration {
         int adapterPosHere = parent.getChildAdapterPosition(parent.getChildAt(nextPosition));
         if (adapterPosHere != RecyclerView.NO_POSITION) {
             long nextId = mStickyAdapter.getStickyId(adapterPosHere);
-            if (nextId != currentHeaderId && nextId != NO_HEADER_ID) {
+            if (nextId != currentHeaderId && nextId != NO_STICKY_ID) {
                 View next = parent.getChildAt(nextPosition);
                 RecyclerView.ViewHolder viewHolder = getStickyHeader(parent, adapterPosHere);
                 if (viewHolder == null) return 0;
@@ -348,7 +348,7 @@ public class ExpandableStickyDecoration extends BaseStickyDecoration {
         int adapterPosHere = parent.getChildAdapterPosition(parent.getChildAt(nextPosition));
         if (adapterPosHere != RecyclerView.NO_POSITION) {
             long nextId = mExpandableAdapter.getGroupUniqueId(adapterPosHere);
-            if (nextId != currentHeaderId && nextId != NO_HEADER_ID) {
+            if (nextId != currentHeaderId && nextId != NO_STICKY_ID) {
                 View next = parent.getChildAt(nextPosition);
                 RecyclerView.ViewHolder viewHolder = getGroupHeader(parent, adapterPosHere);
                 if (viewHolder == null) return OFFSET_NOT_FOUND;
