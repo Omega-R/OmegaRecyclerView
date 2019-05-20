@@ -9,12 +9,12 @@ import android.view.ViewGroup;
 
 import com.omega_r.libs.omegarecyclerview.OmegaRecyclerView;
 import com.omega_r.libs.omegarecyclerview.R;
-import com.omega_r.libs.omegarecyclerview.sticky_header.StickyHeaderAdapter;
-import com.omega_r.libs.omegarecyclerview.sticky_header.BaseStickyHeaderDecoration;
+import com.omega_r.libs.omegarecyclerview.sticky_decoration.StickyAdapter;
+import com.omega_r.libs.omegarecyclerview.sticky_decoration.HeaderStickyDecoration;
 
 import java.util.List;
 
-public class HeaderFooterWrapperAdapter<T extends RecyclerView.Adapter> extends OmegaRecyclerView.Adapter<RecyclerView.ViewHolder> implements StickyHeaderAdapter {
+public class HeaderFooterWrapperAdapter<T extends RecyclerView.Adapter> extends OmegaRecyclerView.Adapter<RecyclerView.ViewHolder> implements StickyAdapter {
 
     // Defines available view type integers for headers and footers.
     private static final int BASE_HEADER_VIEW_TYPE = -1 << 10;
@@ -208,27 +208,27 @@ public class HeaderFooterWrapperAdapter<T extends RecyclerView.Adapter> extends 
     }
 
     @Override
-    public long getHeaderId(int position) {
+    public long getStickyId(int position) {
         if (position < 0 || mRealAdapter.getItemCount() <= position) {
-            return BaseStickyHeaderDecoration.NO_HEADER_ID;
+            return HeaderStickyDecoration.NO_STICKY_ID;
         }
-        StickyHeaderAdapter stickyHeaderAdapter = getStickyHeaderAdapter();
-        if (stickyHeaderAdapter == null) {
-            return BaseStickyHeaderDecoration.NO_HEADER_ID;
+        StickyAdapter stickyAdapter = getStickyAdapter();
+        if (stickyAdapter == null) {
+            return HeaderStickyDecoration.NO_STICKY_ID;
         }
 
         int realAdapterItemCount = mRealAdapter.getItemCount();
         if (realAdapterItemCount == 0) {
-            return BaseStickyHeaderDecoration.NO_HEADER_ID;
+            return HeaderStickyDecoration.NO_STICKY_ID;
         }
         if (isHeaderPosition(position)) {
-            return stickyHeaderAdapter.getHeaderId(0);
+            return stickyAdapter.getStickyId(0);
         }
         if (isFooterPosition(position)) {
-            return stickyHeaderAdapter.getHeaderId(realAdapterItemCount - 1);
+            return stickyAdapter.getStickyId(realAdapterItemCount - 1);
         }
 
-        return stickyHeaderAdapter.getHeaderId(position);
+        return stickyAdapter.getStickyId(position);
     }
 
     public int applyRealPositionToChildPosition(int realPosition) {
@@ -240,26 +240,26 @@ public class HeaderFooterWrapperAdapter<T extends RecyclerView.Adapter> extends 
     }
 
     @Nullable
-    public StickyHeaderAdapter getStickyHeaderAdapter() {
-        if (mRealAdapter instanceof StickyHeaderAdapter) {
-            return (StickyHeaderAdapter) mRealAdapter;
+    public StickyAdapter getStickyAdapter() {
+        if (mRealAdapter instanceof StickyAdapter) {
+            return (StickyAdapter) mRealAdapter;
         }
         return null;
     }
 
     @Override
-    public RecyclerView.ViewHolder onCreateHeaderViewHolder(ViewGroup parent) {
-        StickyHeaderAdapter stickyHeaderAdapter = getStickyHeaderAdapter();
-        assert stickyHeaderAdapter != null;
-        return stickyHeaderAdapter.onCreateHeaderViewHolder(parent);
+    public RecyclerView.ViewHolder onCreateStickyViewHolder(ViewGroup parent) {
+        StickyAdapter stickyAdapter = getStickyAdapter();
+        assert stickyAdapter != null;
+        return stickyAdapter.onCreateStickyViewHolder(parent);
     }
 
     @Override
-    public void onBindHeaderViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
-        StickyHeaderAdapter stickyHeaderAdapter = getStickyHeaderAdapter();
-        assert stickyHeaderAdapter != null;
+    public void onBindStickyViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
+        StickyAdapter stickyAdapter = getStickyAdapter();
+        assert stickyAdapter != null;
         //noinspection unchecked
-        stickyHeaderAdapter.onBindHeaderViewHolder(viewHolder, position);
+        stickyAdapter.onBindStickyViewHolder(viewHolder, position);
     }
 
     @Override

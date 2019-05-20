@@ -105,16 +105,20 @@ public class DividerItemDecoration extends BaseItemDecoration {
             DividerDecorationHelper helper = DividerDecorationHelper.getHelper(getOrientation(), parent);
 
             if (parent.getClipToPadding()) {
+                mViewRect.set(parent.getPaddingLeft(),
+                        parent.getPaddingTop(),
+                        parent.getWidth() - parent.getPaddingRight(),
+                        parent.getHeight() - parent.getPaddingBottom());
+
+                c.clipRect(mViewRect);
+
                 mItemRect.set(parent.getPaddingLeft() + mPaddingStart,
                         parent.getPaddingTop() + mPaddingStart,
                         parent.getWidth() - parent.getPaddingRight() - mPaddingEnd,
                         parent.getHeight() - parent.getPaddingBottom() - mPaddingEnd);
 
-
                 helper.setStart(mItemRect, helper.getStart(mItemRect) - mPaddingStart);
                 helper.setEnd(mItemRect, helper.getEnd(mItemRect) + mPaddingEnd);
-                c.clipRect(mItemRect);
-
             } else {
                 mItemRect.set(mPaddingStart, mPaddingStart,
                         parent.getWidth() - mPaddingEnd, parent.getHeight() - mPaddingEnd);
@@ -140,7 +144,8 @@ public class DividerItemDecoration extends BaseItemDecoration {
             if (isShowMiddleDivider()) {
                 for (int i = offsetIndex; i < childCount; i++) {
                     child = parent.getChildAt(i);
-                    if (isShowDividerAbove(parent, getAdapterPosition(parent, child))) {
+                    int adapterPosition = getAdapterPosition(parent, child);
+                    if (adapterPosition > 0 && isShowDividerAbove(parent, adapterPosition)) {
                         updateViewRect(parent, child);
                         helper.setStart(mItemRect, helper.getStart(mViewRect) - helper.getOffset(mOffset));
                         helper.setEnd(mItemRect, helper.getStart(mItemRect) - helper.getOffset(mDividerSize));
