@@ -7,24 +7,12 @@ import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import androidx.annotation.ColorInt;
-import androidx.annotation.ColorRes;
-import androidx.annotation.IdRes;
-import androidx.annotation.LayoutRes;
-import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.ExpandedRecyclerView;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.ExpandableStickyHeaderDecoration;
-import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.OmegaExpandableRecyclerView;
 import com.omega_r.libs.omegarecyclerview.header.HeaderFooterWrapperAdapter;
 import com.omega_r.libs.omegarecyclerview.item_decoration.DividerItemDecoration;
 import com.omega_r.libs.omegarecyclerview.item_decoration.SpaceItemDecoration;
@@ -32,14 +20,27 @@ import com.omega_r.libs.omegarecyclerview.pagination.OnPageRequestListener;
 import com.omega_r.libs.omegarecyclerview.pagination.PageRequester;
 import com.omega_r.libs.omegarecyclerview.pagination.PaginationAdapter;
 import com.omega_r.libs.omegarecyclerview.pagination.WrapperAdapter;
-import com.omega_r.libs.omegarecyclerview.sticky_header.BaseStickyHeaderDecoration;
-import com.omega_r.libs.omegarecyclerview.sticky_header.StickyHeaderAdapter;
-import com.omega_r.libs.omegarecyclerview.sticky_header.StickyHeaderDecoration;
+import com.omega_r.libs.omegarecyclerview.sticky_decoration.BaseStickyDecoration;
+import com.omega_r.libs.omegarecyclerview.sticky_decoration.StickyAdapter;
+import com.omega_r.libs.omegarecyclerview.sticky_decoration.HeaderStickyDecoration;
+import com.omega_r.libs.omegarecyclerview.sticky_decoration.MiddleStickyDecoration;
 import com.omega_r.libs.omegarecyclerview.swipe_menu.SwipeMenuHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.WeakHashMap;
+
+import androidx.annotation.ColorInt;
+import androidx.annotation.ColorRes;
+import androidx.annotation.IdRes;
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.ExpandedRecyclerView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenuHelper.Callback {
 
@@ -50,7 +51,8 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
 
     private SwipeMenuHelper mSwipeMenuHelper;
     private PageRequester mPageRequester = new PageRequester();
-    private StickyHeaderDecoration mStickyHeaderDecoration;
+    private BaseStickyDecoration mBaseStickyDecoration;
+    private int mStickyMode = StickyAdapter.Mode.HEADER;
     @LayoutRes
     private int mPaginationLayout = R.layout.pagination_omega_layout;
     @LayoutRes
@@ -60,6 +62,7 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
     private List<View> mFooterList = new ArrayList<>();
     private WeakHashMap<ViewGroup.LayoutParams, SectionState> mLayoutParamCache = new WeakHashMap<>();
     private int mItemSpace;
+    private int mDividerSize;
 
     public OmegaRecyclerView(Context context) {
         super(context);
@@ -85,6 +88,7 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
             initItemSpace(a);
             initEmptyView(a);
             initPagination(a);
+            initStickyMode(a);
             a.recycle();
         }
         mSwipeMenuHelper = new SwipeMenuHelper(getContext(), this);
@@ -123,14 +127,14 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
                     }
                 }
 
-                float dividerHeight = a.getDimension(R.styleable.OmegaRecyclerView_dividerHeight,
+                mDividerSize = (int) a.getDimension(R.styleable.OmegaRecyclerView_dividerHeight,
                         a.getDimension(R.styleable.OmegaRecyclerView_android_dividerHeight, -1));
                 float alpha = a.getFloat(R.styleable.OmegaRecyclerView_alphaDivider, 1);
                 int itemSpace = (int) a.getDimension(R.styleable.OmegaRecyclerView_itemSpace, 0);
 
                 DividerItemDecoration decoration = new DividerItemDecoration(
                         dividerDrawable,
-                        (int) dividerHeight,
+                        mDividerSize,
                         showDivider,
                         itemSpace / 2,
                         alpha
@@ -161,6 +165,10 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
         }
     }
 
+    private void initStickyMode(TypedArray a) {
+        mStickyMode = a.getInt(R.styleable.OmegaRecyclerView_stickyMode, mStickyMode);
+    }
+
     @Override
     @SuppressWarnings("unchecked")
     public void setAdapter(RecyclerView.Adapter adapter) {
@@ -168,7 +176,7 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
 
         if (adapter == null) {
             super.setAdapter(null);
-            updateStickyHeader(null);
+            updateStickyDecoration(null);
             return;
         }
 
@@ -191,7 +199,7 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
         mPageRequester.reset();
 
         registerObservers(shellAdapter);
-        updateStickyHeader(shellAdapter);
+        updateStickyDecoration(shellAdapter);
     }
 
     @Nullable
@@ -227,50 +235,50 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
         adapter.registerAdapterDataObserver(mEmptyObserver);
     }
 
-    private void updateStickyHeader(@Nullable RecyclerView.Adapter adapter) {
+    protected void updateStickyDecoration(@Nullable RecyclerView.Adapter adapter) {
         if (adapter == null) {
-            if (mStickyHeaderDecoration != null) removeItemDecoration(mStickyHeaderDecoration);
+            if (mBaseStickyDecoration != null) removeItemDecoration(mBaseStickyDecoration);
         } else {
-            StickyHeaderAdapter stickyHeaderAdapter = null;
-            OmegaExpandableRecyclerView.Adapter expandableAdapter = null;
-
+            StickyAdapter stickyAdapter = null;
             if (adapter instanceof WrapperAdapter) {
                 RecyclerView.Adapter wrappedAdapter = ((WrapperAdapter) adapter).getLastWrappedAdapter();
-                if (wrappedAdapter instanceof StickyHeaderAdapter) {
-                    stickyHeaderAdapter = (StickyHeaderAdapter) wrappedAdapter;
+                if (wrappedAdapter instanceof StickyAdapter) {
+                    stickyAdapter = (StickyAdapter) wrappedAdapter;
                 }
             } else if (adapter instanceof HeaderFooterWrapperAdapter) {
-                if (((HeaderFooterWrapperAdapter) adapter).getStickyHeaderAdapter() != null) {
-                    stickyHeaderAdapter = (StickyHeaderAdapter) adapter;
+                if (((HeaderFooterWrapperAdapter) adapter).getStickyAdapter() != null) {
+                    stickyAdapter = (StickyAdapter) adapter;
                 }
-            } else if (adapter instanceof StickyHeaderAdapter) {
-                stickyHeaderAdapter = (StickyHeaderAdapter) adapter;
+            } else if (adapter instanceof StickyAdapter) {
+                stickyAdapter = (StickyAdapter) adapter;
             }
-
-            if (adapter instanceof OmegaExpandableRecyclerView.Adapter) {
-                expandableAdapter = (OmegaExpandableRecyclerView.Adapter) adapter;
-            }
-
-            if (mStickyHeaderDecoration == null) {
-                mStickyHeaderDecoration = provideStickyHeaderDecoration(stickyHeaderAdapter, expandableAdapter);
-                if (mStickyHeaderDecoration == null) return;
-                mStickyHeaderDecoration.setItemSpace(mItemSpace);
-                addItemDecoration(mStickyHeaderDecoration);
+            if (mBaseStickyDecoration == null) {
+                mBaseStickyDecoration = provideStickyDecoration(adapter, stickyAdapter);
+                if (mBaseStickyDecoration == null) return;
+                mBaseStickyDecoration.setItemSpace(mItemSpace + mDividerSize);
+                addItemDecoration(mBaseStickyDecoration);
             } else {
-                mStickyHeaderDecoration.setStickyHeaderAdapter(stickyHeaderAdapter);
-                if (mStickyHeaderDecoration instanceof ExpandableStickyHeaderDecoration) {
-                    ((ExpandableStickyHeaderDecoration) mStickyHeaderDecoration).setExpandableAdapter(expandableAdapter);
-                }
+                mBaseStickyDecoration.setStickyAdapter(stickyAdapter);
                 invalidateItemDecorations();
             }
         }
     }
 
     @Nullable
-    protected StickyHeaderDecoration provideStickyHeaderDecoration(@Nullable StickyHeaderAdapter adapter,
-                                                                   @Nullable OmegaExpandableRecyclerView.Adapter expandableAdapter) {
-        if (adapter == null) return null;
-        return new BaseStickyHeaderDecoration(adapter);
+    protected BaseStickyDecoration provideStickyDecoration(@NonNull RecyclerView.Adapter adapter, @Nullable StickyAdapter stickyAdapter) {
+        if (stickyAdapter == null) return null;
+        switch (mStickyMode) {
+            case StickyAdapter.Mode.MIDDLE:
+                return new MiddleStickyDecoration(stickyAdapter);
+            case StickyAdapter.Mode.HEADER:
+            default:
+                return new HeaderStickyDecoration(stickyAdapter);
+        }
+    }
+
+    @Nullable
+    protected final BaseStickyDecoration getStickyDecoration() {
+        return mBaseStickyDecoration;
     }
 
 
@@ -281,10 +289,10 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
         } else {
             view.setLayoutParams(params);
             SectionState sectionState = mLayoutParamCache.get(params);
-            Integer integer = sectionState.position;
+            if (sectionState == null) return;
             view.setTag(R.id.section_show_divider, sectionState.showDivider);
 
-            if (integer == 0) {
+            if (sectionState.position == 0) {
                 mHeadersList.add(view);
             } else {
                 mFooterList.add(view);

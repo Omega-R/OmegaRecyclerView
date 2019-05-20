@@ -2,16 +2,12 @@ package com.omega_r.libs.omegarecyclerview.expandable_recycler_view;
 
 import android.graphics.Canvas;
 import android.graphics.Rect;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.util.Pair;
-import androidx.recyclerview.widget.RecyclerView;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.omega_r.libs.omegarecyclerview.sticky_header.StickyHeaderAdapter;
-import com.omega_r.libs.omegarecyclerview.sticky_header.StickyHeaderDecoration;
+import com.omega_r.libs.omegarecyclerview.sticky_decoration.StickyAdapter;
+import com.omega_r.libs.omegarecyclerview.sticky_decoration.BaseStickyDecoration;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,7 +16,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ExpandableStickyHeaderDecoration extends StickyHeaderDecoration {
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.util.Pair;
+import androidx.recyclerview.widget.RecyclerView;
+
+import static com.omega_r.libs.omegarecyclerview.utils.ViewUtils.isReverseLayout;
+
+public class ExpandableStickyDecoration extends BaseStickyDecoration {
 
     private static final int OFFSET_NOT_FOUND = Integer.MIN_VALUE;
     private static final Comparator<Integer> ASCENDING_COMPARATOR = new Comparator<Integer>() {
@@ -30,16 +33,9 @@ public class ExpandableStickyHeaderDecoration extends StickyHeaderDecoration {
         }
     };
 
-    private Rect mViewRect = new Rect();
-
-    @Nullable
-    private StickyHeaderAdapter mStickyHeaderAdapter;
-
+    private final Rect mViewRect = new Rect();
     @Nullable
     private OmegaExpandableRecyclerView.Adapter mExpandableAdapter;
-
-    private int mItemSpace;
-
     private final Map<Long, OmegaExpandableRecyclerView.BaseViewHolder> mGroupHeaderHolders = new HashMap<>();
     private final Map<Long, RecyclerView.ViewHolder> mStickyHeaderHolders = new HashMap<>();
 
@@ -47,23 +43,13 @@ public class ExpandableStickyHeaderDecoration extends StickyHeaderDecoration {
     private final SparseArray<Pair<Integer, View>> mRecyclerViewItemsByAdapterPosition = new SparseArray<>();
     private final List<Integer> mAdapterPositions = new ArrayList<>();
 
-    public ExpandableStickyHeaderDecoration(@Nullable StickyHeaderAdapter adapter,
-                                            @Nullable OmegaExpandableRecyclerView.Adapter expandableAdapter) {
-        mStickyHeaderAdapter = adapter;
+    ExpandableStickyDecoration(@Nullable StickyAdapter adapter,
+                               @Nullable OmegaExpandableRecyclerView.Adapter expandableAdapter) {
+        super(adapter);
         mExpandableAdapter = expandableAdapter;
     }
 
-    @Override
-    public void setStickyHeaderAdapter(@Nullable StickyHeaderAdapter adapter) {
-        mStickyHeaderAdapter = adapter;
-    }
-
-    @Override
-    public void setItemSpace(int itemSpace) {
-        mItemSpace = itemSpace;
-    }
-
-    public void setExpandableAdapter(@Nullable OmegaExpandableRecyclerView.Adapter adapter) {
+    void setExpandableAdapter(@Nullable OmegaExpandableRecyclerView.Adapter adapter) {
         mExpandableAdapter = adapter;
     }
 
@@ -85,11 +71,13 @@ public class ExpandableStickyHeaderDecoration extends StickyHeaderDecoration {
         if (isReverseLayout(parent)) {
             for (int i = mAdapterPositions.size() - 1; i >= 0; i--) {
                 Pair<Integer, View> foundedView = mRecyclerViewItemsByAdapterPosition.get(mAdapterPositions.get(i));
+                if (foundedView == null || foundedView.first == null || foundedView.second == null) continue;
                 drawHeadersWithIdUpdate(canvas, parent, foundedView.second, true, foundedView.first, mAdapterPositions.get(i));
             }
         } else {
             for (int i = 0; i < mAdapterPositions.size(); i++) {
                 Pair<Integer, View> foundedView = mRecyclerViewItemsByAdapterPosition.get(mAdapterPositions.get(i));
+                if (foundedView == null || foundedView.first == null || foundedView.second == null) continue;
                 drawHeadersWithIdUpdate(canvas, parent, foundedView.second, false, foundedView.first, mAdapterPositions.get(i));
             }
         }
@@ -200,8 +188,8 @@ public class ExpandableStickyHeaderDecoration extends StickyHeaderDecoration {
 
     @Nullable
     private RecyclerView.ViewHolder findStickyHeaderWithIdUpdate(RecyclerView recyclerView, int adapterPos) {
-        if (mStickyHeaderAdapter != null && hasStickyHeader(adapterPos)) {
-            long stickyHeaderId = mStickyHeaderAdapter.getHeaderId(adapterPos);
+        if (mStickyAdapter != null && hasSticker(adapterPos)) {
+            long stickyHeaderId = mStickyAdapter.getStickyId(adapterPos);
             if (stickyHeaderId != mDrawingInfo.sticky.id) {
                 RecyclerView.ViewHolder holder = getStickyHeader(recyclerView, adapterPos);
                 if (holder != null) {
@@ -233,11 +221,11 @@ public class ExpandableStickyHeaderDecoration extends StickyHeaderDecoration {
     }
 
     private int getStickyHeaderTop(final RecyclerView parent, boolean isReverseLayout, View child, View header, int adapterPos, int layoutPosition) {
-        if (mStickyHeaderAdapter == null) return 0;
+        if (mStickyAdapter == null) return 0;
         int childCount = parent.getChildCount();
         final int headerHeight = header.getHeight();
         int top = ((int) child.getY()) - headerHeight;
-        final long currentHeaderId = mStickyHeaderAdapter.getHeaderId(adapterPos);
+        final long currentHeaderId = mStickyAdapter.getStickyId(adapterPos);
 
         return calculateTop(isReverseLayout, layoutPosition, childCount, top, new Function<Integer, Integer>() {
             @Override
@@ -272,7 +260,8 @@ public class ExpandableStickyHeaderDecoration extends StickyHeaderDecoration {
         int headerHeight = 0;
 
         if (position != RecyclerView.NO_POSITION) {
-            if (mStickyHeaderAdapter != null && hasStickyHeader(position) && showHeaderAboveItem(parent, position)) {
+
+            if (mStickyAdapter != null && hasSticker(position) && showHeaderAboveItem(parent, position)) {
                 RecyclerView.ViewHolder header = getStickyHeader(parent, position);
                 if (header != null) {
                     headerHeight += header.itemView.getHeight() - mItemSpace;
@@ -289,19 +278,19 @@ public class ExpandableStickyHeaderDecoration extends StickyHeaderDecoration {
     }
 
     private boolean showHeaderAboveItem(RecyclerView parent, int position) {
-        if (mStickyHeaderAdapter == null) return false;
+        if (mStickyAdapter == null || parent.getLayoutManager() == null) return false;
         if (isReverseLayout(parent)) {
             int itemCount = parent.getLayoutManager().getItemCount();
-            return position == (itemCount - 1) || mStickyHeaderAdapter.getHeaderId(position + 1)
-                    != mStickyHeaderAdapter.getHeaderId(position);
+            return position == (itemCount - 1) || mStickyAdapter.getStickyId(position + 1)
+                    != mStickyAdapter.getStickyId(position);
         } else {
-            return position == 0 || mStickyHeaderAdapter.getHeaderId(position - 1)
-                    != mStickyHeaderAdapter.getHeaderId(position);
+            return position == 0 || mStickyAdapter.getStickyId(position - 1)
+                    != mStickyAdapter.getStickyId(position);
         }
     }
 
     private boolean showGroupHeaderAboveItem(RecyclerView parent, int position) {
-        if (mExpandableAdapter == null) return false;
+        if (mExpandableAdapter == null || parent.getLayoutManager() == null) return false;
         if (isReverseLayout(parent)) {
             int itemCount = parent.getLayoutManager().getItemCount();
             return position == (itemCount - 1) || mExpandableAdapter.getGroupUniqueId(position + 1)
@@ -318,11 +307,6 @@ public class ExpandableStickyHeaderDecoration extends StickyHeaderDecoration {
             OmegaExpandableRecyclerView recyclerView = (OmegaExpandableRecyclerView) parent;
             recyclerView.notifyHeaderPosition((OmegaExpandableRecyclerView.Adapter.GroupViewHolder) headerHolder, viewRect);
         }
-    }
-
-    private boolean hasStickyHeader(int position) {
-        if (mStickyHeaderAdapter == null) return false;
-        return mStickyHeaderAdapter.getHeaderId(position) != NO_HEADER_ID;
     }
 
     private int calculateTop(boolean isReverseLayout, int layoutPos, int childCount, int simpleTop, Function<Integer, Integer> calculateFunc) {
@@ -345,11 +329,11 @@ public class ExpandableStickyHeaderDecoration extends StickyHeaderDecoration {
     }
 
     private int calculateStickyOffset(RecyclerView parent, int headerHeight, long currentHeaderId, int nextPosition) {
-        if (mStickyHeaderAdapter == null) return 0;
+        if (mStickyAdapter == null) return 0;
         int adapterPosHere = parent.getChildAdapterPosition(parent.getChildAt(nextPosition));
         if (adapterPosHere != RecyclerView.NO_POSITION) {
-            long nextId = mStickyHeaderAdapter.getHeaderId(adapterPosHere);
-            if (nextId != currentHeaderId && nextId != NO_HEADER_ID) {
+            long nextId = mStickyAdapter.getStickyId(adapterPosHere);
+            if (nextId != currentHeaderId && nextId != NO_STICKY_ID) {
                 View next = parent.getChildAt(nextPosition);
                 RecyclerView.ViewHolder viewHolder = getStickyHeader(parent, adapterPosHere);
                 if (viewHolder == null) return 0;
@@ -364,7 +348,7 @@ public class ExpandableStickyHeaderDecoration extends StickyHeaderDecoration {
         int adapterPosHere = parent.getChildAdapterPosition(parent.getChildAt(nextPosition));
         if (adapterPosHere != RecyclerView.NO_POSITION) {
             long nextId = mExpandableAdapter.getGroupUniqueId(adapterPosHere);
-            if (nextId != currentHeaderId && nextId != NO_HEADER_ID) {
+            if (nextId != currentHeaderId && nextId != NO_STICKY_ID) {
                 View next = parent.getChildAt(nextPosition);
                 RecyclerView.ViewHolder viewHolder = getGroupHeader(parent, adapterPosHere);
                 if (viewHolder == null) return OFFSET_NOT_FOUND;
@@ -395,19 +379,19 @@ public class ExpandableStickyHeaderDecoration extends StickyHeaderDecoration {
 
     @Nullable
     private RecyclerView.ViewHolder getStickyHeader(RecyclerView parent, int position) {
-        if (mStickyHeaderAdapter == null) return null;
+        if (mStickyAdapter == null) return null;
 
-        long id = mStickyHeaderAdapter.getHeaderId(position);
+        long id = mStickyAdapter.getStickyId(position);
 
         RecyclerView.ViewHolder holder = mStickyHeaderHolders.get(id);
         boolean isHolderExists = holder != null;
 
         if (!isHolderExists) {
-            holder = mStickyHeaderAdapter.onCreateHeaderViewHolder(parent);
+            holder = mStickyAdapter.onCreateStickyViewHolder(parent);
             mStickyHeaderHolders.put(id, holder);
         }
         //noinspection unchecked
-        mStickyHeaderAdapter.onBindHeaderViewHolder(holder, position);
+        mStickyAdapter.onBindStickyViewHolder(holder, position);
         measureAndLayoutHolder(parent, holder);
         return holder;
     }
