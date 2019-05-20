@@ -23,7 +23,7 @@ import com.omega_r.libs.omegarecyclerview.pagination.WrapperAdapter;
 import com.omega_r.libs.omegarecyclerview.sticky_decoration.BaseStickyDecoration;
 import com.omega_r.libs.omegarecyclerview.sticky_decoration.StickyAdapter;
 import com.omega_r.libs.omegarecyclerview.sticky_decoration.HeaderStickyDecoration;
-import com.omega_r.libs.omegarecyclerview.sticky_decoration.StickyMiddleDecoration;
+import com.omega_r.libs.omegarecyclerview.sticky_decoration.MiddleStickyDecoration;
 import com.omega_r.libs.omegarecyclerview.swipe_menu.SwipeMenuHelper;
 
 import java.util.ArrayList;
@@ -269,7 +269,7 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
         if (stickyAdapter == null) return null;
         switch (mStickyMode) {
             case StickyAdapter.Mode.MIDDLE:
-                return new StickyMiddleDecoration(stickyAdapter);
+                return new MiddleStickyDecoration(stickyAdapter);
             case StickyAdapter.Mode.HEADER:
             default:
                 return new HeaderStickyDecoration(stickyAdapter);
