@@ -25,7 +25,7 @@ public class SpaceItemDecoration extends BaseItemDecoration {
         if (isShowEndDivider() && position == itemCount - countBeginEndPositions) helper.setEnd(outRect, space);
 
         if (position % countBeginEndPositions != 0 || isShowBeginDivider()) helper.setOtherStart(outRect, space);
-        if (position / (countBeginEndPositions - 1) > 0 && isShowEndDivider()) helper.setOtherStart(outRect, space);
+        if (position / (countBeginEndPositions - 1) > 0 && isShowEndDivider()) helper.setOtherEnd(outRect, space);
 
 
     }
