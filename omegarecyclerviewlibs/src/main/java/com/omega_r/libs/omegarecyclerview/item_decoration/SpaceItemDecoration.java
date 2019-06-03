@@ -23,6 +23,11 @@ public class SpaceItemDecoration extends BaseItemDecoration {
         int countBeginEndPositions = getCountBeginEndPositions(parent);
         if (isShowBeginDivider() || countBeginEndPositions <= position) helper.setStart(outRect, space);
         if (isShowEndDivider() && position == itemCount - countBeginEndPositions) helper.setEnd(outRect, space);
+
+        if (position % countBeginEndPositions != 0 || isShowBeginDivider()) helper.setOtherStart(outRect, space);
+        if (position / (countBeginEndPositions - 1) > 0 && isShowEndDivider()) helper.setOtherStart(outRect, space);
+
+
     }
 
     private int getCountBeginEndPositions(RecyclerView recyclerView) {
