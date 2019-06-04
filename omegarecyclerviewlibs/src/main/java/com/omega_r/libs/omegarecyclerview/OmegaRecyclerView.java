@@ -610,7 +610,8 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
 
     public abstract static class Adapter<VH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<VH> {
 
-        private RecyclerView recyclerView;
+        @Nullable
+        protected RecyclerView recyclerView;
 
         public boolean isDividerAllowedAbove(int position) {
             return true;
