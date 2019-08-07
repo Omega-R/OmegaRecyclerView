@@ -46,6 +46,14 @@ public abstract class DividerDecorationHelper {
 
     public abstract int getEnd(Rect rect);
 
+    public abstract void setOtherStart(Rect rect, int start);
+
+    public abstract void setOtherEnd(Rect rect, int end);
+
+    public abstract int getOtherStart(Rect rect);
+
+    public abstract int getOtherEnd(Rect rect);
+
     public int getOffset(int offset) {
         return offset;
     }
@@ -78,6 +86,26 @@ class NormalVerticalDividerDecorationHelper extends DividerDecorationHelper {
         return rect.bottom;
     }
 
+    @Override
+    public void setOtherStart(Rect rect, int start) {
+        rect.left = start;
+    }
+
+    @Override
+    public void setOtherEnd(Rect rect, int end) {
+        rect.right = end;
+    }
+
+    @Override
+    public int getOtherStart(Rect rect) {
+        return rect.left;
+    }
+
+    @Override
+    public int getOtherEnd(Rect rect) {
+        return rect.right;
+    }
+
 }
 
 class ReverseVerticalDividerDecorationHelper extends DividerDecorationHelper {
@@ -104,6 +132,26 @@ class ReverseVerticalDividerDecorationHelper extends DividerDecorationHelper {
     @Override
     public int getEnd(Rect rect) {
         return rect.top;
+    }
+
+    @Override
+    public void setOtherStart(Rect rect, int start) {
+        rect.right = start;
+    }
+
+    @Override
+    public void setOtherEnd(Rect rect, int end) {
+        rect.left = end;
+    }
+
+    @Override
+    public int getOtherStart(Rect rect) {
+        return rect.right;
+    }
+
+    @Override
+    public int getOtherEnd(Rect rect) {
+        return rect.left;
     }
 
     @Override
@@ -139,6 +187,26 @@ class NormalHorizontalDividerDecorationHelper extends DividerDecorationHelper {
         return rect.right;
     }
 
+    @Override
+    public void setOtherStart(Rect rect, int start) {
+        rect.top = start;
+    }
+
+    @Override
+    public void setOtherEnd(Rect rect, int end) {
+        rect.bottom = end;
+    }
+
+    @Override
+    public int getOtherStart(Rect rect) {
+        return rect.top;
+    }
+
+    @Override
+    public int getOtherEnd(Rect rect) {
+        return rect.bottom;
+    }
+
 }
 
 class ReverseHorizontalDividerDecorationHelper extends DividerDecorationHelper {
@@ -165,6 +233,26 @@ class ReverseHorizontalDividerDecorationHelper extends DividerDecorationHelper {
     @Override
     public int getEnd(Rect rect) {
         return rect.left;
+    }
+
+    @Override
+    public void setOtherStart(Rect rect, int start) {
+        rect.bottom = start;
+    }
+
+    @Override
+    public void setOtherEnd(Rect rect, int end) {
+        rect.top = end;
+    }
+
+    @Override
+    public int getOtherStart(Rect rect) {
+        return rect.bottom;
+    }
+
+    @Override
+    public int getOtherEnd(Rect rect) {
+        return rect.top;
     }
 
     @Override
