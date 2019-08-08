@@ -49,7 +49,7 @@ abstract class StickyDecoration extends BaseStickyDecoration {
                     View stickerView = stickyHolder.itemView;
                     int top = getStickerTop(isReverseLayout, childView, stickerView, layoutPos + 1);
 
-                    long previousStickyId = mStickyAdapter.getStickyId(adapterPosition - 1);
+                    long previousStickyId = adapterPosition == 0 ? currentStickerId : mStickyAdapter.getStickyId(adapterPosition - 1);
 
                     if (layoutPos == 0 && top > 0 && adapterPosition > 0
                             && hasSticker(adapterPosition - 1)
