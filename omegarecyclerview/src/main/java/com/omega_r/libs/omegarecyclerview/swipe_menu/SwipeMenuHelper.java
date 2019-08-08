@@ -1,6 +1,5 @@
 package com.omega_r.libs.omegarecyclerview.swipe_menu;
 
-
 import android.content.Context;
 import android.view.MotionEvent;
 import android.view.View;
@@ -37,7 +36,7 @@ public class SwipeMenuHelper {
         }
 
         if (touchingPosition != mOldTouchedPosition && mOldSwipedView != null) {
-            if (mOldSwipedView.isMenuOpen()) {
+            if (mOldSwipedView.isMenuOpen() || mOldSwipedView.isNotInPlace()) {
                 mOldSwipedView.smoothCloseMenu();
                 isIntercepted = true;
             }
@@ -45,9 +44,9 @@ public class SwipeMenuHelper {
 
         touchingView = mCallback.transformTouchView(touchingPosition, touchingView);
 
-        if (touchingView != null && touchingView instanceof ViewGroup) {
+        if (touchingView instanceof ViewGroup) {
             View itemView = getSwipeMenuView((ViewGroup) touchingView);
-            if (itemView != null && itemView instanceof SwipeHorizontalMenuLayout) {
+            if (itemView instanceof SwipeHorizontalMenuLayout) {
                 mOldSwipedView = (SwipeHorizontalMenuLayout) itemView;
                 mOldTouchedPosition = touchingPosition;
             }

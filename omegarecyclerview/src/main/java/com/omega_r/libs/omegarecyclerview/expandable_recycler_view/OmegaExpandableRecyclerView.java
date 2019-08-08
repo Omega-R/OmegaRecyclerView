@@ -37,8 +37,8 @@ import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.data.GroupPro
 import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.data.Range;
 import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.data.UniqueIdProvider;
 import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.layout_manager.ExpandableLayoutManager;
-import com.omega_r.libs.omegarecyclerview.sticky_header.StickyHeaderAdapter;
-import com.omega_r.libs.omegarecyclerview.sticky_header.StickyHeaderDecoration;
+import com.omega_r.libs.omegarecyclerview.sticky_decoration.StickyAdapter;
+import com.omega_r.libs.omegarecyclerview.sticky_decoration.BaseStickyDecoration;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -213,13 +213,25 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
         }
     }
 
+    @Override
+    protected void updateStickyDecoration(@Nullable RecyclerView.Adapter adapter) {
+        BaseStickyDecoration stickyDecoration = getStickyDecoration();
+        if (adapter != null && stickyDecoration != null) {
+            if (adapter instanceof OmegaExpandableRecyclerView.Adapter
+                && stickyDecoration instanceof ExpandableStickyDecoration) {
+                ((ExpandableStickyDecoration) stickyDecoration).setExpandableAdapter((Adapter) adapter);
+            }
+        }
+        super.updateStickyDecoration(adapter);
+    }
+
     @Nullable
     @Override
-    protected StickyHeaderDecoration provideStickyHeaderDecoration(@Nullable StickyHeaderAdapter adapter, @Nullable Adapter expandableAdapter) {
-        if (mShouldUseStickyGroups) {
-            return new ExpandableStickyHeaderDecoration(adapter, expandableAdapter);
+    protected BaseStickyDecoration provideStickyDecoration(@NonNull RecyclerView.Adapter adapter, @Nullable StickyAdapter stickyAdapter) {
+        if (adapter instanceof OmegaExpandableRecyclerView.Adapter && mShouldUseStickyGroups) {
+            return new ExpandableStickyDecoration(stickyAdapter, (Adapter) adapter);
         } else {
-            return super.provideStickyHeaderDecoration(adapter, expandableAdapter);
+            return super.provideStickyDecoration(adapter, stickyAdapter);
         }
     }
 
@@ -502,6 +514,7 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
             return items.getItems();
         }
 
+        @Nullable
         public ExpandableViewData<G, CH> getItem(int position) {
             return items.getDataAtVisiblePosition(position);
         }

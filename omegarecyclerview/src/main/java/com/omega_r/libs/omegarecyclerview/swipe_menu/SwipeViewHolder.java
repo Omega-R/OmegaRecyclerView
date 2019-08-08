@@ -95,12 +95,16 @@ public class SwipeViewHolder extends OmegaRecyclerView.ViewHolder {
         mSwipeMenuLayout.smoothCloseMenu();
     }
 
-    public void smoothOpenBeginMenu() {
-        mSwipeMenuLayout.smoothOpenBeginMenu();
+    public void smoothOpenMenu(SwipeDirection direction) {
+        mSwipeMenuLayout.smoothOpenMenu(direction);
     }
 
-    public void smoothOpenEndMenu() {
-        mSwipeMenuLayout.smoothOpenEndMenu();
+    public void smoothOpenLeftMenu() {
+        mSwipeMenuLayout.smoothOpenMenu(SwipeDirection.LEFT);
+    }
+
+    public void smoothOpenRightMenu() {
+        mSwipeMenuLayout.smoothOpenMenu(SwipeDirection.RIGHT);
     }
 
     public void setSwipeEnable(boolean enable) {
@@ -108,11 +112,11 @@ public class SwipeViewHolder extends OmegaRecyclerView.ViewHolder {
     }
 
     public void setLeftSwipeEnable(boolean enable) {
-        mSwipeMenuLayout.setLeftSwipeEnabled(enable);
+        mSwipeMenuLayout.setSwipeEnable(SwipeDirection.LEFT, enable);
     }
 
     public void setRightSwipeEnable(boolean enable) {
-        mSwipeMenuLayout.setRightSwipeEnabled(enable);
+        mSwipeMenuLayout.setSwipeEnable(SwipeDirection.RIGHT, enable);
     }
 
     public boolean isSwipeEnable() {
@@ -120,10 +124,12 @@ public class SwipeViewHolder extends OmegaRecyclerView.ViewHolder {
     }
 
     public boolean isLeftSwipeEnable() {
-        return mSwipeMenuLayout.isLeftSwipeEnabled();
+        return mSwipeMenuLayout.isSwipeEnable(SwipeDirection.LEFT);
     }
 
     public boolean isRightSwipeEnable() {
-        return mSwipeMenuLayout.isRightSwipeEnabled();
+        return mSwipeMenuLayout.isSwipeEnable(SwipeDirection.RIGHT);
     }
+
+
 }

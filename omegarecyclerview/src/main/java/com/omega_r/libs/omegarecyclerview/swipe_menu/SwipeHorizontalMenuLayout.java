@@ -225,30 +225,33 @@ public class SwipeHorizontalMenuLayout extends SwipeMenuLayout {
         if (getScrollX() != mPreScrollX) {
             int absScrollX = Math.abs(getScrollX());
             if (mCurrentSwiper instanceof LeftHorizontalSwiper) {
+                SwipeDirection direction = SwipeDirection.LEFT;
                 if (mSwipeSwitchListener != null) {
-                    if (absScrollX == 0) mSwipeSwitchListener.beginMenuClosed(this);
+                    if (absScrollX == 0) mSwipeSwitchListener.onSwipeMenuClosed(this, direction);
                     else if (absScrollX == mBeginSwiper.getMenuWidth())
-                        mSwipeSwitchListener.beginMenuOpened(this);
+                        mSwipeSwitchListener.onSwipeMenuOpened(this, direction);
                 }
                 if (mSwipeFractionListener != null) {
                     float fraction = (float) absScrollX / mBeginSwiper.getMenuWidth();
                     fraction = Float.parseFloat(mDecimalFormat.format(fraction));
                     if (fraction != mPreLeftMenuFraction) {
-                        mSwipeFractionListener.beginMenuSwipeFraction(this, fraction);
+                        mSwipeFractionListener.onSwipeMenuFraction(this, direction, fraction);
                     }
                     mPreLeftMenuFraction = fraction;
                 }
             } else {
+                SwipeDirection direction = SwipeDirection.RIGHT;
+
                 if (mSwipeSwitchListener != null) {
-                    if (absScrollX == 0) mSwipeSwitchListener.endMenuClosed(this);
+                    if (absScrollX == 0) mSwipeSwitchListener.onSwipeMenuClosed(this, direction);
                     else if (absScrollX == mEndSwiper.getMenuWidth())
-                        mSwipeSwitchListener.endMenuOpened(this);
+                        mSwipeSwitchListener.onSwipeMenuOpened(this, direction);
                 }
                 if (mSwipeFractionListener != null) {
                     float fraction = (float) absScrollX / mEndSwiper.getMenuWidth();
                     fraction = Float.parseFloat(mDecimalFormat.format(fraction));
                     if (fraction != mPreRightMenuFraction) {
-                        mSwipeFractionListener.endMenuSwipeFraction(this, fraction);
+                        mSwipeFractionListener.onSwipeMenuFraction(this, direction, fraction);
                     }
                     mPreRightMenuFraction = fraction;
                 }
@@ -373,20 +376,29 @@ public class SwipeHorizontalMenuLayout extends SwipeMenuLayout {
         return (int) (ev.getX() - sx);
     }
 
-    public boolean isLeftSwipeEnabled() {
-        return isLeftSwipeEnabled;
+    @Override
+    public boolean isSwipeEnable(SwipeDirection direction) {
+        switch (direction) {
+            case LEFT:
+                return isLeftSwipeEnabled;
+            case RIGHT:
+                return isRightSwipeEnabled;
+            default:
+                return false;
+
+        }
     }
 
-    public void setLeftSwipeEnabled(boolean leftSwipeEnabled) {
-        isLeftSwipeEnabled = leftSwipeEnabled;
-    }
-
-    public boolean isRightSwipeEnabled() {
-        return isRightSwipeEnabled;
-    }
-
-    public void setRightSwipeEnabled(boolean rightSwipeEnabled) {
-        isRightSwipeEnabled = rightSwipeEnabled;
+    @Override
+    public void setSwipeEnable(SwipeDirection direction, boolean swipeEnable) {
+        switch (direction) {
+            case LEFT:
+                isLeftSwipeEnabled = swipeEnable;
+                break;
+            case RIGHT:
+                isRightSwipeEnabled = swipeEnable;
+                break;
+        }
     }
 
 }

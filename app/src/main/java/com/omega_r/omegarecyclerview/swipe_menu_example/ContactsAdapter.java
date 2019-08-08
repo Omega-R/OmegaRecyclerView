@@ -60,11 +60,11 @@ public class ContactsAdapter extends OmegaRecyclerView.Adapter<ContactsAdapter.V
             bubbleChartButton = findViewById(R.id.imagebutton_bubble);
             bubbleChartButton.setOnClickListener(this);
 
-            contentView.setOnLongClickListener(new View.OnLongClickListener() {
+            contentView.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public boolean onLongClick(View v) {
-                    smoothOpenBeginMenu();
-                    return true;
+                public void onClick(View v) {
+                    smoothOpenLeftMenu();
+//                    return true;
                 }
             });
         }
