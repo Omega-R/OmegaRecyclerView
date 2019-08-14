@@ -1,5 +1,6 @@
 package com.omega_r.omegarecyclerview.fastscroll_example;
 
+import android.graphics.Color;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
@@ -19,6 +20,7 @@ public class FastScrollAdapter extends OmegaRecyclerView.Adapter<FastScrollAdapt
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        holder.bind();
         holder.textView.setText(String.valueOf(position));
     }
 
@@ -39,6 +41,10 @@ public class FastScrollAdapter extends OmegaRecyclerView.Adapter<FastScrollAdapt
         ViewHolder(ViewGroup parent) {
             super(parent, R.layout.item_text);
             textView = findViewById(R.id.text_item);
+        }
+
+        void bind() {
+//            itemView.setBackgroundColor(getAdapterPosition() % 2 == 0 ? Color.WHITE : Color.BLUE);
         }
 
     }

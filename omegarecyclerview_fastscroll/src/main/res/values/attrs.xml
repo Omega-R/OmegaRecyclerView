@@ -1,14 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <declare-styleable name="OmegaFastScrollerLayout">
-        <attr name="hideScrollbar" format="boolean" />
-        <attr name="showBubble" format="boolean" />
-        <attr name="showTrack" format="boolean" />
-        <attr name="trackColor" format="color" />
-        <attr name="handleColor" format="color" />
-        <attr name="bubbleColor" format="color" />
-        <attr name="bubbleTextColor" format="color" />
+    <!--<declare-styleable name="OmegaFastScrollerLayout">-->
+        <!--<attr name="hideScrollbar" format="boolean" />-->
+        <!--<attr name="showBubble" format="boolean" />-->
+        <!--<attr name="showTrack" format="boolean" />-->
+        <!--<attr name="trackColor" format="color" />-->
+        <!--<attr name="handleColor" format="color" />-->
+        <!--<attr name="bubbleColor" format="color" />-->
+        <!--<attr name="bubbleTextColor" format="color" />-->
+    <!--</declare-styleable>-->
+
+    <declare-styleable name="OmegaFastScrollRecyclerView">
+        <attr name="trackDrawable" format="reference"/>
+        <attr name="omega_trackColor" format="color"/>
+
+        <attr name="bubbleUpDrawable" format="reference"/>
+        <attr name="bubbleUpColor" format="color"/>
+        <attr name="bubbleDownDrawable" format="reference"/>
+        <attr name="bubbleDownColor" format="color"/>
+
+        <attr name="position" format="enum">
+            <enum name="auto" value="0"/>
+            <enum name="left" value="1"/>
+            <enum name="right" value="2"/>
+        </attr>
+
+        <attr name="fastScrollbarColor" format="color"/>
+        <attr name="fastScrollbarWidth" format="dimension"/>
+
+        <attr name="fastScrollTrackPadding" format="dimension"/>
+        <attr name="fastScrollTrackPaddingLeft" format="dimension"/>
+        <attr name="fastScrollTrackPaddingTop" format="dimension"/>
+        <attr name="fastScrollTrackPaddingRight" format="dimension"/>
+        <attr name="fastScrollTrackPaddingBottom" format="dimension"/>
+
+        <attr name="fastScrollVisibility" format="flags">
+            <flag name="none" value="0"/>
+            <flag name="scrollbar" value="1"/>
+            <flag name="track" value="2"/>
+            <flag name="bubble" value="4"/>
+        </attr>
+
+        <attr name="fastScrollAutoHide" format="flags">
+            <flag name="none" value="0"/>
+            <flag name="scrollbar" value="1"/>
+            <flag name="track" value="2"/>
+            <flag name="bubble" value="4"/>
+        </attr>
+
     </declare-styleable>
 
 </resources>
