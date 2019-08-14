@@ -49,6 +49,10 @@
             <flag name="bubble" value="4"/>
         </attr>
 
+        <attr name="fastScrollAnimDuration" format="integer"/>
+        <attr name="fastScrollBubbleAnimDuration" format="integer"/>
+        <attr name="fastScrollHideTrackDelay" format="integer"/>
+
     </declare-styleable>
 
 </resources>
