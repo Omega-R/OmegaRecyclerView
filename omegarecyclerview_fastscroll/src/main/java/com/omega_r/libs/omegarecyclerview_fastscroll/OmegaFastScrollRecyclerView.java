@@ -11,18 +11,20 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.util.SparseArray;
 import android.view.MotionEvent;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
-import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.omega_r.libs.omegarecyclerview.OmegaRecyclerView;
 
+import static android.view.View.MeasureSpec.EXACTLY;
 import static com.omega_r.libs.omegarecyclerview_fastscroll.DrawableUtils.getTintedDrawable;
 import static com.omega_r.libs.omegarecyclerview_fastscroll.Position.LEFT;
 import static com.omega_r.libs.omegarecyclerview_fastscroll.Position.RIGHT;
@@ -30,7 +32,7 @@ import static com.omega_r.libs.omegarecyclerview_fastscroll.Position.RIGHT;
 public class OmegaFastScrollRecyclerView extends OmegaRecyclerView {
 
     private static final long ANIM_DURATION_IN_MILLIS = 300;
-    private static final long BUBBLE_ANIM_DURATION_IN_MILLIS = 100;
+    private static final long BUBBLE_ANIM_DURATION_IN_MILLIS = 1000;
     private static final long TRACK_HIDE_DELAY_IN_MILLIS = 1000;
     private static final int MAX_ALPHA = 255;
     private static final int MIN_ALPHA = 0;
@@ -72,6 +74,7 @@ public class OmegaFastScrollRecyclerView extends OmegaRecyclerView {
         }
     };
 
+    private final SparseArray<RecyclerView.ViewHolder> mHolderSparseArray = new SparseArray<>();
     private final Paint mTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Rect mTextBounds = new Rect();
 
@@ -92,7 +95,7 @@ public class OmegaFastScrollRecyclerView extends OmegaRecyclerView {
     private final Rect mScrollbarBounds = new Rect();
     private final Paint mScrollbarPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
-    private Position mPosition = RIGHT;
+    private Position mPosition;
     private int mElementsVisibility = FastScrollVisibility.NONE;
     private int mAutoHide = FastScrollAutoHide.NONE;
 
@@ -127,21 +130,12 @@ public class OmegaFastScrollRecyclerView extends OmegaRecyclerView {
     private void init(Context context, @Nullable AttributeSet attrs, int defStyle) {
         mPosition = ViewCompat.getLayoutDirection(this) == ViewCompat.LAYOUT_DIRECTION_RTL ? LEFT : RIGHT;
         mTrackDrawable = ContextCompat.getDrawable(context, R.drawable.ic_track);
-        switch (mPosition) {
-            case LEFT:
-                mBubbleUpDrawable = ContextCompat.getDrawable(context, R.drawable.ic_bubble_up_left);
-                mBubbleDownDrawable = ContextCompat.getDrawable(context, R.drawable.ic_bubble_down_left);
-                break;
-            case RIGHT:
-                mBubbleUpDrawable = ContextCompat.getDrawable(context, R.drawable.ic_bubble_up_right);
-                mBubbleDownDrawable = ContextCompat.getDrawable(context, R.drawable.ic_bubble_down_right);
-                break;
-        }
+        initBubbleDrawables(mPosition);
 
-        mTrackPaddingLeft = getResources().getDimensionPixelSize(R.dimen.omega_track_padding_left);
-        mTrackPaddingTop = getResources().getDimensionPixelSize(R.dimen.omega_track_padding_top);
-        mTrackPaddingRight = getResources().getDimensionPixelSize(R.dimen.omega_track_padding_right);
-        mTrackPaddingBottom = getResources().getDimensionPixelSize(R.dimen.omega_track_padding_bottom);
+        mTrackPaddingLeft = getResources().getDimensionPixelSize(R.dimen.fastscroll_track_padding_left);
+        mTrackPaddingTop = getResources().getDimensionPixelSize(R.dimen.fastscroll_track_padding_top);
+        mTrackPaddingRight = getResources().getDimensionPixelSize(R.dimen.fastscroll_track_padding_right);
+        mTrackPaddingBottom = getResources().getDimensionPixelSize(R.dimen.fastscroll_track_padding_bottom);
 
         mScrollbarPaint.setStyle(Paint.Style.FILL);
 
@@ -166,26 +160,34 @@ public class OmegaFastScrollRecyclerView extends OmegaRecyclerView {
 
     private void initAttrs(@NonNull TypedArray typedArray) {
         int position = typedArray.getInt(R.styleable.OmegaFastScrollRecyclerView_position, 0);
+        Position newPosition;
         if (position == 0) {
-            mPosition = ViewCompat.getLayoutDirection(this) == ViewCompat.LAYOUT_DIRECTION_RTL ? LEFT : RIGHT;
+            newPosition = ViewCompat.getLayoutDirection(this) == ViewCompat.LAYOUT_DIRECTION_RTL ? LEFT : RIGHT;
         } else {
-            mPosition = Position.values()[position];
+            newPosition = Position.values()[position - 1];
+        }
+        if (newPosition != mPosition) {
+            mPosition = newPosition;
+            initBubbleDrawables(mPosition);
         }
 
         Drawable trackDrawable = typedArray.getDrawable(R.styleable.OmegaFastScrollRecyclerView_trackDrawable);
         if (trackDrawable != null) mTrackDrawable = trackDrawable;
         int trackColor = typedArray.getColor(R.styleable.OmegaFastScrollRecyclerView_omega_trackColor, Color.TRANSPARENT);
-        if (trackColor != Color.TRANSPARENT) mTrackDrawable = getTintedDrawable(mTrackDrawable, trackColor);
+        if (trackColor != Color.TRANSPARENT)
+            mTrackDrawable = getTintedDrawable(mTrackDrawable, trackColor);
 
         Drawable bubbleUp = typedArray.getDrawable(R.styleable.OmegaFastScrollRecyclerView_bubbleUpDrawable);
         if (bubbleUp != null) mBubbleUpDrawable = bubbleUp;
         int bubbleUpColor = typedArray.getColor(R.styleable.OmegaFastScrollRecyclerView_bubbleUpColor, Color.TRANSPARENT);
-        if (bubbleUpColor != Color.TRANSPARENT) mBubbleUpDrawable = getTintedDrawable(mBubbleUpDrawable, bubbleUpColor);
+        if (bubbleUpColor != Color.TRANSPARENT)
+            mBubbleUpDrawable = getTintedDrawable(mBubbleUpDrawable, bubbleUpColor);
 
         Drawable bubbleDown = typedArray.getDrawable(R.styleable.OmegaFastScrollRecyclerView_bubbleDownDrawable);
         if (bubbleDown != null) mBubbleDownDrawable = bubbleDown;
         int bubbleDownColor = typedArray.getColor(R.styleable.OmegaFastScrollRecyclerView_bubbleDownColor, Color.TRANSPARENT);
-        if (bubbleUpColor != Color.TRANSPARENT) mBubbleDownDrawable = getTintedDrawable(mBubbleDownDrawable, bubbleDownColor);
+        if (bubbleUpColor != Color.TRANSPARENT)
+            mBubbleDownDrawable = getTintedDrawable(mBubbleDownDrawable, bubbleDownColor);
 
 
         int trackPadding = typedArray.getDimensionPixelSize(R.styleable.OmegaFastScrollRecyclerView_fastScrollTrackPadding, -1);
@@ -228,6 +230,24 @@ public class OmegaFastScrollRecyclerView extends OmegaRecyclerView {
         if (isShowBubble() && isAutoHideBubble()) {
             mBubbleUpDrawable.setAlpha(MIN_ALPHA);
             mBubbleDownDrawable.setAlpha(MIN_ALPHA);
+        }
+
+        mTextPaint.setColor(typedArray.getColor(R.styleable.OmegaFastScrollRecyclerView_fastScrollTextColor, Color.WHITE));
+        int textSize = typedArray.getDimensionPixelSize(R.styleable.OmegaFastScrollRecyclerView_fastScrollTextSize,
+                getResources().getDimensionPixelSize(R.dimen.fastscroll_text_size));
+        mTextPaint.setTextSize(textSize);
+    }
+
+    private void initBubbleDrawables(Position position) {
+        switch (position) {
+            case LEFT:
+                mBubbleUpDrawable = ContextCompat.getDrawable(getContext(), R.drawable.ic_bubble_up_left);
+                mBubbleDownDrawable = ContextCompat.getDrawable(getContext(), R.drawable.ic_bubble_down_left);
+                break;
+            case RIGHT:
+                mBubbleUpDrawable = ContextCompat.getDrawable(getContext(), R.drawable.ic_bubble_up_right);
+                mBubbleDownDrawable = ContextCompat.getDrawable(getContext(), R.drawable.ic_bubble_down_right);
+                break;
         }
     }
 
@@ -331,15 +351,35 @@ public class OmegaFastScrollRecyclerView extends OmegaRecyclerView {
             }
             mScrollbarBounds.set(left, 0, right, height);
         }
+        if (isShowTrack() && !isAutoHideTrack()) {
+            Rect bounds = mTrackDrawable.getBounds();
+            int trackWidth = mTrackDrawable.getIntrinsicWidth();
+
+            int left = 0;
+            int right = 0;
+            switch (mPosition) {
+                case LEFT:
+                    left = mTrackPaddingLeft;
+                    right = left + trackWidth;
+                    break;
+                case RIGHT:
+                    left = width - mTrackPaddingRight - trackWidth;
+                    right = left + trackWidth;
+                    break;
+            }
+            mTrackDrawable.setBounds(left, bounds.top, right, bounds.bottom);
+            onScrolled();
+        }
+        if (isShowBubble() && (!isShowTrack() || !isAutoHideTrack())) onScrolled();
     }
 
     @Override
     public void setAdapter(RecyclerView.Adapter adapter) {
         super.setAdapter(adapter);
         if (adapter instanceof FastScrollAdapter) {
-            setSectionIndexer((FastScrollAdapter) adapter);
+            mFastScrollAdapter = (FastScrollAdapter) adapter;
         } else if (adapter == null) {
-            setSectionIndexer(null);
+            mFastScrollAdapter = null;
         }
     }
 
@@ -435,11 +475,6 @@ public class OmegaFastScrollRecyclerView extends OmegaRecyclerView {
         }
     }
 
-    public final void setSectionIndexer(FastScrollAdapter adapter) {
-        mFastScrollAdapter = adapter;
-        invalidate();
-    }
-
     private void onScrollScreenStateChanged(int newState) {
         switch (newState) {
             case RecyclerView.SCROLL_STATE_DRAGGING:
@@ -462,7 +497,7 @@ public class OmegaFastScrollRecyclerView extends OmegaRecyclerView {
         int to = 0;
         switch (mPosition) {
             case LEFT:
-                from = bounds.left == 0 ? -trackWidth : bounds.left;
+                from = bounds.right == 0 ? -trackWidth : bounds.left;
                 to = mTrackPaddingLeft;
                 break;
             case RIGHT:
@@ -505,7 +540,7 @@ public class OmegaFastScrollRecyclerView extends OmegaRecyclerView {
         int to = 0;
         switch (mPosition) {
             case LEFT:
-                from = bounds.left == 0 ? -scrollbarWidth : bounds.left;
+                from = bounds.right == 0 ? -scrollbarWidth : bounds.left;
                 to = 0;
                 break;
             case RIGHT:
@@ -543,7 +578,7 @@ public class OmegaFastScrollRecyclerView extends OmegaRecyclerView {
     private void showBubble() {
         if (mBubbleDrawable == null) return;
         if (!isShowBubble() || !isAutoHideBubble() || mIsBubbleVisible || !mIsTrackTouched) return;
-        int startAlpha = DrawableCompat.getAlpha(mBubbleDrawable);
+        int startAlpha = DrawableUtils.getAlpha(mBubbleDrawable);
         if (startAlpha == MAX_ALPHA) startAlpha = MIN_ALPHA;
         mHideBubbleAnimator.cancel();
         mShowBubbleAnimator.cancel();
@@ -556,7 +591,7 @@ public class OmegaFastScrollRecyclerView extends OmegaRecyclerView {
         if (!isShowBubble() || !isAutoHideBubble() || !mIsBubbleVisible) return;
         mShowBubbleAnimator.cancel();
         mHideBubbleAnimator.cancel();
-        mHideBubbleAnimator.setIntValues(DrawableCompat.getAlpha(mBubbleDrawable), MIN_ALPHA);
+        mHideBubbleAnimator.setIntValues(DrawableUtils.getAlpha(mBubbleDrawable), MIN_ALPHA);
         mHideBubbleAnimator.start();
     }
 
@@ -590,8 +625,7 @@ public class OmegaFastScrollRecyclerView extends OmegaRecyclerView {
     }
 
     private void updateTrackPosition(int screenHeight, int screenWidth, int scrollPosition) {
-        boolean isAnimationRunning = mShowTrackAnimator != null && mShowTrackAnimator.isRunning() ||
-                mHideTrackAnimator != null && mHideTrackAnimator.isRunning();
+        boolean isAnimationRunning = mShowTrackAnimator.isRunning() || mHideTrackAnimator.isRunning();
 
         Rect bounds = mTrackDrawable.getBounds();
         int trackWidth = mTrackDrawable.getIntrinsicWidth();
@@ -674,34 +708,71 @@ public class OmegaFastScrollRecyclerView extends OmegaRecyclerView {
         if (isShowTrack()) mTrackDrawable.draw(canvas);
         if (isShowBubble() && mBubbleDrawable != null) {
             mBubbleDrawable.draw(canvas);
-            drawText(canvas);
+            if (mIsBubbleVisible || mShowBubbleAnimator.isRunning() || mHideBubbleAnimator.isRunning()) {
+                drawBubbleContent(canvas);
+            }
         }
     }
 
-    private void drawText(Canvas canvas) {
+    private void drawBubbleContent(Canvas canvas) {
+        if (mFastScrollAdapter == null) return;
         LayoutManager layoutManager = getLayoutManager();
         if (!(layoutManager instanceof LinearLayoutManager)) return;
-        if (mFastScrollAdapter == null) return;
         int position = ((LinearLayoutManager) layoutManager).findFirstVisibleItemPosition();
         if (position == RecyclerView.NO_POSITION) return;
 
-        mFastScrollAdapter.getFastScrollSection(position);
-
-
+        if (mFastScrollAdapter instanceof FastScrollAdapter.Text) {
+            drawText(canvas, ((FastScrollAdapter.Text) mFastScrollAdapter).getText(position));
+        } else if (mFastScrollAdapter instanceof FastScrollAdapter.ViewHolder) {
+            drawGroupViewHolder(canvas, (FastScrollAdapter.ViewHolder) mFastScrollAdapter, position);
+        }
     }
 
-    private void updateSectionText(int adapterPosition) {
-        if (mFastScrollAdapter == null || mBubbleDrawable == null || adapterPosition < 0) return;
-//        mSectionText = "T";
-//        mFastScrollAdapter.getFastScrollSection(adapterPosition);
-//        if (mSectionText == null) return;
-//        Rect mBubbleBounds = mBubbleDrawable.getBounds();
-//        int centerY = mBubbleBounds.centerY();
-//        int centerX = mBubbleBounds.centerX();
-//        mTextPaint.getTextBounds(mSectionText, 0, mSectionText.length() - 1, mTextBounds);
-//        int halfTextWidth = mTextBounds.width() / 2;
-//        int halfTextHeight = mTextBounds.height() / 2;
-//        mTextBounds.set(centerX - halfTextWidth, centerY - halfTextHeight, centerX + halfTextWidth, centerY + halfTextHeight);
+    private void drawText(Canvas canvas, @Nullable String text) {
+        if (text == null || mBubbleDrawable == null) return;
+        Rect bubbleBounds = mBubbleDrawable.getBounds();
+        int centerY = bubbleBounds.centerY();
+        int centerX = bubbleBounds.centerX();
+        mTextPaint.getTextBounds(text, 0, text.length(), mTextBounds);
+        mTextPaint.setAlpha(DrawableUtils.getAlpha(mBubbleDrawable));
+        canvas.drawText(text, centerX, centerY + (mTextBounds.height() / 2F), mTextPaint);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void drawGroupViewHolder(Canvas canvas, FastScrollAdapter.ViewHolder adapter, int position) {
+        if (mBubbleDrawable == null) return;
+        Rect bounds = mBubbleDrawable.getBounds();
+
+        assert mFastScrollAdapter != null;
+        long groupId = adapter.getFastScrollGroupId(position);
+        RecyclerView.ViewHolder viewHolder = mHolderSparseArray.get((int) groupId);
+        if (viewHolder == null) {
+            viewHolder = adapter.onCreateFastScrollViewHolder(this);
+            if (viewHolder == null) return;
+
+            mHolderSparseArray.put((int) groupId, viewHolder);
+            View itemView = viewHolder.itemView;
+
+            int width = mBubbleDrawable.getIntrinsicWidth();
+            int height = mBubbleUpDrawable.getIntrinsicHeight();
+
+            int widthSpec = View.MeasureSpec.makeMeasureSpec(width, EXACTLY);
+            int heightSpec = View.MeasureSpec.makeMeasureSpec(height, EXACTLY);
+
+            itemView.measure(widthSpec, heightSpec);
+            itemView.layout(0, 0, width, height);
+        }
+        adapter.onBindFastScrollViewHolder(viewHolder, position);
+        View itemView = viewHolder.itemView;
+        Drawable backgroundDrawable = itemView.getBackground();
+        if (backgroundDrawable != null) backgroundDrawable.setAlpha(DrawableUtils.getAlpha(mBubbleDrawable));
+
+        canvas.save();
+        canvas.translate(bounds.left, bounds.top);
+        itemView.setTranslationX(bounds.left);
+        itemView.setTranslationY(bounds.top);
+        itemView.draw(canvas);
+        canvas.restore();
     }
 
 }

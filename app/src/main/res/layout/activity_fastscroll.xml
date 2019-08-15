@@ -10,10 +10,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:fastScrollVisibility="scrollbar|track|bubble"
-
+        app:fastScrollAutoHide="scrollbar|track|bubble"
         app:fastScrollbarColor="@color/colorAccent"
-        app:fastScrollbarWidth="30dp"/>
-
-    <!--app:fastScrollAutoHide="scrollbar|track|bubble"-->
+        app:fastScrollbarWidth="10dp"/>
 
 </FrameLayout>

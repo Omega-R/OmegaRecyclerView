@@ -17,9 +17,11 @@
     <dimen name="fastscroll_scrollbar_padding_start">8dp</dimen>
     <dimen name="fastscroll_scrollbar_padding_end">8dp</dimen>
 
-    <dimen name="omega_track_padding_right">0dp</dimen>
-    <dimen name="omega_track_padding_left">8dp</dimen>
-    <dimen name="omega_track_padding_top">0dp</dimen>
-    <dimen name="omega_track_padding_bottom">0dp</dimen>
+    <dimen name="fastscroll_track_padding_right">0dp</dimen>
+    <dimen name="fastscroll_track_padding_left">4dp</dimen>
+    <dimen name="fastscroll_track_padding_top">0dp</dimen>
+    <dimen name="fastscroll_track_padding_bottom">0dp</dimen>
+
+    <dimen name="fastscroll_text_size">40sp</dimen>
 
 </resources>

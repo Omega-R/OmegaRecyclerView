@@ -1,16 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!--<declare-styleable name="OmegaFastScrollerLayout">-->
-        <!--<attr name="hideScrollbar" format="boolean" />-->
-        <!--<attr name="showBubble" format="boolean" />-->
-        <!--<attr name="showTrack" format="boolean" />-->
-        <!--<attr name="trackColor" format="color" />-->
-        <!--<attr name="handleColor" format="color" />-->
-        <!--<attr name="bubbleColor" format="color" />-->
-        <!--<attr name="bubbleTextColor" format="color" />-->
-    <!--</declare-styleable>-->
-
     <declare-styleable name="OmegaFastScrollRecyclerView">
         <attr name="trackDrawable" format="reference"/>
         <attr name="omega_trackColor" format="color"/>
@@ -52,6 +42,9 @@
         <attr name="fastScrollAnimDuration" format="integer"/>
         <attr name="fastScrollBubbleAnimDuration" format="integer"/>
         <attr name="fastScrollHideTrackDelay" format="integer"/>
+
+        <attr name="fastScrollTextSize" format="dimension"/>
+        <attr name="fastScrollTextColor" format="color"/>
 
     </declare-styleable>
 

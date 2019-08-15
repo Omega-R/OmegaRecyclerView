@@ -10,25 +10,12 @@ import com.omega_r.omegarecyclerview.R;
 
 public class FastScrollActivity extends AppCompatActivity {
 
-    private static final String TAG = FastScrollActivity.class.getSimpleName();
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fastscroll);
         RecyclerView recyclerView = findViewById(R.id.recyclerview);
         recyclerView.setAdapter(new FastScrollAdapter());
-//        recyclerView.setFastScrollStateChangeListener(this);
     }
-
-//    @Override
-//    public void onFastScrollStart(OmegaFastScrollerLayout fastScrollerLayout) {
-//        Log.d(TAG, "onFastScrollStart");
-//    }
-//
-//    @Override
-//    public void onFastScrollStop(OmegaFastScrollerLayout fastScrollerLayout) {
-//        Log.d(TAG, "onFastScrollStop");
-//    }
 
 }
