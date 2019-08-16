@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.util.SparseArray;
 import android.view.MotionEvent;
@@ -25,6 +26,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.omega_r.libs.omegarecyclerview.OmegaRecyclerView;
 
 import static android.view.View.MeasureSpec.EXACTLY;
+import static com.omega_r.libs.omegarecyclerview.utils.ViewUtils.isReverseLayout;
 import static com.omega_r.libs.omegarecyclerview_fastscroll.DrawableUtils.getTintedDrawable;
 import static com.omega_r.libs.omegarecyclerview_fastscroll.Position.LEFT;
 import static com.omega_r.libs.omegarecyclerview_fastscroll.Position.RIGHT;
@@ -32,8 +34,8 @@ import static com.omega_r.libs.omegarecyclerview_fastscroll.Position.RIGHT;
 public class OmegaFastScrollRecyclerView extends OmegaRecyclerView {
 
     private static final long ANIM_DURATION_IN_MILLIS = 300;
-    private static final long BUBBLE_ANIM_DURATION_IN_MILLIS = 1000;
-    private static final long TRACK_HIDE_DELAY_IN_MILLIS = 1000;
+    private static final long BUBBLE_ANIM_DURATION_IN_MILLIS = 100;
+    private static final long TRACK_HIDE_DELAY_IN_MILLIS = 1500;
     private static final int MAX_ALPHA = 255;
     private static final int MIN_ALPHA = 0;
 
@@ -110,7 +112,7 @@ public class OmegaFastScrollRecyclerView extends OmegaRecyclerView {
     private long mBubbleAnimDuration = BUBBLE_ANIM_DURATION_IN_MILLIS;
     private long mHideTrackDelay = TRACK_HIDE_DELAY_IN_MILLIS;
 
-    private float mActionDownYDiff;
+    private float mLastEventY;
 
     public OmegaFastScrollRecyclerView(Context context) {
         super(context);
@@ -387,6 +389,7 @@ public class OmegaFastScrollRecyclerView extends OmegaRecyclerView {
     @SuppressLint("ClickableViewAccessibility")
     public boolean onTouchEvent(MotionEvent event) {
         if (!isEnabled() || getVisibility() != VISIBLE) return super.onTouchEvent(event);
+        if (!isShowScrollbar() && !isShowTrack() && !isShowBubble()) return super.onTouchEvent(event);
 
         int action = event.getAction();
         float eventX = event.getX();
@@ -397,35 +400,35 @@ public class OmegaFastScrollRecyclerView extends OmegaRecyclerView {
                 mIsScrollbarTouched = isScrollbarTouched(eventX);
                 mIsTrackTouched = isTrackTouched(eventX, eventY);
                 mIsBubbleTouched = isBubbleTouched(eventX, eventY);
+                if (mIsTrackTouched || mIsScrollbarTouched || mIsBubbleTouched) {
+                    mLastEventY = eventY;
+                    requestDisallowInterceptTouchEvent(true);
+                    removeOnScrollListener(mScrollListener);
+                    removeCallbacks(mHiderRunnable);
 
-                if (isShowScrollbar() || isShowTrack() || isShowBubble()) {
-                    if (mIsTrackTouched || mIsScrollbarTouched || mIsBubbleTouched) {
-                        mActionDownYDiff = (mIsTrackTouched || mIsBubbleTouched) ? mTrackDrawable.getBounds().top - eventY : 0;
-                        requestDisallowInterceptTouchEvent(true);
-                        removeOnScrollListener(mScrollListener);
-                        removeCallbacks(mHiderRunnable);
-
-                        if (mIsTrackTouched) {
-                            showBubble();
-                        } else if (!mIsBubbleTouched) {
-                            updateRecyclerViewPosition(eventY);
-                            onScrolled(eventY);
-                        }
-                        showScrollbar();
-                        showTrack();
-                        return true;
+                    if (mIsTrackTouched) {
+                        showBubble();
+                    } else if (!mIsBubbleTouched) {
+                        updateRecyclerViewPosition(eventY);
+                        onScrolled(eventY);
                     }
+                    showScrollbar();
+                    showTrack();
+                    return true;
                 }
             case MotionEvent.ACTION_MOVE:
                 if (mIsTrackTouched || mIsScrollbarTouched || mIsBubbleTouched) {
-                    float y = Math.min(getHeight(), Math.max(0, eventY + mActionDownYDiff));
-                    updateRecyclerViewPosition(y);
+                    float diff = eventY - mLastEventY;
+                    Rect bounds = mTrackDrawable.getBounds();
+                    float y = bounds.top + diff;
+                    mLastEventY = eventY;
+                    y = Math.min(getHeight(), Math.max(0, y));
+                    updateRecyclerViewPosition(isReverseLayout(this) ? y + bounds.height() : y);
                     onScrolled(y);
                     return true;
                 }
             case MotionEvent.ACTION_UP:
                 if (mIsTrackTouched || mIsScrollbarTouched || mIsBubbleTouched) {
-                    mActionDownYDiff = 0;
                     postDelayed(mHiderRunnable, mHideTrackDelay);
                     requestDisallowInterceptTouchEvent(false);
                     mIsTrackTouched = isShowTrack() && !isAutoHideTrack();
@@ -466,7 +469,8 @@ public class OmegaFastScrollRecyclerView extends OmegaRecyclerView {
 
         int itemCount = adapter.getItemCount();
         float positionPercent = (eventY * 100) / getHeight();
-        int newPosition = (int) ((itemCount * positionPercent) / 100);
+        int newPosition = Math.round((itemCount * positionPercent) / 100);
+        if (isReverseLayout(this)) newPosition = itemCount - newPosition;
 
         if (layoutManager instanceof LinearLayoutManager) {
             ((LinearLayoutManager) layoutManager).scrollToPositionWithOffset(newPosition, 0);
@@ -478,6 +482,7 @@ public class OmegaFastScrollRecyclerView extends OmegaRecyclerView {
     private void onScrollScreenStateChanged(int newState) {
         switch (newState) {
             case RecyclerView.SCROLL_STATE_DRAGGING:
+            case RecyclerView.SCROLL_STATE_SETTLING:
                 removeCallbacks(mHiderRunnable);
                 showScrollbar();
                 showTrack();
@@ -611,7 +616,7 @@ public class OmegaFastScrollRecyclerView extends OmegaRecyclerView {
         int scrollOffset = computeVerticalScrollOffset();
         double scrollPercents = (scrollOffset == 0) ? 0 : (scrollOffset * 100.0 / scrollRange);
         height = height - mTrackPaddingTop - mTrackPaddingBottom - mTrackDrawable.getIntrinsicHeight();
-
+        if (isReverseLayout(this) && scrollRange < 0) return height;
         return (int) (mTrackPaddingTop + ((height * scrollPercents) / 100));
     }
 
@@ -755,19 +760,22 @@ public class OmegaFastScrollRecyclerView extends OmegaRecyclerView {
 
             int width = mBubbleDrawable.getIntrinsicWidth();
             int height = mBubbleUpDrawable.getIntrinsicHeight();
-
-            int widthSpec = View.MeasureSpec.makeMeasureSpec(width, EXACTLY);
-            int heightSpec = View.MeasureSpec.makeMeasureSpec(height, EXACTLY);
-
+            int widthSpec = MeasureSpec.makeMeasureSpec(width, EXACTLY);
+            int heightSpec = MeasureSpec.makeMeasureSpec(height, EXACTLY);
             itemView.measure(widthSpec, heightSpec);
             itemView.layout(0, 0, width, height);
         }
         adapter.onBindFastScrollViewHolder(viewHolder, position);
         View itemView = viewHolder.itemView;
-        Drawable backgroundDrawable = itemView.getBackground();
-        if (backgroundDrawable != null) backgroundDrawable.setAlpha(DrawableUtils.getAlpha(mBubbleDrawable));
 
         canvas.save();
+        int alpha = DrawableUtils.getAlpha(mBubbleDrawable);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            canvas.saveLayerAlpha(bounds.left, bounds.top, bounds.right, bounds.bottom, alpha);
+        } else {
+            Drawable backgroundDrawable = itemView.getBackground();
+            if (backgroundDrawable != null) backgroundDrawable.setAlpha(alpha);
+        }
         canvas.translate(bounds.left, bounds.top);
         itemView.setTranslationX(bounds.left);
         itemView.setTranslationY(bounds.top);

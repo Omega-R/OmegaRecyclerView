@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
     <com.omega_r.libs.omegarecyclerview_fastscroll.OmegaFastScrollRecyclerView
         android:id="@+id/recyclerview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:fastScrollVisibility="scrollbar|track|bubble"
         app:fastScrollAutoHide="scrollbar|track|bubble"
+        app:fastScrollVisibility="scrollbar|track|bubble"
         app:fastScrollbarColor="@color/colorAccent"
-        app:fastScrollbarWidth="10dp"/>
+        app:fastScrollbarWidth="10dp"
+        app:reverseLayout="false" />
 
 </FrameLayout>
