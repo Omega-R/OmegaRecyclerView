@@ -386,6 +386,17 @@ public class OmegaFastScrollRecyclerView extends OmegaRecyclerView {
     }
 
     @Override
+    protected void onDetachedFromWindow() {
+        mShowBubbleAnimator.cancel();
+        mShowScrollbarAnimator.cancel();
+        mShowTrackAnimator.cancel();
+        mHideBubbleAnimator.cancel();
+        mHideScrollbarAnimator.cancel();
+        mHideTrackAnimator.cancel();
+        super.onDetachedFromWindow();
+    }
+
+    @Override
     @SuppressLint("ClickableViewAccessibility")
     public boolean onTouchEvent(MotionEvent event) {
         if (!isEnabled() || getVisibility() != VISIBLE) return super.onTouchEvent(event);
