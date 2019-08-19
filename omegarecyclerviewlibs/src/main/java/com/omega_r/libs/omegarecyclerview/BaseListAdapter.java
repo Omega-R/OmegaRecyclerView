@@ -10,18 +10,13 @@ import java.util.List;
 
 public abstract class BaseListAdapter<T> extends OmegaRecyclerView.Adapter<BaseListAdapter<T>.ViewHolder> {
 
-    private static final int INDEX_NOT_FOUND = -1;
-
     private List<T> items;
 
     @Nullable
-    private OnItemClickListener<T> clickListener = null;
+    private OnItemClickListener<T> clickListener;
 
     @Nullable
-    private OnItemLongClickListener<T> longClickListener = null;
-
-
-    protected abstract BaseListAdapter<T>.ViewHolder provideViewHolder(ViewGroup parent);
+    private OnItemLongClickListener<T> longClickListener;
 
     public BaseListAdapter(@NonNull List<T> items,
                            @Nullable OnItemClickListener<T> clickListener,
@@ -99,13 +94,6 @@ public abstract class BaseListAdapter<T> extends OmegaRecyclerView.Adapter<BaseL
         }
     }
 
-    @NonNull
-    @Override
-    public BaseListAdapter<T>.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return provideViewHolder(parent);
-    }
-
-    @SuppressWarnings("unchecked")
     @Override
     public void onBindViewHolder(@NonNull BaseListAdapter<T>.ViewHolder holder, int position) {
         holder.bind(getItem(position));
@@ -116,7 +104,9 @@ public abstract class BaseListAdapter<T> extends OmegaRecyclerView.Adapter<BaseL
         return items.size();
     }
 
-    public abstract class ViewHolder extends OmegaRecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
+    public abstract class ViewHolder extends OmegaRecyclerView.ViewHolder implements
+            View.OnClickListener,
+            View.OnLongClickListener {
 
         private T item;
 
@@ -134,6 +124,7 @@ public abstract class BaseListAdapter<T> extends OmegaRecyclerView.Adapter<BaseL
             if (clickListener != null) {
                 itemView.setOnClickListener(this);
             }
+
             if (longClickListener != null) {
                 itemView.setOnLongClickListener(this);
             }
