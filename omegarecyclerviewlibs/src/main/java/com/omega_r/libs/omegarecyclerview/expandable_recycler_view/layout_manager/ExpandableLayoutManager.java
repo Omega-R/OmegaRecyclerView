@@ -55,8 +55,8 @@ public class ExpandableLayoutManager extends LinearLayoutManager {
     @Override
     public void onLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State state) {
         super.onLayoutChildren(recycler, state);
-        if (mRecyclerView != null) {
-            if (mRecyclerView.getLayoutStep() == ExpandedRecyclerView.STEP_LAYOUT) mAddedRange.clear();
+        if (mRecyclerView != null && mRecyclerView.getLayoutStep() == ExpandedRecyclerView.STEP_LAYOUT) {
+            mAddedRange.clear();
         }
     }
 
@@ -77,6 +77,7 @@ public class ExpandableLayoutManager extends LinearLayoutManager {
                 ((OmegaExpandableRecyclerView.Adapter.ChildViewHolder) holder).contentView.setAlpha(0f);
             }
         }
+
         super.addView(child);
     }
 

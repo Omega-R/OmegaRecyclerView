@@ -7,16 +7,16 @@ import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.data.GroupPro
 import java.util.Arrays;
 import java.util.List;
 
-public class SimpleData implements GroupProvider<QuoteGlobalInfo, String> {
+public class SimpleData implements GroupProvider<QuoteGlobalInfo, Quote> {
 
     private QuoteGlobalInfo mQuoteGlobalInfo;
-    private List<String> mQuotes;
+    private List<Quote> mQuotes;
 
-    public static SimpleData from(QuoteGlobalInfo title, String... quotes) {
+    public static SimpleData from(QuoteGlobalInfo title, Quote... quotes) {
         return new SimpleData(title, Arrays.asList(quotes));
     }
 
-    public SimpleData(QuoteGlobalInfo quoteGlobalInfo, List<String> quotes) {
+    public SimpleData(QuoteGlobalInfo quoteGlobalInfo, List<Quote> quotes) {
         mQuoteGlobalInfo = quoteGlobalInfo;
         mQuotes = quotes;
     }
@@ -29,11 +29,11 @@ public class SimpleData implements GroupProvider<QuoteGlobalInfo, String> {
         mQuoteGlobalInfo = quoteGlobalInfo;
     }
 
-    public List<String> getQuotes() {
+    public List<Quote> getQuotes() {
         return mQuotes;
     }
 
-    public void setQuotes(List<String> quotes) {
+    public void setQuotes(List<Quote> quotes) {
         mQuotes = quotes;
     }
 
@@ -43,7 +43,7 @@ public class SimpleData implements GroupProvider<QuoteGlobalInfo, String> {
     }
 
     @Override
-    public List<String> provideChilds() {
+    public List<Quote> provideChilds() {
         return mQuotes;
     }
 

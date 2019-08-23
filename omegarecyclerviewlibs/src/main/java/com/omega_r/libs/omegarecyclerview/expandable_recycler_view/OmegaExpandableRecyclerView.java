@@ -329,9 +329,18 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
 
         @NonNull
         private List<ExpandableViewData<G, CH>> convertFrom(GroupProvider<G, CH>[] groupProviders) {
+            return convertFrom(Arrays.asList(groupProviders));
+        }
+
+        @NonNull
+        private List<ExpandableViewData<G, CH>> convertFrom(List<GroupProvider<G, CH>> groupProviders) {
             List<ExpandableViewData<G, CH>> expandableViewData = new ArrayList<>();
             for (GroupProvider<G, CH> groupProvider : groupProviders) {
-                expandableViewData.add(ExpandableViewData.of(groupProvider.provideGroup(), groupProvider.provideStickyId(), groupProvider.provideChilds()));
+                expandableViewData.add(ExpandableViewData.of(
+                        groupProvider.provideGroup(),
+                        groupProvider.provideStickyId(),
+                        groupProvider.provideChilds()
+                ));
             }
             return expandableViewData;
         }
@@ -347,7 +356,11 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
         }
 
         @SafeVarargs
-        public final void setItems(GroupProvider<G, CH>... groupProviders) {
+        public final void setItemsAsGroupProviders(GroupProvider<G, CH>... groupProviders) {
+            setItems(convertFrom(groupProviders));
+        }
+
+        public final void setItemsAsGroupProviders(@NonNull List<GroupProvider<G, CH>> groupProviders) {
             setItems(convertFrom(groupProviders));
         }
 
@@ -534,6 +547,13 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
 
         public Resources getResources() {
             return getContext().getResources();
+        }
+
+        public void notifyChildChanged(CH child) {
+            int visiblePosition = items.getVisiblePosition(child);
+            if (visiblePosition != FlatGroupingList.POSITION_NOT_FOUND) {
+                tryNotifyItemChanged(visiblePosition);
+            }
         }
 
         public abstract class GroupViewHolder extends BaseViewHolder<G> implements OnAnimationEndListener {
