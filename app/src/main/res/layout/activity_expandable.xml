@@ -29,6 +29,12 @@
             android:text="@string/button_use_dropdown"
             android:textColor="@color/white"/>
 
+        <Button
+            android:id="@+id/button_test_update_child"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/test_update_child" />
+
     </RadioGroup>
 
     <RadioGroup

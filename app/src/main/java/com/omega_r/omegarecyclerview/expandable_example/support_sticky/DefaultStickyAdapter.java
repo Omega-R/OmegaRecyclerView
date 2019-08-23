@@ -11,9 +11,10 @@ import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.data.Expandab
 import com.omega_r.libs.omegarecyclerview.sticky_decoration.StickyAdapter;
 import com.omega_r.libs.omegarecyclerview.sticky_decoration.HeaderStickyDecoration;
 import com.omega_r.omegarecyclerview.R;
+import com.omega_r.omegarecyclerview.expandable_example.core.Quote;
 import com.omega_r.omegarecyclerview.expandable_example.core.QuoteGlobalInfo;
 
-public class DefaultStickyAdapter extends OmegaExpandableRecyclerView.Adapter<QuoteGlobalInfo, String> implements StickyAdapter<DefaultStickyAdapter.StickyViewHolder> {
+public class DefaultStickyAdapter extends OmegaExpandableRecyclerView.Adapter<QuoteGlobalInfo, Quote> implements StickyAdapter<DefaultStickyAdapter.StickyViewHolder> {
 
     @Override
     protected ExGroupViewHolder provideGroupViewHolder(@NonNull ViewGroup viewGroup) {
@@ -27,7 +28,7 @@ public class DefaultStickyAdapter extends OmegaExpandableRecyclerView.Adapter<Qu
 
     @Override
     public long getStickyId(int position) {
-        ExpandableViewData<QuoteGlobalInfo, String> item = getItem(position);
+        ExpandableViewData<QuoteGlobalInfo, Quote> item = getItem(position);
         if (item == null) return HeaderStickyDecoration.NO_STICKY_ID;
         Integer providedId = item.getStickyId();
         return providedId == null ? HeaderStickyDecoration.NO_STICKY_ID : providedId;
@@ -78,8 +79,8 @@ public class DefaultStickyAdapter extends OmegaExpandableRecyclerView.Adapter<Qu
         }
 
         @Override
-        protected void onBind(String item) {
-            textView.setText(item);
+        protected void onBind(Quote item) {
+            textView.setText(item.getQuote());
         }
     }
 

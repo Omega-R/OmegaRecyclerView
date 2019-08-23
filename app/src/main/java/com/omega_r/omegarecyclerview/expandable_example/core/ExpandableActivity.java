@@ -3,6 +3,9 @@ package com.omega_r.omegarecyclerview.expandable_example.core;
 import android.os.Bundle;
 import androidx.annotation.LayoutRes;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.view.View;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
 
@@ -10,7 +13,11 @@ import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.OmegaExpandab
 import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.animation.ExpandableItemAnimator;
 import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.animation.standard_animations.DropDownItemAnimator;
 import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.animation.standard_animations.FadeItemAnimator;
+import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.data.GroupProvider;
 import com.omega_r.omegarecyclerview.R;
+
+import java.util.Arrays;
+import java.util.List;
 
 import omega.com.annotations.OmegaActivity;
 
@@ -27,6 +34,8 @@ public class ExpandableActivity extends AppCompatActivity implements CompoundBut
         return new ExpandableAdapter();
     }
 
+    private List<? extends GroupProvider<QuoteGlobalInfo, Quote>> items;
+
     @LayoutRes
     protected int provideContentLayoutRes() {
         return R.layout.activity_expandable;
@@ -37,9 +46,46 @@ public class ExpandableActivity extends AppCompatActivity implements CompoundBut
         super.onCreate(savedInstanceState);
         setContentView(provideContentLayoutRes());
 
+        createItems();
+
         setupRecyclerView();
         setupRadioButtons();
         fillAdapter();
+
+        findViewById(R.id.button_test_update_child).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Quote quote = items.get(3).provideChilds().get(1);
+                quote.setQuote("UPDATED QUOTE");
+                mAdapter.notifyChildChanged(quote);
+            }
+        });
+    }
+
+    private void createItems() {
+        items = Arrays.asList(
+                SimpleData.from(
+                        new QuoteGlobalInfo(getString(R.string.group_text_1), 1500),
+                        new Quote(getString(R.string.child_text_1))
+                ),
+                SimpleData.from(
+                        new QuoteGlobalInfo(getString(R.string.group_text_2), 1500),
+                        new Quote(getString(R.string.child_text_2))
+                ),
+                SimpleData.from(
+                        new QuoteGlobalInfo(getString(R.string.group_text_3), 1914),
+                        new Quote(getString(R.string.child_text_3)),
+                        new Quote(getString(R.string.child_text_5))
+                ),
+                SimpleData.from(
+                        new QuoteGlobalInfo(getString(R.string.group_text_5), 1914),
+                        new Quote(getString(R.string.child_text_1)),
+                        new Quote(getString(R.string.child_text_2)),
+                        new Quote(getString(R.string.child_text_3)),
+                        new Quote(getString(R.string.child_text_4)),
+                        new Quote(getString(R.string.child_text_5))
+                )
+        );
     }
 
     protected void setupRecyclerView() {
@@ -48,19 +94,7 @@ public class ExpandableActivity extends AppCompatActivity implements CompoundBut
     }
 
     protected void fillAdapter() {
-        mAdapter.setItems(
-                SimpleData.from(new QuoteGlobalInfo(getString(R.string.group_text_1), 1500), getString(R.string.child_text_1)),
-                SimpleData.from(new QuoteGlobalInfo(getString(R.string.group_text_2), 1500), getString(R.string.child_text_2)),
-                SimpleData.from(new QuoteGlobalInfo(getString(R.string.group_text_3), 1914),
-                        getString(R.string.child_text_3),
-                        getString(R.string.child_text_5)),
-                SimpleData.from(new QuoteGlobalInfo(getString(R.string.group_text_5), 1914),
-                        getString(R.string.child_text_1),
-                        getString(R.string.child_text_2),
-                        getString(R.string.child_text_3),
-                        getString(R.string.child_text_4),
-                        getString(R.string.child_text_5))
-        );
+        mAdapter.setItemsAsGroupProviders(items);
     }
 
     protected void setupRadioButtons() {

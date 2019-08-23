@@ -33,7 +33,7 @@ dependencies {
 # Usage
 Example of usage in xml layout
 ```
-com.omega_r.libs.omegarecyclerview.OmegaRecyclerView
+<com.omega_r.libs.omegarecyclerview.OmegaRecyclerView
         android:id="@+id/custom_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -306,7 +306,7 @@ Adding OmegaExpandableRecyclerView to layout:
 
 Create adapter like following:
 ```
-public class ExpandableAdapter extends OmegaExpandableRecyclerView.Adapter<QuoteGlobalInfo, String> {
+public class ExpandableAdapter extends OmegaExpandableRecyclerView.Adapter<QuoteGlobalInfo, Quote> {
 
     @Override
     protected ExGroupViewHolder provideGroupViewHolder(@NonNull ViewGroup viewGroup) {
@@ -353,8 +353,8 @@ public class ExpandableAdapter extends OmegaExpandableRecyclerView.Adapter<Quote
         }
 
         @Override
-        protected void onBind(String item) {
-            textView.setText(item);
+        protected void onBind(Quote item) {
+            textView.setText(item.getQuote());
         }
     }
 }
@@ -362,9 +362,10 @@ public class ExpandableAdapter extends OmegaExpandableRecyclerView.Adapter<Quote
 
 Use one of the following methods to set items for adapter or use adapter constructors:
 ```
-void setItems(@NonNull List<ExpandableViewData<G, CH>> expandableViewData)
-void setItems(ExpandableViewData<G, CH>... expandableViewData)
-void setItems(GroupProvider<G, CH>... groupProviders)
+public final void setItems(@NonNull List<ExpandableViewData<G, CH>> expandableViewData)
+public final void setItems(ExpandableViewData<G, CH>... expandableViewData)
+public final void setItemsAsGroupProviders(GroupProvider<G, CH>... groupProviders)
+public final void setItemsAsGroupProviders(@NonNull List<GroupProvider<G, CH>> groupProviders)
 ```
 
 Your view data (group and childs) should be wrapped with ```ExpandableViewData``` using one of the following ways:
@@ -385,6 +386,12 @@ public interface GroupProvider<G, CH> {
     @Nullable
     Integer provideStickyId();
 }
+```
+
+It is available to update only child item using 
+```
+// Adapter
+public void notifyChildChanged(CH child)
 ```
 
 You can set expandMode and childAnimation both with xml attr and programmatically
