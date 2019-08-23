@@ -3,6 +3,7 @@ package com.omega_r.omegarecyclerview.ListAdapterExample;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import com.omega_r.libs.omegarecyclerview.BaseListAdapter;
 import com.omega_r.omegarecyclerview.R;
 
@@ -13,8 +14,9 @@ public class ListAdapter extends BaseListAdapter<String> {
         super(clickListener, longClickListener);
     }
 
+    @NonNull
     @Override
-    protected ViewHolder provideViewHolder(ViewGroup parent) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         return new SampleViewHolder(parent);
     }
 

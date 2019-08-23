@@ -33,8 +33,8 @@ ext {
     compileSdkVersion = 28
     minSdkVersion = 16
     targetSdkVersion = 28
-    appcompatVersion = "1.1.0-alpha01"
-    materialVersion = "1.1.0-alpha03"
+    appcompatVersion = "1.1.0-rc01"
+    materialVersion = "1.1.0-alpha09"
     espressoVersion = "3.0.1"
     junitVersion = "4.12"
     omegaIntentBuilder = "1.1.5"
