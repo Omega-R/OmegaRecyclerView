@@ -65,6 +65,7 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
     private DividerItemDecoration mDividerItemDecoration;
     private int mItemSpace;
     private int mDividerSize;
+    private boolean mIsAdapterConnected;
 
     public OmegaRecyclerView(Context context) {
         super(context);
@@ -175,6 +176,7 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
     @Override
     @SuppressWarnings("unchecked")
     public void setAdapter(RecyclerView.Adapter adapter) {
+        mIsAdapterConnected = true;
         unregisterObservers();
 
         if (adapter == null) {
@@ -301,6 +303,38 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
                 mFooterList.add(view);
             }
         }
+    }
+
+    @Override
+    public int getChildCount() {
+        if (!mIsAdapterConnected && areSectionsInitialized())  {
+            return super.getChildCount() + mHeadersList.size() + mFooterList.size();
+        }
+
+        return super.getChildCount();
+    }
+
+    @Override
+    public View getChildAt(int index) {
+        if (!mIsAdapterConnected && areSectionsInitialized()) {
+            int realChildrenCount = super.getChildCount();
+            int headersCount = mHeadersList.size();
+            int footersCount = mFooterList.size();
+
+            if (index < realChildrenCount) {
+                return super.getChildAt(index);
+            } else if (index < realChildrenCount + headersCount) {
+                return mHeadersList.get(index - realChildrenCount);
+            } else if (index < realChildrenCount + headersCount + footersCount) {
+                return mFooterList.get(index - realChildrenCount - headersCount);
+            }
+
+        }
+        return super.getChildAt(index);
+    }
+
+    private boolean areSectionsInitialized() {
+        return mHeadersList != null && mFooterList != null;
     }
 
     @Override
