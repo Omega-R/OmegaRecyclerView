@@ -7,7 +7,7 @@ import android.widget.TextView;
 import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.OmegaExpandableRecyclerView;
 import com.omega_r.omegarecyclerview.R;
 
-public class ExpandableAdapter extends OmegaExpandableRecyclerView.Adapter<QuoteGlobalInfo, String> {
+public class ExpandableAdapter extends OmegaExpandableRecyclerView.Adapter<QuoteGlobalInfo, Quote> {
 
     @Override
     protected ExGroupViewHolder provideGroupViewHolder(@NonNull ViewGroup viewGroup) {
@@ -54,8 +54,8 @@ public class ExpandableAdapter extends OmegaExpandableRecyclerView.Adapter<Quote
         }
 
         @Override
-        protected void onBind(String item) {
-            textView.setText(item);
+        protected void onBind(Quote item) {
+            textView.setText(item.getQuote());
         }
     }
 }

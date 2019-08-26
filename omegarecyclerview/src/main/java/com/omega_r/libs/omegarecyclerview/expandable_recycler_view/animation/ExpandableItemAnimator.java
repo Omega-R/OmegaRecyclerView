@@ -2,12 +2,14 @@ package com.omega_r.libs.omegarecyclerview.expandable_recycler_view.animation;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 import androidx.recyclerview.widget.SimpleItemAnimator;
+
 import android.view.View;
 import android.view.ViewPropertyAnimator;
 
@@ -75,10 +77,18 @@ public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
         if (additionsPending) runAddActions(removalsPending, movesPending, changesPending);
 
         View someView = null;
-        if (removalsPending) someView = mPendingChanges.removals.get(0).itemView;
-        if (someView == null && movesPending) someView = mPendingChanges.moves.get(0).holder.itemView;
-        if (someView == null && changesPending) someView = mPendingChanges.changes.get(0).oldHolder.itemView;
-        if (someView == null && additionsPending) someView = mPendingChanges.additions.get(0).itemView;
+        if (removalsPending) {
+            someView = mPendingChanges.removals.get(0).itemView;
+        }
+        if (someView == null && movesPending) {
+            someView = mPendingChanges.moves.get(0).holder.itemView;
+        }
+        if (someView == null && changesPending) {
+            someView = mPendingChanges.changes.get(0).oldHolder.itemView;
+        }
+        if (someView == null && additionsPending) {
+            someView = mPendingChanges.additions.get(0).itemView;
+        }
         if (someView != null) {
             ViewCompat.postOnAnimationDelayed(someView, mPendingCleaner, getTotalDelay(removalsPending, movesPending, changesPending));
         }
@@ -501,7 +511,11 @@ public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
         ViewHolder holder = changeInfo.oldHolder;
         final View view = holder == null ? null : holder.itemView;
         ViewHolder newHolder = changeInfo.newHolder;
-        final View newView = newHolder != null ? newHolder.itemView : null;
+        final View newView = newHolder != null ?
+                (newHolder instanceof OmegaExpandableRecyclerView.Adapter.ChildViewHolder ?
+                        ((OmegaExpandableRecyclerView.Adapter.ChildViewHolder) newHolder).contentView
+                        : newHolder.itemView)
+                : null;
 
         if (view != null) {
             mChangeAnimations.add(changeInfo.oldHolder);
@@ -525,7 +539,8 @@ public abstract class ExpandableItemAnimator extends SimpleItemAnimator {
                             mChangeAnimations.remove(changeInfo.oldHolder);
                             dispatchFinishedWhenDone();
                         }
-                    }).start();
+                    })
+                    .start();
         }
 
         if (newView != null) {

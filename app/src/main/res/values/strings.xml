@@ -33,4 +33,5 @@
     <string name="button_support_sticky">Sticky header support</string>
     <string name="button_group_sticky">Group as sticky header</string>
     <string name="fastscroll_example">FastScroll Example</string>
+    <string name="test_update_child">Test update child</string>
 </resources>
