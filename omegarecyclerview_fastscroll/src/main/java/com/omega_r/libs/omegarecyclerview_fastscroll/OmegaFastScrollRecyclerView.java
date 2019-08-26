@@ -1,6 +1,7 @@
 package com.omega_r.libs.omegarecyclerview_fastscroll;
 
 import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -265,7 +266,7 @@ public class OmegaFastScrollRecyclerView extends OmegaRecyclerView {
         };
         mShowScrollbarAnimator.setDuration(mAnimDuration);
         mShowScrollbarAnimator.addUpdateListener(scrollbarAnimator);
-        mShowScrollbarAnimator.addListener(new AnimatorListener() {
+        mShowScrollbarAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
                 mIsScrollbarVisible = true;
@@ -273,7 +274,7 @@ public class OmegaFastScrollRecyclerView extends OmegaRecyclerView {
         });
         mHideScrollbarAnimator.setDuration(mAnimDuration);
         mHideScrollbarAnimator.addUpdateListener(scrollbarAnimator);
-        mHideScrollbarAnimator.addListener(new AnimatorListener() {
+        mHideScrollbarAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
                 mIsScrollbarVisible = false;
@@ -292,7 +293,7 @@ public class OmegaFastScrollRecyclerView extends OmegaRecyclerView {
         };
         mShowTrackAnimator.setDuration(mAnimDuration);
         mShowTrackAnimator.addUpdateListener(trackAnimator);
-        mShowTrackAnimator.addListener(new AnimatorListener() {
+        mShowTrackAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
                 mIsTrackVisible = true;
@@ -300,7 +301,7 @@ public class OmegaFastScrollRecyclerView extends OmegaRecyclerView {
         });
         mHideTrackAnimator.setDuration(mAnimDuration);
         mHideTrackAnimator.addUpdateListener(trackAnimator);
-        mHideTrackAnimator.addListener(new AnimatorListener() {
+        mHideTrackAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
                 mIsTrackVisible = false;
@@ -318,7 +319,7 @@ public class OmegaFastScrollRecyclerView extends OmegaRecyclerView {
         };
         mShowBubbleAnimator.setDuration(mBubbleAnimDuration);
         mShowBubbleAnimator.addUpdateListener(bubbleAnimator);
-        mShowBubbleAnimator.addListener(new AnimatorListener() {
+        mShowBubbleAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
                 mIsBubbleVisible = true;
@@ -326,7 +327,7 @@ public class OmegaFastScrollRecyclerView extends OmegaRecyclerView {
         });
         mHideBubbleAnimator.setDuration(mBubbleAnimDuration);
         mHideBubbleAnimator.addUpdateListener(bubbleAnimator);
-        mHideBubbleAnimator.addListener(new AnimatorListener() {
+        mHideBubbleAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
                 mIsBubbleVisible = false;

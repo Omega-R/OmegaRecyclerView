@@ -32,7 +32,7 @@ public class DrawableUtils {
     public static int getAlpha(@NonNull Drawable drawable) {
         if (SDK_INT >= KITKAT) return drawable.getAlpha();
 
-        if( drawable instanceof ColorDrawable) {
+        if (drawable instanceof ColorDrawable) {
             return ((ColorDrawable) drawable).getColor() >>> 24;
         } else if( drawable instanceof BitmapDrawable) {
             return ((BitmapDrawable) drawable).getPaint().getAlpha();
