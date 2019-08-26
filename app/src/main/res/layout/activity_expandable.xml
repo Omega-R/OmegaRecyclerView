@@ -60,7 +60,7 @@
 
     </RadioGroup>
 
-    <com.omega_r.libs.omegarecyclerview.expandable_recycler_view.OmegaExpandableRecyclerView
+    <com.omega_r.libs.omegarecyclerview_expandable.OmegaExpandableRecyclerView
         android:id="@+id/recyclerview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
