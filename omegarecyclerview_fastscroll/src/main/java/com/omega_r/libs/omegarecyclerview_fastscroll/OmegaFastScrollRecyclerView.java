@@ -28,7 +28,6 @@ import com.omega_r.libs.omegarecyclerview.OmegaRecyclerView;
 
 import static android.view.View.MeasureSpec.EXACTLY;
 import static com.omega_r.libs.omegarecyclerview.utils.ViewUtils.isReverseLayout;
-import static com.omega_r.libs.omegarecyclerview_fastscroll.DrawableUtils.getTintedDrawable;
 import static com.omega_r.libs.omegarecyclerview_fastscroll.Position.LEFT;
 import static com.omega_r.libs.omegarecyclerview_fastscroll.Position.RIGHT;
 
@@ -171,24 +170,12 @@ public class OmegaFastScrollRecyclerView extends OmegaRecyclerView {
             initBubbleDrawables(mPosition);
         }
 
-        Drawable trackDrawable = typedArray.getDrawable(R.styleable.OmegaFastScrollRecyclerView_trackDrawable);
-        if (trackDrawable != null) mTrackDrawable = trackDrawable;
-        int trackColor = typedArray.getColor(R.styleable.OmegaFastScrollRecyclerView_omega_trackColor, Color.TRANSPARENT);
-        if (trackColor != Color.TRANSPARENT)
-            mTrackDrawable = getTintedDrawable(mTrackDrawable, trackColor);
-
-        Drawable bubbleUp = typedArray.getDrawable(R.styleable.OmegaFastScrollRecyclerView_bubbleUpDrawable);
-        if (bubbleUp != null) mBubbleUpDrawable = bubbleUp;
-        int bubbleUpColor = typedArray.getColor(R.styleable.OmegaFastScrollRecyclerView_bubbleUpColor, Color.TRANSPARENT);
-        if (bubbleUpColor != Color.TRANSPARENT)
-            mBubbleUpDrawable = getTintedDrawable(mBubbleUpDrawable, bubbleUpColor);
-
-        Drawable bubbleDown = typedArray.getDrawable(R.styleable.OmegaFastScrollRecyclerView_bubbleDownDrawable);
-        if (bubbleDown != null) mBubbleDownDrawable = bubbleDown;
-        int bubbleDownColor = typedArray.getColor(R.styleable.OmegaFastScrollRecyclerView_bubbleDownColor, Color.TRANSPARENT);
-        if (bubbleUpColor != Color.TRANSPARENT)
-            mBubbleDownDrawable = getTintedDrawable(mBubbleDownDrawable, bubbleDownColor);
-
+        mTrackDrawable = getTintedDrawable(typedArray, mTrackDrawable,
+                R.styleable.OmegaFastScrollRecyclerView_trackDrawable, R.styleable.OmegaFastScrollRecyclerView_omega_trackColor);
+        mBubbleUpDrawable = getTintedDrawable(typedArray, mBubbleUpDrawable,
+                R.styleable.OmegaFastScrollRecyclerView_bubbleUpDrawable, R.styleable.OmegaFastScrollRecyclerView_bubbleUpColor);
+        mBubbleDownDrawable = getTintedDrawable(typedArray, mBubbleDownDrawable, R
+                .styleable.OmegaFastScrollRecyclerView_bubbleDownDrawable, R.styleable.OmegaFastScrollRecyclerView_bubbleDownColor);
 
         int trackPadding = typedArray.getDimensionPixelSize(R.styleable.OmegaFastScrollRecyclerView_fastScrollTrackPadding, -1);
         if (trackPadding != -1) {
@@ -236,6 +223,16 @@ public class OmegaFastScrollRecyclerView extends OmegaRecyclerView {
         int textSize = typedArray.getDimensionPixelSize(R.styleable.OmegaFastScrollRecyclerView_fastScrollTextSize,
                 getResources().getDimensionPixelSize(R.dimen.fastscroll_text_size));
         mTextPaint.setTextSize(textSize);
+    }
+
+    private Drawable getTintedDrawable(@NonNull TypedArray typedArray, Drawable defaultDrawable, int drawableIndex, int colorIndex) {
+        Drawable drawable = typedArray.getDrawable(drawableIndex);
+        int trackColor = typedArray.getColor(colorIndex, Color.TRANSPARENT);
+
+        if (drawable != null && trackColor != Color.TRANSPARENT) return DrawableUtils.getTintedDrawable(drawable, trackColor);
+        if (trackColor != Color.TRANSPARENT) return DrawableUtils.getTintedDrawable(defaultDrawable, trackColor);
+
+        return defaultDrawable;
     }
 
     private void initBubbleDrawables(Position position) {
@@ -466,13 +463,14 @@ public class OmegaFastScrollRecyclerView extends OmegaRecyclerView {
     }
 
     private boolean isScrollbarTouched(float eventX) {
-        return eventX >= mScrollbarBounds.left && eventX <= mScrollbarBounds.right;
+        return mScrollbarBounds.left <= eventX && eventX <= mScrollbarBounds.right;
     }
 
     private boolean isBubbleTouched(float eventX, float eventY) {
         if (mBubbleDrawable == null) return false;
         Rect bounds = mBubbleDrawable.getBounds();
-        return bounds.left <= eventX && eventX <= bounds.right && bounds.top <= eventY && eventY <= bounds.bottom;
+        return bounds.left <= eventX && eventX <= bounds.right
+                && bounds.top <= eventY && eventY <= bounds.bottom;
     }
 
     private void updateRecyclerViewPosition(float eventY) {
