@@ -1,1 +1,1 @@
-include ':app', ':omegarecyclerview', ':omegarecyclerview_fastscroll'
+include ':app', ':omegarecyclerview', ':omegarecyclerview_fastscroll', ':omegarecyclerview_expandable'

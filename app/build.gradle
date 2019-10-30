@@ -33,6 +33,7 @@ dependencies {
 
     implementation project(':omegarecyclerview')
     implementation project(':omegarecyclerview_fastscroll')
+    implementation project(':omegarecyclerview_expandable')
 
     androidTestImplementation('com.android.support.test.espresso:espresso-core:' + rootProject.espressoVersion, {
         exclude group: 'com.android.support', module: 'support-annotations'
