@@ -1,54 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp"
-    tools:context="com.omega_r.omegarecyclerview.MainActivity">
+    android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/button_swipe_menu"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/swipe_menu_example"/>
+        android:orientation="vertical"
+        android:padding="16dp"
+        tools:context="com.omega_r.omegarecyclerview.MainActivity">
 
-    <Button
-        android:id="@+id/button_sticky_header"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/sticky_header_example"/>
+        <Button
+            android:id="@+id/button_swipe_menu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/swipe_menu_example" />
 
-    <Button
-        android:id="@+id/button_pagination"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/pagination_example"/>
+        <Button
+            android:id="@+id/button_sticky_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/sticky_header_example" />
 
-    <Button
-        android:id="@+id/button_sections"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/sections_example"/>
+        <Button
+            android:id="@+id/button_pagination"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/pagination_example" />
 
-    <Button
-        android:id="@+id/button_viewpager"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/viewpager_example"/>
+        <Button
+            android:id="@+id/button_sections"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/sections_example" />
 
-    <Button
-        android:id="@+id/button_list_adapter"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/list_adapter_example"/>
+        <Button
+            android:id="@+id/button_viewpager"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/viewpager_example" />
 
+        <Button
+            android:id="@+id/button_list_adapter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/list_adapter_example" />
 
-    <Button
-        android:id="@+id/button_expandable_recyclerview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/expandable_recyclerview_example"/>
+        <Button
+            android:id="@+id/button_expandable_recyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/expandable_recyclerview_example" />
 
-</LinearLayout>
+        <Button
+            android:id="@+id/button_fastscroll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/fastscroll_example" />
+
+    </LinearLayout>
+
+</ScrollView>
