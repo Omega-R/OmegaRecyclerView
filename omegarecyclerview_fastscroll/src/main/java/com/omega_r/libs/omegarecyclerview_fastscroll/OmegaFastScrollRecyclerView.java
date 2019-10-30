@@ -46,7 +46,7 @@ public class OmegaFastScrollRecyclerView extends OmegaRecyclerView {
 
         @Override
         public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-            if (!isEnabled() || mFastScrollAdapter == null) return;
+            if (!isEnabled() || getFastScrollAdapter() == null) return;
             OmegaFastScrollRecyclerView.this.onScrollScreenStateChanged(newState);
         }
 
@@ -56,7 +56,7 @@ public class OmegaFastScrollRecyclerView extends OmegaRecyclerView {
                 isFirstScroll = false;
                 return;
             }
-            if (!isEnabled() || mFastScrollAdapter == null) return;
+            if (!isEnabled() || getFastScrollAdapter() == null) return;
             OmegaFastScrollRecyclerView.this.onScrolled();
         }
     };
@@ -80,9 +80,6 @@ public class OmegaFastScrollRecyclerView extends OmegaRecyclerView {
     private final SparseArray<RecyclerView.ViewHolder> mHolderSparseArray = new SparseArray<>();
     private final Paint mTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Rect mTextBounds = new Rect();
-
-    @Nullable
-    private FastScrollAdapter mFastScrollAdapter;
 
     private Drawable mBubbleUpDrawable;
     private Drawable mBubbleDownDrawable;
@@ -379,11 +376,15 @@ public class OmegaFastScrollRecyclerView extends OmegaRecyclerView {
     @Override
     public void setAdapter(RecyclerView.Adapter adapter) {
         super.setAdapter(adapter);
-        if (adapter instanceof FastScrollAdapter) {
-            mFastScrollAdapter = (FastScrollAdapter) adapter;
-        } else if (adapter == null) {
-            mFastScrollAdapter = null;
+        if (adapter != null && !(adapter instanceof FastScrollAdapter)) {
+            throw new IllegalArgumentException("RecyclerView.Adapter should be instanceof FastScrollAdapter");
         }
+    }
+
+    @Nullable
+    private FastScrollAdapter getFastScrollAdapter() {
+        RecyclerView.Adapter adapter = getAdapter();
+        return adapter == null ? null : (FastScrollAdapter) adapter;
     }
 
     @Override
@@ -732,16 +733,17 @@ public class OmegaFastScrollRecyclerView extends OmegaRecyclerView {
     }
 
     private void drawBubbleContent(Canvas canvas) {
-        if (mFastScrollAdapter == null) return;
+        FastScrollAdapter adapter = getFastScrollAdapter();
+        if (adapter == null) return;
         LayoutManager layoutManager = getLayoutManager();
         if (!(layoutManager instanceof LinearLayoutManager)) return;
         int position = ((LinearLayoutManager) layoutManager).findFirstVisibleItemPosition();
         if (position == RecyclerView.NO_POSITION) return;
 
-        if (mFastScrollAdapter instanceof FastScrollAdapter.Text) {
-            drawText(canvas, ((FastScrollAdapter.Text) mFastScrollAdapter).getText(position));
-        } else if (mFastScrollAdapter instanceof FastScrollAdapter.ViewHolder) {
-            drawGroupViewHolder(canvas, (FastScrollAdapter.ViewHolder) mFastScrollAdapter, position);
+        if (adapter instanceof FastScrollAdapter.Text) {
+            drawText(canvas, ((FastScrollAdapter.Text) adapter).getText(position));
+        } else if (adapter instanceof FastScrollAdapter.ViewHolder) {
+            drawGroupViewHolder(canvas, (FastScrollAdapter.ViewHolder) adapter, position);
         }
     }
 
@@ -760,7 +762,6 @@ public class OmegaFastScrollRecyclerView extends OmegaRecyclerView {
         if (mBubbleDrawable == null) return;
         Rect bounds = mBubbleDrawable.getBounds();
 
-        assert mFastScrollAdapter != null;
         long groupId = adapter.getFastScrollGroupId(position);
         RecyclerView.ViewHolder viewHolder = mHolderSparseArray.get((int) groupId);
         if (viewHolder == null) {
