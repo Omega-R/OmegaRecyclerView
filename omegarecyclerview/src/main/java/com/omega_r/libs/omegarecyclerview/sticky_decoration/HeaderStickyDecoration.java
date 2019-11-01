@@ -85,9 +85,4 @@ public class HeaderStickyDecoration extends StickyDecoration {
         return (int) Math.max(0, child.getY() - stickerHeight  - topMargin);
     }
 
-    @Override
-    protected int getMeasureStickerWidthMode() {
-        return View.MeasureSpec.EXACTLY;
-    }
-
 }
