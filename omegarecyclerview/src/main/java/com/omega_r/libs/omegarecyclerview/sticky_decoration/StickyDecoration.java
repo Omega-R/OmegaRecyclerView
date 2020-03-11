@@ -153,7 +153,7 @@ abstract class StickyDecoration extends BaseStickyDecoration {
     }
 
     protected int getMeasureStickerWidthMode() {
-        return View.MeasureSpec.UNSPECIFIED;
+        return View.MeasureSpec.EXACTLY;
     }
 
     protected int getMeasureStickerHeightMode() {
