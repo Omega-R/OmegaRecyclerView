@@ -663,8 +663,12 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
 
     @Override
     public void onRestoreInstanceState(Parcelable state) {
-        Bundle bundle = (Bundle) state;
-        mCurrentPosition = bundle.getInt(KEY_EXTRA_POSITION);
+        if (state instanceof Bundle) {
+            Bundle bundle = (Bundle) state;
+            mCurrentPosition = bundle.getInt(KEY_EXTRA_POSITION);
+        } else {
+            super.onRestoreInstanceState(state);
+        }
     }
 
     @Override
