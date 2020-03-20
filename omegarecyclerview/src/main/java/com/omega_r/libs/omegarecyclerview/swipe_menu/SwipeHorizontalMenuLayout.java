@@ -5,6 +5,7 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.core.view.ViewCompat;
 
+import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
@@ -24,6 +25,7 @@ public class SwipeHorizontalMenuLayout extends SwipeMenuLayout {
     private boolean mDownMenuOpen;
     private boolean isLeftSwipeEnabled = true;
     private boolean isRightSwipeEnabled = true;
+    private boolean mFixedPositionMenuEnabled;
 
     public SwipeHorizontalMenuLayout(Context context) {
         super(context);
@@ -400,4 +402,33 @@ public class SwipeHorizontalMenuLayout extends SwipeMenuLayout {
         }
     }
 
+    public void setFixedPositionMenuEnabled(boolean enabled) {
+        mFixedPositionMenuEnabled = enabled;
+    }
+
+    @Override
+    protected void onScrollChanged(int l, int t, int oldl, int oldt) {
+        super.onScrollChanged(l, t, oldl, oldt);
+        if (mFixedPositionMenuEnabled) {
+            if (mBeginSwiper != null) {
+                mBeginSwiper.getMenuView().setTranslationX(mBeginSwiper.getMenuView().getWidth() + l);
+            }
+            if (mEndSwiper != null) {
+                mEndSwiper.getMenuView().setTranslationX(-mEndSwiper.getMenuView().getWidth() + l);
+            }
+        }
+    }
+
+    @Override
+    protected boolean drawChild(Canvas canvas, View child, long drawingTime) {
+        if (mFixedPositionMenuEnabled) {
+            int saveCount = canvas.save();
+            canvas.clipRect(child.getLeft(), child.getTop(), child.getRight(), child.getBottom());
+            boolean result = super.drawChild(canvas, child, drawingTime);
+            canvas.restoreToCount(saveCount);
+            return result;
+        } else {
+            return super.drawChild(canvas, child, drawingTime);
+        }
+    }
 }
