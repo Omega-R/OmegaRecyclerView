@@ -1,8 +1,10 @@
 package com.omega_r.libs.omegarecyclerview.swipe_menu;
 
 import android.content.Context;
+
 import androidx.annotation.NonNull;
 import androidx.core.view.ViewCompat;
+
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
@@ -49,6 +51,7 @@ public class SwipeHorizontalMenuLayout extends SwipeMenuLayout {
             case MotionEvent.ACTION_MOVE:
                 int disX = (int) (ev.getX() - mDownX);
                 int disY = (int) (ev.getY() - mDownY);
+                mLastX = (int) ev.getX();
                 isIntercepted = Math.abs(disX) > mScaledTouchSlop && Math.abs(disX) > Math.abs(disY);
                 break;
             case MotionEvent.ACTION_UP:
@@ -89,17 +92,13 @@ public class SwipeHorizontalMenuLayout extends SwipeMenuLayout {
                 if (eventX > mLastX && !isLeftSwipeEnabled && !isNotInPlace()) break;
 
                 int disX = (int) (mLastX - ev.getX());
-                int disY = (int) (mLastY - ev.getY());
-                if (!mDragging
-                        && Math.abs(disX) > mScaledTouchSlop
-                        && Math.abs(disX) > Math.abs(disY)) {
+                if (!mDragging) {
                     ViewParent parent = getParent();
                     if (parent != null) {
                         parent.requestDisallowInterceptTouchEvent(true);
                     }
                     mDragging = true;
-                }
-                if (mDragging) {
+                } else {
                     if (mCurrentSwiper == null || shouldResetSwiper) {
                         if (disX < 0) {
                             if (mBeginSwiper != null)
@@ -332,9 +331,9 @@ public class SwipeHorizontalMenuLayout extends SwipeMenuLayout {
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         if (mContentView == null) return;
 
-        int parentViewWidth = ViewCompat.getMeasuredWidthAndState(this);
-        int contentViewWidth = ViewCompat.getMeasuredWidthAndState(mContentView);
-        int contentViewHeight = ViewCompat.getMeasuredHeightAndState(mContentView);
+        int parentViewWidth = getMeasuredWidthAndState();
+        int contentViewWidth = mContentView.getMeasuredWidthAndState();
+        int contentViewHeight = mContentView.getMeasuredHeightAndState();
         LayoutParams lp = (LayoutParams) mContentView.getLayoutParams();
         int lGap = getPaddingLeft() + lp.leftMargin;
         int tGap = getPaddingTop() + lp.topMargin;
@@ -345,8 +344,8 @@ public class SwipeHorizontalMenuLayout extends SwipeMenuLayout {
                 tGap + contentViewHeight);
 
         if (mEndSwiper != null) {
-            int menuViewWidth = ViewCompat.getMeasuredWidthAndState(mEndSwiper.getMenuView());
-            int menuViewHeight = ViewCompat.getMeasuredHeightAndState(mEndSwiper.getMenuView());
+            int menuViewWidth = mEndSwiper.getMenuView().getMeasuredWidthAndState();
+            int menuViewHeight = mEndSwiper.getMenuView().getMeasuredHeightAndState();
             lp = (LayoutParams) mEndSwiper.getMenuView().getLayoutParams();
             tGap = getPaddingTop() + lp.topMargin;
             mEndSwiper.getMenuView().layout(parentViewWidth,
@@ -356,8 +355,8 @@ public class SwipeHorizontalMenuLayout extends SwipeMenuLayout {
         }
 
         if (mBeginSwiper != null) {
-            int menuViewWidth = ViewCompat.getMeasuredWidthAndState(mBeginSwiper.getMenuView());
-            int menuViewHeight = ViewCompat.getMeasuredHeightAndState(mBeginSwiper.getMenuView());
+            int menuViewWidth = mBeginSwiper.getMenuView().getMeasuredWidthAndState();
+            int menuViewHeight = mBeginSwiper.getMenuView().getMeasuredHeightAndState();
             lp = (LayoutParams) mBeginSwiper.getMenuView().getLayoutParams();
             tGap = getPaddingTop() + lp.topMargin;
             mBeginSwiper.getMenuView().layout(-menuViewWidth,
