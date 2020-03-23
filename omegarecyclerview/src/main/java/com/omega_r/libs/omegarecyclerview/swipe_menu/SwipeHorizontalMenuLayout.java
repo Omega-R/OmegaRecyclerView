@@ -411,10 +411,10 @@ public class SwipeHorizontalMenuLayout extends SwipeMenuLayout {
         super.onScrollChanged(l, t, oldl, oldt);
         if (mFixedPositionMenuEnabled) {
             if (mBeginSwiper != null) {
-                mBeginSwiper.getMenuView().setTranslationX(mBeginSwiper.getMenuView().getWidth() + l);
+                mBeginSwiper.getMenuView().setTranslationX(l == 0 ? 0 : mBeginSwiper.getMenuView().getWidth() + l);
             }
             if (mEndSwiper != null) {
-                mEndSwiper.getMenuView().setTranslationX(-mEndSwiper.getMenuView().getWidth() + l);
+                mEndSwiper.getMenuView().setTranslationX(l == 0 ? 0 : -mEndSwiper.getMenuView().getWidth() + l);
             }
         }
     }
