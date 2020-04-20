@@ -5,6 +5,8 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 
+import com.omega_r.libs.omegarecyclerview.header.HeaderFooterWrapperAdapter;
+
 public class PageRequester extends RecyclerView.ItemDecoration {
 
     @Nullable
@@ -29,7 +31,13 @@ public class PageRequester extends RecyclerView.ItemDecoration {
         int adapterPosition = ((RecyclerView.LayoutParams) view.getLayoutParams()).getViewAdapterPosition();
         if(adapterPosition < 0) return;
 
-        int itemCount = recyclerView.getAdapter().getItemCount();
+        RecyclerView.Adapter adapter = recyclerView.getAdapter();
+        int itemCount = adapter.getItemCount();
+        if (adapter instanceof HeaderFooterWrapperAdapter) {
+            HeaderFooterWrapperAdapter wrapperAdapter = (HeaderFooterWrapperAdapter) adapter;
+            itemCount -= wrapperAdapter.getItemCount() - wrapperAdapter.getWrappedAdapter().getItemCount();
+        }
+
         // RecyclerView.Adapter getItemCount gives count of values + 1 (PaginationViewHolder)
         int preventionPosition = itemCount - mCallback.getPagePreventionForEnd() - 1;
         if (adapterPosition >= preventionPosition && itemCount > mLastItemCount) {
