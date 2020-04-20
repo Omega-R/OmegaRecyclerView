@@ -27,6 +27,8 @@ public class PageRequester extends RecyclerView.ItemDecoration {
         if (mCallback == null || !mEnabled) return;
 
         int adapterPosition = ((RecyclerView.LayoutParams) view.getLayoutParams()).getViewAdapterPosition();
+        if(adapterPosition < 0) return;
+
         int itemCount = recyclerView.getAdapter().getItemCount();
         // RecyclerView.Adapter getItemCount gives count of values + 1 (PaginationViewHolder)
         int preventionPosition = itemCount - mCallback.getPagePreventionForEnd() - 1;
