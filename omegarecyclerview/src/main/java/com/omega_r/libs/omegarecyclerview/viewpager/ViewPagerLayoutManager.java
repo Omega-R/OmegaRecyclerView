@@ -28,8 +28,10 @@ import com.omega_r.libs.omegarecyclerview.viewpager.orientation.OrientationHelpe
 import com.omega_r.libs.omegarecyclerview.viewpager.orientation.VerticalHelper;
 import com.omega_r.libs.omegarecyclerview.viewpager.transform.ItemTransformer;
 
+import static android.view.View.MeasureSpec.UNSPECIFIED;
 import static androidx.recyclerview.widget.RecyclerView.HORIZONTAL;
 import static androidx.recyclerview.widget.RecyclerView.NO_POSITION;
+import static androidx.recyclerview.widget.RecyclerView.UNDEFINED_DURATION;
 import static androidx.recyclerview.widget.RecyclerView.VERTICAL;
 
 public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
@@ -204,13 +206,15 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
 
         switch (mOrientation) {
             case HORIZONTAL:
-                if (getHeightMode() == View.MeasureSpec.AT_MOST) {
-                    heightSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+                int heightMode = getHeightMode();
+                if (heightMode == View.MeasureSpec.AT_MOST || heightMode == UNSPECIFIED) {
+                    heightSpec = View.MeasureSpec.makeMeasureSpec(0, UNSPECIFIED);
                 }
                 break;
             case VERTICAL:
-                if (getWidthMode() == View.MeasureSpec.AT_MOST) {
-                    widthSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+                int widthMode = getWidthMode();
+                if (widthMode == View.MeasureSpec.AT_MOST || widthMode == UNSPECIFIED) {
+                    widthSpec = View.MeasureSpec.makeMeasureSpec(0, UNSPECIFIED);
                 }
                 break;
         }
