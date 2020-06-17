@@ -199,8 +199,21 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
                 break;
         }
 
-        final int widthSpec = View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY);
-        final int heightSpec = View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY);
+        int widthSpec = View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY);
+        int heightSpec = View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY);
+
+        switch (mOrientation) {
+            case HORIZONTAL:
+                if (getHeightMode() == View.MeasureSpec.AT_MOST) {
+                    heightSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+                }
+                break;
+            case VERTICAL:
+                if (getWidthMode() == View.MeasureSpec.AT_MOST) {
+                    widthSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+                }
+                break;
+        }
         measureChildWithDecorationsAndMargin(view, widthSpec, heightSpec);
         return view;
     }
