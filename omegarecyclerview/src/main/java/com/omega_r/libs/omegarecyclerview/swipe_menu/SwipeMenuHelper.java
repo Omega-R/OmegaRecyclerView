@@ -1,10 +1,10 @@
 package com.omega_r.libs.omegarecyclerview.swipe_menu;
 
-import android.content.Context;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewConfiguration;
 import android.view.ViewGroup;
+
+import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,19 +13,29 @@ public class SwipeMenuHelper {
 
     private static final int INVALID_POSITION = -1;
 
-    private Callback mCallback;
-
+    private final Callback mCallback;
+    @Nullable
     private SwipeHorizontalMenuLayout mOldSwipedView;
-
     private int mOldTouchedPosition = INVALID_POSITION;
 
-    public SwipeMenuHelper(Context context, Callback callback) {
+    public SwipeMenuHelper(Callback callback) {
         mCallback = callback;
-        ViewConfiguration.get(context);
     }
 
-    public boolean handleListDownTouchEvent(MotionEvent ev, boolean defaultIntercepted) {
-        boolean isIntercepted = defaultIntercepted;
+    public boolean handleTouchEventForSecurity(MotionEvent ev, boolean defaultResult) {
+        if (mOldSwipedView == null ||
+                ev.getActionIndex() == 0 ||
+                ev.getActionMasked() != MotionEvent.ACTION_POINTER_DOWN) return defaultResult;
+
+        int pointerId = ev.getPointerId(ev.getActionIndex());
+        SwipeHorizontalMenuLayout touchingView = getTouchingView(ev.getX(pointerId), ev.getY(pointerId));
+        return mOldSwipedView.equals(touchingView) && defaultResult;
+    }
+
+    public boolean handleInterceptTouchEvent(MotionEvent ev, boolean defaultResult) {
+        if (ev.getActionIndex() != 0 || ev.getAction() != MotionEvent.ACTION_DOWN) return defaultResult;
+
+        boolean isIntercepted = defaultResult;
         View touchingView = findChildViewUnder((int) ev.getX(), (int) ev.getY());
         int touchingPosition;
 
@@ -42,16 +52,11 @@ public class SwipeMenuHelper {
             }
         }
 
-        touchingView = mCallback.transformTouchView(touchingPosition, touchingView);
-
-        if (touchingView instanceof ViewGroup) {
-            View itemView = getSwipeMenuView((ViewGroup) touchingView);
-            if (itemView instanceof SwipeHorizontalMenuLayout) {
-                mOldSwipedView = (SwipeHorizontalMenuLayout) itemView;
-                mOldTouchedPosition = touchingPosition;
-            }
+        touchingView = extractSwipeMenuView(mCallback.transformTouchView(touchingPosition, touchingView));
+        if (touchingView != null) {
+            mOldSwipedView = (SwipeHorizontalMenuLayout) touchingView;
+            mOldTouchedPosition = touchingPosition;
         }
-
         if (isIntercepted) {
             mOldSwipedView = null;
             mOldTouchedPosition = INVALID_POSITION;
@@ -60,20 +65,27 @@ public class SwipeMenuHelper {
         return isIntercepted;
     }
 
-    private View getSwipeMenuView(ViewGroup itemView) {
-        if (itemView instanceof SwipeHorizontalMenuLayout) {
-            return itemView;
+    private SwipeHorizontalMenuLayout getTouchingView(float eventX, float eventY) {
+        View touchingView = findChildViewUnder(eventX, eventY);
+        if (touchingView != null) {
+            int touchingPosition = mCallback.getPositionForView(touchingView);
+            touchingView = mCallback.transformTouchView(touchingPosition, touchingView);
         }
+        return extractSwipeMenuView(touchingView);
+    }
+
+    @Nullable
+    private SwipeHorizontalMenuLayout extractSwipeMenuView(@Nullable View view) {
+        if (view instanceof SwipeHorizontalMenuLayout) return (SwipeHorizontalMenuLayout) view;
 
         List<View> unvisited = new ArrayList<>();
-        unvisited.add(itemView);
+        if (view != null) unvisited.add(view);
 
         while (!unvisited.isEmpty()) {
             View child = unvisited.remove(0);
 
+            if (child instanceof SwipeHorizontalMenuLayout) return (SwipeHorizontalMenuLayout) child;
             if (!(child instanceof ViewGroup)) continue;
-
-            if (child instanceof SwipeHorizontalMenuLayout) return child;
 
             ViewGroup group = (ViewGroup) child;
             int childCount = group.getChildCount();
@@ -83,7 +95,7 @@ public class SwipeMenuHelper {
             }
         }
 
-        return itemView;
+        return null;
     }
 
     private View findChildViewUnder(float x, float y) {
