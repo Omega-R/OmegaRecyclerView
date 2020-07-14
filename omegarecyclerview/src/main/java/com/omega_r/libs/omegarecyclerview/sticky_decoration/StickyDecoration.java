@@ -22,11 +22,10 @@ abstract class StickyDecoration extends BaseStickyDecoration {
 
     private static final float CLICK_MOVE_BIAS = 150;
 
-    private long mClickedPosition = NO_POSITION;
+    private final Map<Long, Rect> mStickyRectMap = new HashMap<>();
+    private long mClickedStickyId = NO_STICKY_ID;
     private float mActionDownX;
     private float mActionDownY;
-
-    private final Map<Long, Rect> mStickyRectMap = new HashMap<>();
 
     public StickyDecoration(@Nullable StickyAdapter adapter) {
         super(adapter);
@@ -43,14 +42,14 @@ abstract class StickyDecoration extends BaseStickyDecoration {
             case MotionEvent.ACTION_DOWN:
                 mActionDownX = ev.getX();
                 mActionDownY = ev.getY();
-                mClickedPosition = NO_POSITION;
+                mClickedStickyId = NO_STICKY_ID;
                 return handleActionDown(parent, ev, defaultResult);
             case MotionEvent.ACTION_UP:
-                if (mStickyAdapter != null && mClickedPosition != NO_POSITION) {
+                if (mStickyAdapter != null && mClickedStickyId != NO_STICKY_ID) {
                     float eventX = ev.getX();
                     float eventY = ev.getY();
                     if (abs(mActionDownX - eventX) <= CLICK_MOVE_BIAS && abs(mActionDownY - eventY) <= CLICK_MOVE_BIAS) {
-                        mStickyAdapter.onClickStickyViewHolder(mClickedPosition);
+                        mStickyAdapter.onClickStickyViewHolder(mClickedStickyId);
                     }
                 }
                 break;
@@ -64,7 +63,7 @@ abstract class StickyDecoration extends BaseStickyDecoration {
         for (Long stickyId : mStickyRectMap.keySet()) {
             Rect rect = mStickyRectMap.get(stickyId);
             if (stickyId != NO_STICKY_ID && rect != null && !rect.isEmpty() && rect.contains(eventX, eventY)) {
-                mClickedPosition = stickyId;
+                mClickedStickyId = stickyId;
                 return true;
             }
         }
