@@ -264,7 +264,8 @@ public class HeaderFooterWrapperAdapter<T extends RecyclerView.Adapter> extends 
 
     @Override
     public void onClickStickyViewHolder(long id) {
-        // nothing
+        StickyAdapter stickyAdapter = getStickyAdapter();
+        if (stickyAdapter != null) stickyAdapter.onClickStickyViewHolder(id);
     }
 
     @Override
