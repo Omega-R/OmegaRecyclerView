@@ -55,6 +55,7 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
     private View mEmptyView;
     private int mEmptyViewId;
 
+    @Nullable
     private BaseStickyDecoration mBaseStickyDecoration;
     private int mStickyMode = StickyAdapter.Mode.HEADER;
     @LayoutRes
@@ -409,7 +410,15 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        return mSwipeMenuHelper.handleInterceptTouchEvent(ev, super.onInterceptTouchEvent(ev));
+        boolean result = mSwipeMenuHelper.handleInterceptTouchEvent(ev, super.onInterceptTouchEvent(ev));
+        if (mBaseStickyDecoration != null && !result) return mBaseStickyDecoration.onTouchEvent(this, ev, result);
+        return result;
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent e) {
+        boolean result = super.onTouchEvent(e);
+        return mBaseStickyDecoration == null ? result : mBaseStickyDecoration.onTouchEvent(this, e, result);
     }
 
     @Override

@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.omega_r.libs.omegarecyclerview.OmegaRecyclerView;
 import com.omega_r.libs.omegarecyclerview.sticky_decoration.StickyAdapter;
@@ -14,9 +15,11 @@ public class StickyHeaderAdapter extends OmegaRecyclerView.Adapter<StickyHeaderA
         implements StickyAdapter<StickyHeaderAdapter.HeaderHolder> {
 
     private LayoutInflater mInflater;
+    private final Context mContext;
 
     public StickyHeaderAdapter(Context context) {
         mInflater = LayoutInflater.from(context);
+        mContext = context;
     }
 
     @Override
@@ -51,12 +54,23 @@ public class StickyHeaderAdapter extends OmegaRecyclerView.Adapter<StickyHeaderA
         viewHolder.header.setText("Header " + getStickyId(position));
     }
 
+    @Override
+    public void onClickStickyViewHolder(long id) {
+        Toast.makeText(mContext, "onClickStickyViewHolder " + id, Toast.LENGTH_SHORT).show();
+    }
+
     static class ViewHolder extends OmegaRecyclerView.ViewHolder {
         public TextView item;
 
         public ViewHolder(View itemView) {
             super(itemView);
             item = (TextView) itemView;
+            item.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(v.getContext(), "Clicked", Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     }
 

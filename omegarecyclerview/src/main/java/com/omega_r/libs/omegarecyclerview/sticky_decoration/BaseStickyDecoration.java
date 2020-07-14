@@ -1,9 +1,13 @@
 package com.omega_r.libs.omegarecyclerview.sticky_decoration;
 
+import android.view.MotionEvent;
+
 import androidx.annotation.CallSuper;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
+@SuppressWarnings("rawtypes")
 public abstract class BaseStickyDecoration extends RecyclerView.ItemDecoration {
 
     public static final long NO_STICKY_ID = -1L;
@@ -16,6 +20,10 @@ public abstract class BaseStickyDecoration extends RecyclerView.ItemDecoration {
         mStickyAdapter = adapter;
     }
 
+    public boolean onTouchEvent(@NonNull RecyclerView parent, @NonNull MotionEvent ev, boolean defaultResult) {
+        return defaultResult;
+    }
+
     @CallSuper
     public final void setStickyAdapter(@Nullable StickyAdapter adapter) {
         mStickyAdapter = adapter;
@@ -26,8 +34,7 @@ public abstract class BaseStickyDecoration extends RecyclerView.ItemDecoration {
     }
 
     protected final boolean hasSticker(int position) {
-        if (mStickyAdapter == null) return false;
-        return mStickyAdapter.getStickyId(position) != NO_STICKY_ID;
+        return mStickyAdapter != null && mStickyAdapter.getStickyId(position) != NO_STICKY_ID;
     }
 
 }
