@@ -129,7 +129,7 @@ public class DividerItemDecoration extends BaseItemDecoration {
 
             // show beginning divider
             if (isShowBeginDivider()) {
-                child = parent.getChildAt(0);
+                child = getFirstChild(parent);
                 int adapterPosition = getAdapterPosition(parent, child);
                 if (adapterPosition == 0 && isShowDividerAbove(parent, 0)) {
                     offsetIndex = 1;
@@ -169,6 +169,22 @@ public class DividerItemDecoration extends BaseItemDecoration {
 
             c.restore();
         }
+    }
+
+    // But with Expandable adapter and hide animation.
+    // RecyclerView getChild - returns wrong child (ChildClippingFrameLayout).
+    private View getFirstChild(RecyclerView parent) {
+        int count = parent.getChildCount();
+        View topView = null;
+        for (int i = 0; i < count; i++) {
+            View view = parent.getChildAt(i);
+            if (topView == null) {
+                topView = view;
+            } else if (topView.getY() > view.getY()) {
+                topView = view;
+            }
+        }
+        return topView;
     }
 
     private void updateViewRect(RecyclerView parent, View view) {
