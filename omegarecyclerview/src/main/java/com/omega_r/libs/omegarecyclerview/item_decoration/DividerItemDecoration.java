@@ -171,7 +171,7 @@ public class DividerItemDecoration extends BaseItemDecoration {
         }
     }
 
-    // But with Expandable adapter and hide animation.
+    // Bug with Expandable adapter and hide animation.
     // RecyclerView getChild - returns wrong child (ChildClippingFrameLayout).
     private View getFirstChild(RecyclerView parent) {
         int count = parent.getChildCount();
