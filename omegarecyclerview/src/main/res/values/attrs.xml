@@ -75,6 +75,7 @@
         </attr>
         <attr name="stickyGroups" format="boolean" />
         <attr name="backgrounds" format="reference" />
+        <attr name="groupItemSpace" format="dimension" />
     </declare-styleable>
 
 </resources>

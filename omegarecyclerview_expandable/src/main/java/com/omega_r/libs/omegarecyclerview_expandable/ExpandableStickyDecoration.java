@@ -26,12 +26,6 @@ import static com.omega_r.libs.omegarecyclerview.utils.ViewUtils.isReverseLayout
 public class ExpandableStickyDecoration extends BaseStickyDecoration {
 
     private static final int OFFSET_NOT_FOUND = Integer.MIN_VALUE;
-    private static final Comparator<Integer> ASCENDING_COMPARATOR = new Comparator<Integer>() {
-        @Override
-        public int compare(Integer o1, Integer o2) {
-            return o1.compareTo(o2);
-        }
-    };
 
     private final Rect mViewRect = new Rect();
     @Nullable
@@ -66,7 +60,7 @@ public class ExpandableStickyDecoration extends BaseStickyDecoration {
             mAdapterPositions.add(adapterPosition);
         }
 
-        Collections.sort(mAdapterPositions, ASCENDING_COMPARATOR);
+        Collections.sort(mAdapterPositions);
 
         if (isReverseLayout(parent)) {
             for (int i = mAdapterPositions.size() - 1; i >= 0; i--) {

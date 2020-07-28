@@ -27,6 +27,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.omega_r.libs.omegarecyclerview.OmegaRecyclerView;
 import com.omega_r.libs.omegarecyclerview.R;
+import com.omega_r.libs.omegarecyclerview.item_decoration.BaseSpaceItemDecoration;
 import com.omega_r.libs.omegarecyclerview.sticky_decoration.BaseStickyDecoration;
 import com.omega_r.libs.omegarecyclerview.sticky_decoration.StickyAdapter;
 import com.omega_r.libs.omegarecyclerview_expandable.animation.AnimationHelper;
@@ -139,9 +140,32 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
             mExpandMode = attrs.getInteger(R.styleable.OmegaExpandableRecyclerView_expandMode, EXPAND_MODE_SINGLE);
             mShouldUseStickyGroups = attrs.getBoolean(R.styleable.OmegaExpandableRecyclerView_stickyGroups, false);
             mItemsBackgroundRes = attrs.getResourceId(R.styleable.OmegaExpandableRecyclerView_backgrounds, NO_RESOURCE);
+            initGroupItemSpace(attrs);
         } finally {
             attrs.recycle();
         }
+    }
+
+    private void initGroupItemSpace(TypedArray a) {
+        BaseSpaceItemDecoration decoration = getSpaceDecoration();
+        int groupItemSpace = (int) a.getDimension(R.styleable.OmegaExpandableRecyclerView_groupItemSpace, 0);
+        if (groupItemSpace > 0) {
+            ((ExpandableSpaceItemDecoration) decoration).setGroupSpace(groupItemSpace);
+            if (!hasSpaceDecoration()) addItemDecoration(decoration);
+        }
+    }
+
+    private boolean hasSpaceDecoration() {
+        for (int i = 0; i < getItemDecorationCount(); i++) {
+            RecyclerView.ItemDecoration decoration = getItemDecorationAt(i);
+            if (decoration instanceof BaseSpaceItemDecoration) return true;
+        }
+        return false;
+    }
+
+    @Override
+    protected BaseSpaceItemDecoration createSpaceItemDecoration(int showDivider, int itemSpace) {
+        return new ExpandableSpaceItemDecoration(showDivider, itemSpace);
     }
 
     @Override
@@ -219,7 +243,7 @@ public class OmegaExpandableRecyclerView extends OmegaRecyclerView {
         BaseStickyDecoration stickyDecoration = getStickyDecoration();
         if (adapter != null && stickyDecoration != null) {
             if (adapter instanceof OmegaExpandableRecyclerView.Adapter
-                && stickyDecoration instanceof ExpandableStickyDecoration) {
+                    && stickyDecoration instanceof ExpandableStickyDecoration) {
                 ((ExpandableStickyDecoration) stickyDecoration).setExpandableAdapter((Adapter) adapter);
             }
         }
