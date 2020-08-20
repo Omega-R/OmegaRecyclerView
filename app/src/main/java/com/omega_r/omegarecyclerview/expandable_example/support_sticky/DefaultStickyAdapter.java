@@ -44,6 +44,11 @@ public class DefaultStickyAdapter extends OmegaExpandableRecyclerView.Adapter<Qu
         viewHolder.bind(getItem(position).getGroup().getYear());
     }
 
+    @Override
+    public void onClickStickyViewHolder(long id) {
+        // nothing
+    }
+
     class ExGroupViewHolder extends GroupViewHolder {
 
         private TextView textView;

@@ -11,6 +11,7 @@ public interface StickyAdapter<T extends RecyclerView.ViewHolder> {
 
     void onBindStickyViewHolder(T viewHolder, int position);
 
+    void onClickStickyViewHolder(long id);
 
     interface Mode {
 

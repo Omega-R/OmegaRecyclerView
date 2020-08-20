@@ -4,14 +4,13 @@ import android.graphics.Rect;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.omega_r.libs.omegarecyclerview.utils.ViewUtils;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import static com.omega_r.libs.omegarecyclerview.utils.ViewUtils.isReverseLayout;
 
+@SuppressWarnings("rawtypes")
 public class HeaderStickyDecoration extends StickyDecoration {
 
     public HeaderStickyDecoration(StickyAdapter adapter) {

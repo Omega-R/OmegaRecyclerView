@@ -271,6 +271,12 @@ public class HeaderFooterWrapperAdapter<T extends RecyclerView.Adapter> extends 
     }
 
     @Override
+    public void onClickStickyViewHolder(long id) {
+        StickyAdapter stickyAdapter = getStickyAdapter();
+        if (stickyAdapter != null) stickyAdapter.onClickStickyViewHolder(id);
+    }
+
+    @Override
     protected void tryNotifyItemRangeChanged(int positionStart, int itemCount, Object payload) {
         super.tryNotifyItemRangeChanged(positionStart + mHeaderArray.size(), itemCount, payload);
     }

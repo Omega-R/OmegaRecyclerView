@@ -1,6 +1,8 @@
 package com.omega_r.libs.omegarecyclerview.sticky_decoration;
 
 import android.graphics.Canvas;
+import android.graphics.Rect;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -8,17 +10,71 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
-import static com.omega_r.libs.omegarecyclerview.utils.ViewUtils.isReverseLayout;
+import java.util.HashMap;
+import java.util.Map;
 
+import static androidx.recyclerview.widget.RecyclerView.NO_POSITION;
+import static com.omega_r.libs.omegarecyclerview.utils.ViewUtils.isReverseLayout;
+import static java.lang.Math.abs;
+
+@SuppressWarnings("rawtypes")
 abstract class StickyDecoration extends BaseStickyDecoration {
+
+    private static final float CLICK_MOVE_BIAS = 150;
+
+    private final Map<Long, Rect> mStickyRectMap = new HashMap<>();
+    private long mClickedStickyId = NO_STICKY_ID;
+    private float mActionDownX;
+    private float mActionDownY;
 
     public StickyDecoration(@Nullable StickyAdapter adapter) {
         super(adapter);
     }
 
     @Override
+    public final boolean onTouchEvent(@NonNull RecyclerView parent, @NonNull MotionEvent ev, boolean defaultResult) {
+        if (mStickyAdapter == null) return defaultResult;
+
+        RecyclerView.Adapter adapter = parent.getAdapter();
+        if (adapter == null || adapter.getItemCount() == 0) return defaultResult;
+
+        switch (ev.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                mActionDownX = ev.getX();
+                mActionDownY = ev.getY();
+                mClickedStickyId = NO_STICKY_ID;
+                return handleActionDown(parent, ev, defaultResult);
+            case MotionEvent.ACTION_UP:
+                if (mStickyAdapter != null && mClickedStickyId != NO_STICKY_ID) {
+                    float eventX = ev.getX();
+                    float eventY = ev.getY();
+                    if (abs(mActionDownX - eventX) <= CLICK_MOVE_BIAS && abs(mActionDownY - eventY) <= CLICK_MOVE_BIAS) {
+                        mStickyAdapter.onClickStickyViewHolder(mClickedStickyId);
+                    }
+                }
+                break;
+        }
+        return super.onTouchEvent(parent, ev, defaultResult);
+    }
+
+    private boolean handleActionDown(@NonNull RecyclerView parent, @NonNull final MotionEvent ev, boolean defaultResult) {
+        int eventX = (int) ev.getX();
+        int eventY = (int) ev.getY();
+        for (Long stickyId : mStickyRectMap.keySet()) {
+            Rect rect = mStickyRectMap.get(stickyId);
+            if (stickyId != NO_STICKY_ID && rect != null && !rect.isEmpty() && rect.contains(eventX, eventY)) {
+                mClickedStickyId = stickyId;
+                return true;
+            }
+        }
+        return defaultResult;
+    }
+
+    @Override
     public final void onDrawOver(@NonNull Canvas canvas, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
         super.onDrawOver(canvas, parent, state);
+        invalidateRectMap();
+
         int count = parent.getChildCount();
         long previousStickerId = -1;
         if (isReverseLayout(parent)) {
@@ -29,6 +85,12 @@ abstract class StickyDecoration extends BaseStickyDecoration {
             for (int layoutPos = 0; layoutPos < count; layoutPos++) {
                 previousStickerId = calculateStickerIdAndDrawIt(canvas, parent, false, layoutPos, previousStickerId);
             }
+        }
+    }
+
+    private void invalidateRectMap() {
+        for (Rect rect : mStickyRectMap.values()) {
+            rect.setEmpty();
         }
     }
 
@@ -66,11 +128,21 @@ abstract class StickyDecoration extends BaseStickyDecoration {
                     } else {
                         top = getStickerTop(parent, isReverseLayout, childView, stickerView, adapterPosition, layoutPos);
                         drawSticky(canvas, childView, stickyHolder, top);
+                        updateStickerRect(previousId, top, stickerView);
                     }
                 }
             }
         }
         return previousId;
+    }
+
+    private void updateStickerRect(long stickyId, int stickerTop, View stickerView) {
+        Rect rect = mStickyRectMap.get(stickyId);
+        if (rect == null) {
+            rect = new Rect();
+            mStickyRectMap.put(stickyId, rect);
+        }
+        rect.set(stickerView.getLeft(), stickerTop, stickerView.getRight(), stickerTop + stickerView.getHeight());
     }
 
     private void drawSticky(Canvas canvas, View childView, RecyclerView.ViewHolder stickyHolder, int top) {
