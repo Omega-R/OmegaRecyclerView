@@ -13,6 +13,18 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.ColorInt;
+import androidx.annotation.ColorRes;
+import androidx.annotation.IdRes;
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.ExpandedRecyclerView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.omega_r.libs.omegarecyclerview.header.HeaderFooterWrapperAdapter;
 import com.omega_r.libs.omegarecyclerview.item_decoration.DividerItemDecoration;
 import com.omega_r.libs.omegarecyclerview.item_decoration.BaseSpaceItemDecoration;
@@ -30,28 +42,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.WeakHashMap;
 
-import androidx.annotation.ColorInt;
-import androidx.annotation.ColorRes;
-import androidx.annotation.IdRes;
-import androidx.annotation.LayoutRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.ExpandedRecyclerView;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 @SuppressWarnings("rawtypes")
 public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenuHelper.Callback {
 
     private static final int[] DEFAULT_DIVIDER_ATTRS = new int[]{android.R.attr.listDivider};
 
+    private final WeakHashMap<ViewGroup.LayoutParams, SectionState> mLayoutParamCache = new WeakHashMap<>();
+    private final SwipeMenuHelper mSwipeMenuHelper = new SwipeMenuHelper(this);
+    private final PageRequester mPageRequester = new PageRequester();
+    private final List<View> mHeadersList = new ArrayList<>();
+    private final List<View> mFooterList = new ArrayList<>();
+
     private View mEmptyView;
     private int mEmptyViewId;
 
-    private SwipeMenuHelper mSwipeMenuHelper;
-    private PageRequester mPageRequester = new PageRequester();
     private BaseStickyDecoration mBaseStickyDecoration;
     private BaseSpaceItemDecoration mBaseSpaceItemDecoration;
     private int mStickyMode = StickyAdapter.Mode.HEADER;
@@ -60,9 +64,6 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
     @LayoutRes
     private int mPaginationErrorLayout = R.layout.pagination_error_omega_layout;
     private boolean mFinishedInflate = false;
-    private List<View> mHeadersList = new ArrayList<>();
-    private List<View> mFooterList = new ArrayList<>();
-    private WeakHashMap<ViewGroup.LayoutParams, SectionState> mLayoutParamCache = new WeakHashMap<>();
     @Nullable
     private DividerItemDecoration mDividerItemDecoration;
     private int mItemSpace;
@@ -96,7 +97,6 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
             initStickyMode(a);
             a.recycle();
         }
-        mSwipeMenuHelper = new SwipeMenuHelper(getContext(), this);
         mPageRequester.attach(this);
     }
 
@@ -328,7 +328,7 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
 
     @Override
     public int getChildCount() {
-        if (!mIsAdapterConnected && areSectionsInitialized())  {
+        if (!mIsAdapterConnected && areSectionsInitialized()) {
             return super.getChildCount() + mHeadersList.size() + mFooterList.size();
         }
 
@@ -430,17 +430,12 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        boolean isIntercepted = super.onInterceptTouchEvent(ev);
-        if (ev.getActionIndex() != 0) return true;
-        int action = ev.getAction();
+        return mSwipeMenuHelper.handleInterceptTouchEvent(ev, super.onInterceptTouchEvent(ev));
+    }
 
-        switch (action) {
-            case MotionEvent.ACTION_DOWN:
-                isIntercepted = mSwipeMenuHelper.handleListDownTouchEvent(ev, isIntercepted);
-                break;
-        }
-
-        return isIntercepted;
+    @Override
+    public boolean onFilterTouchEventForSecurity(MotionEvent ev) {
+        return mSwipeMenuHelper.handleTouchEventForSecurity(ev, super.onFilterTouchEventForSecurity(ev));
     }
 
     private Drawable getDefaultDivider() {
