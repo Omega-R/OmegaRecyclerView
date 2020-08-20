@@ -27,7 +27,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.omega_r.libs.omegarecyclerview.header.HeaderFooterWrapperAdapter;
 import com.omega_r.libs.omegarecyclerview.item_decoration.DividerItemDecoration;
-import com.omega_r.libs.omegarecyclerview.item_decoration.SpaceItemDecoration;
+import com.omega_r.libs.omegarecyclerview.item_decoration.BaseSpaceItemDecoration;
 import com.omega_r.libs.omegarecyclerview.pagination.OnPageRequestListener;
 import com.omega_r.libs.omegarecyclerview.pagination.PageRequester;
 import com.omega_r.libs.omegarecyclerview.pagination.PaginationAdapter;
@@ -57,6 +57,7 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
     private int mEmptyViewId;
 
     private BaseStickyDecoration mBaseStickyDecoration;
+    private BaseSpaceItemDecoration mBaseSpaceItemDecoration;
     private int mStickyMode = StickyAdapter.Mode.HEADER;
     @LayoutRes
     private int mPaginationLayout = R.layout.pagination_omega_layout;
@@ -111,12 +112,16 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
         }
     }
 
-    public void initItemSpace(TypedArray a) {
-        if (a.hasValue(R.styleable.OmegaRecyclerView_itemSpace)) {
-            int showDivider = a.getInt(R.styleable.OmegaRecyclerView_dividerShow, DividerItemDecoration.ShowDivider.NONE);
-            mItemSpace = (int) a.getDimension(R.styleable.OmegaRecyclerView_itemSpace, 0);
-            addItemDecoration(new SpaceItemDecoration(showDivider, mItemSpace));
-        }
+    private void initItemSpace(TypedArray a) {
+        int showDivider = a.getInt(R.styleable.OmegaRecyclerView_dividerShow, DividerItemDecoration.ShowDivider.NONE);
+        mItemSpace = (int) a.getDimension(R.styleable.OmegaRecyclerView_itemSpace, 0);
+        mBaseSpaceItemDecoration = createSpaceItemDecoration(showDivider, mItemSpace);
+
+        if (a.hasValue(R.styleable.OmegaRecyclerView_itemSpace)) addItemDecoration(mBaseSpaceItemDecoration);
+    }
+
+    protected BaseSpaceItemDecoration createSpaceItemDecoration(int showDivider, int itemSpace) {
+        return new BaseSpaceItemDecoration(showDivider, itemSpace);
     }
 
     public void initDivider(TypedArray a) {
@@ -297,6 +302,10 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
             }
         }
         super.smoothScrollToPosition(scrollPosition);
+    }
+    @NonNull
+    protected final BaseSpaceItemDecoration getSpaceDecoration() {
+        return mBaseSpaceItemDecoration;
     }
 
     @Override
