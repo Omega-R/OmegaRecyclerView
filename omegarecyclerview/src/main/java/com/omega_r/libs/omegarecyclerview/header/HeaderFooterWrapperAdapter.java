@@ -187,6 +187,10 @@ public class HeaderFooterWrapperAdapter<T extends RecyclerView.Adapter> extends 
         }
     }
 
+    public boolean isHeadersVisible() {
+        return mHeadersVisibility;
+    }
+
     public void setFootersVisible(boolean visible) {
         if (mFootersVisibility != visible) {
             if (visible) {
@@ -197,6 +201,10 @@ public class HeaderFooterWrapperAdapter<T extends RecyclerView.Adapter> extends 
             mFootersVisibility = visible;
             notifyDataSetChanged();
         }
+    }
+
+    public boolean isFootersVisible() {
+        return mFootersVisibility;
     }
 
     private <V> void copyTo(SparseArray<V> fromArray, SparseArray<V> toArray) {
