@@ -42,6 +42,7 @@ import androidx.recyclerview.widget.ExpandedRecyclerView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+@SuppressWarnings("rawtypes")
 public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenuHelper.Callback {
 
     private static final int[] DEFAULT_DIVIDER_ATTRS = new int[]{android.R.attr.listDivider};
@@ -286,6 +287,17 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
         return mBaseStickyDecoration;
     }
 
+    public void smoothScrollToRealPosition(int position) {
+        int scrollPosition = position;
+
+        RecyclerView.Adapter adapter = getAdapter();
+        if (adapter instanceof HeaderFooterWrapperAdapter) {
+            if (((HeaderFooterWrapperAdapter) adapter).isHeadersVisible()) {
+                scrollPosition += mHeadersList.size();
+            }
+        }
+        super.smoothScrollToPosition(scrollPosition);
+    }
 
     @Override
     public void addView(View view, int index, ViewGroup.LayoutParams params) {
