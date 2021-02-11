@@ -445,6 +445,9 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
         int itemCount = super.getItemCount();
         if (mIsInfinite && itemCount != 0) {
             int currentWindowPosition = mCurrentPosition / itemCount;
+            if(currentWindowPosition > position * itemCount) {
+                currentWindowPosition++;
+            }
             return currentWindowPosition * itemCount + position;
         }
         return position;
