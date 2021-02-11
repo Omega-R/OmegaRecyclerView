@@ -190,8 +190,8 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
         View view = recycler.getViewForPosition(calculateRealPosition(position));
         addView(view);
 
-        int width = getWidth();
-        int height = getHeight();
+        int width = getWidth() - getPaddingLeft() - getPaddingRight();
+        int height = getHeight() - getPaddingTop() - getPaddingBottom();
         switch (mOrientation) {
             case HORIZONTAL:
                 width *= mPageSize;
@@ -251,7 +251,10 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
     }
 
     private void updateRecyclerDimensions() {
-        mRecyclerCenterPoint.set(getWidth() / 2, getHeight() / 2);
+        mRecyclerCenterPoint.set(
+                (getWidth() + getPaddingLeft() - getPaddingRight()) / 2,
+                (getHeight() + getPaddingTop() - getPaddingBottom()) / 2
+        );
     }
 
     private void fill(RecyclerView.Recycler recycler) {
@@ -259,7 +262,11 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
 
         mOrientationHelper.setCurrentViewCenter(mRecyclerCenterPoint, mScrolled, mCurrentViewCenterPoint);
 
-        final int endBound = mOrientationHelper.getViewEnd(getWidth(), getHeight());
+        final int endBound = getClipToPadding() ?
+                mOrientationHelper.getViewEnd(
+                        getWidth() - getPaddingRight(),
+                getHeight() - getPaddingBottom())
+                : mOrientationHelper.getViewEnd(getWidth(), getHeight());
 
         if (mScrolled >= 0) {
             layoutViews(recycler, Direction.START, endBound); //Layout items before the current item
