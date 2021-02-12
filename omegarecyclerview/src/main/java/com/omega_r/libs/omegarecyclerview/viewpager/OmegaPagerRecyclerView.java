@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 import androidx.viewpager.widget.ViewPager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Interpolator;
 
@@ -306,9 +307,10 @@ public class OmegaPagerRecyclerView extends OmegaRecyclerView implements ViewPag
      * @param smoothScroll True to smoothly scroll to the new item, false to transition immediately
      */
     public void setCurrentItem(int item, boolean smoothScroll) {
-        if (item < 0 || item >= getItemCount()) {
+        if ((item < 0 || item >= getItemCount()) && !getLayoutManager().isInfinite()) {
             return;
         }
+        Log.d("COUNT_ITEM", String.valueOf(item));
         if (smoothScroll) {
             smoothScrollToPosition(item);
         } else {
