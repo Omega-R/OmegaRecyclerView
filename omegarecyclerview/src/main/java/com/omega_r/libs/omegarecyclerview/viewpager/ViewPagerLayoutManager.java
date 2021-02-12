@@ -16,6 +16,7 @@ import androidx.core.view.accessibility.AccessibilityRecordCompat;
 import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
@@ -265,7 +266,7 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
         final int endBound = getClipToPadding() ?
                 mOrientationHelper.getViewEnd(
                         getWidth() - getPaddingRight(),
-                getHeight() - getPaddingBottom())
+                        getHeight() - getPaddingBottom())
                 : mOrientationHelper.getViewEnd(getWidth(), getHeight());
 
         if (mScrolled >= 0) {
@@ -452,6 +453,7 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
         int itemCount = super.getItemCount();
         if (mIsInfinite && itemCount != 0) {
             int currentWindowPosition = mCurrentPosition / itemCount;
+            Log.d("Scroll debage RV", "mCurrentPosition = " + mCurrentPosition + " currentWindowPosition  = " + currentWindowPosition + " itemCount = " + itemCount)
             if (mCurrentPosition > position + (currentWindowPosition * itemCount)) {
                 currentWindowPosition++;
             }
