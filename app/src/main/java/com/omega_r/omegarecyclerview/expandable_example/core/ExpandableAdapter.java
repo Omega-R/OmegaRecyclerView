@@ -4,7 +4,7 @@ import androidx.annotation.NonNull;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.OmegaExpandableRecyclerView;
+import com.omega_r.libs.omegarecyclerview_expandable.OmegaExpandableRecyclerView;
 import com.omega_r.omegarecyclerview.R;
 
 public class ExpandableAdapter extends OmegaExpandableRecyclerView.Adapter<QuoteGlobalInfo, Quote> {

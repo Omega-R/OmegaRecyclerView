@@ -6,10 +6,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.omega_r.libs.omegarecyclerview.OmegaRecyclerView;
-import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.OmegaExpandableRecyclerView;
-import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.data.ExpandableViewData;
 import com.omega_r.libs.omegarecyclerview.sticky_decoration.StickyAdapter;
 import com.omega_r.libs.omegarecyclerview.sticky_decoration.HeaderStickyDecoration;
+import com.omega_r.libs.omegarecyclerview_expandable.OmegaExpandableRecyclerView;
+import com.omega_r.libs.omegarecyclerview_expandable.data.ExpandableViewData;
 import com.omega_r.omegarecyclerview.R;
 import com.omega_r.omegarecyclerview.expandable_example.core.Quote;
 import com.omega_r.omegarecyclerview.expandable_example.core.QuoteGlobalInfo;
@@ -42,6 +42,11 @@ public class DefaultStickyAdapter extends OmegaExpandableRecyclerView.Adapter<Qu
     @Override
     public void onBindStickyViewHolder(StickyViewHolder viewHolder, int position) {
         viewHolder.bind(getItem(position).getGroup().getYear());
+    }
+
+    @Override
+    public void onClickStickyViewHolder(long id) {
+        // nothing
     }
 
     class ExGroupViewHolder extends GroupViewHolder {

@@ -5,7 +5,7 @@
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name_omega"
+        android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light">
@@ -25,7 +25,7 @@
         <activity android:name=".expandable_example.core.ExpandableActivity" />
         <activity android:name=".expandable_example.support_sticky.DefaultStickyExpandableActivity" />
         <activity android:name=".expandable_example.ChooseExpandableActivity" />
-        <activity android:name=".expandable_example.sticky_groups.StickyGroupsActivity"></activity>
+        <activity android:name=".fastscroll_example.FastScrollActivity"/>
     </application>
 
 </manifest>

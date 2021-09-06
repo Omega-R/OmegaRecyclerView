@@ -4,7 +4,9 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/OmegaRecyclerView.iml" filepath="$PROJECT_DIR$/OmegaRecyclerView.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/omegarecyclerviewlibs/omegarecyclerviewlibs.iml" filepath="$PROJECT_DIR$/omegarecyclerviewlibs/omegarecyclerviewlibs.iml" />
+      <module fileurl="file://$PROJECT_DIR$/omegarecyclerview/omegarecyclerview.iml" filepath="$PROJECT_DIR$/omegarecyclerview/omegarecyclerview.iml" />
+      <module fileurl="file://$PROJECT_DIR$/omegarecyclerview_expandable/omegarecyclerview_expandable.iml" filepath="$PROJECT_DIR$/omegarecyclerview_expandable/omegarecyclerview_expandable.iml" />
+      <module fileurl="file://$PROJECT_DIR$/omegarecyclerview_fastscroll/omegarecyclerview_fastscroll.iml" filepath="$PROJECT_DIR$/omegarecyclerview_fastscroll/omegarecyclerview_fastscroll.iml" />
     </modules>
   </component>
 </project>

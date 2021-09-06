@@ -17,10 +17,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal"
+        android:paddingLeft="10dp"
+        android:clipChildren="false"
+        android:clipToPadding="false"
         app:autoScrollEnabled="true"
-        app:autoScrollInterval="2500"
         app:pageSize="1"
         app:transformer="RotateUpTransformer"
         app:infinite="true"/>
+    <!--        app:autoScrollInterval="2500"-->
 
 </LinearLayout>

@@ -9,11 +9,11 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
 
-import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.OmegaExpandableRecyclerView;
-import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.animation.ExpandableItemAnimator;
-import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.animation.standard_animations.DropDownItemAnimator;
-import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.animation.standard_animations.FadeItemAnimator;
-import com.omega_r.libs.omegarecyclerview.expandable_recycler_view.data.GroupProvider;
+import com.omega_r.libs.omegarecyclerview_expandable.OmegaExpandableRecyclerView;
+import com.omega_r.libs.omegarecyclerview_expandable.animation.ExpandableItemAnimator;
+import com.omega_r.libs.omegarecyclerview_expandable.animation.standard_animations.DropDownItemAnimator;
+import com.omega_r.libs.omegarecyclerview_expandable.animation.standard_animations.FadeItemAnimator;
+import com.omega_r.libs.omegarecyclerview_expandable.data.GroupProvider;
 import com.omega_r.omegarecyclerview.R;
 
 import java.util.Arrays;

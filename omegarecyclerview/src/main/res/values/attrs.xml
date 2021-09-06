@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="OmegaRecyclerView">
+        <attr name="itemSpace" format="dimension" />
+        <attr name="android:divider" />
+        <attr name="android:dividerHeight" />
+
+        <attr name="divider" format="reference" />
+        <attr name="dividerHeight" format="dimension" />
+        <attr name="dividerPadding" format="dimension" />
+        <attr name="dividerPaddingStart" format="dimension" />
+        <attr name="dividerPaddingEnd" format="dimension" />
+        <attr name="dividerShow">
+            <flag name="none" value="0" />
+            <flag name="beginning" value="1" />
+            <flag name="middle" value="2" />
+            <flag name="end" value="4" />
+        </attr>
+        <attr name="dividerAlpha" format="float" />
+        <attr name="emptyView" format="reference" />
+        <attr name="paginationLayout" format="reference" />
+        <attr name="paginationErrorLayout" format="reference" />
+        <attr name="stickyMode" format="enum">
+            <enum name="Header" value="0"/>
+            <enum name="Middle" value="1"/>
+        </attr>
+    </declare-styleable>
+
+    <declare-styleable name="OmegaRecyclerView_Layout">
+        <attr name="layout_section" format="enum">
+            <enum name="header" value="0" />
+            <enum name="footer" value="1" />
+        </attr>
+        <attr name="layout_showDivider" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="OmegaPagerRecyclerView">
+        <attr name="slideOnFling" format="boolean" />
+        <attr name="android:orientation" />
+        <attr name="pageSize" format="float" />
+        <attr name="transitionTime" format="integer" />
+        <attr name="slideOnFlingThreshold" format="integer" />
+        <attr name="infinite" format="boolean" />
+        <attr name="transformer" format="enum">
+            <enum name="None" value="0" />
+            <enum name="AccordionTransformer" value="1" />
+            <enum name="BackgroundToForegroundTransformer" value="2" />
+            <enum name="CubeInTransformer" value="3" />
+            <enum name="CubeOutTransformer" value="4" />
+            <enum name="DepthPageTransformer" value="5" />
+            <enum name="FadeTransformer" value="6" />
+            <enum name="FlipTransformer" value="7" />
+            <enum name="ForegroundToBackground" value="8" />
+            <enum name="RotateDownTransformer" value="9" />
+            <enum name="RotateUpTransformer" value="10" />
+            <enum name="StackTransformer" value="11" />
+            <enum name="TabletTransformer" value="12" />
+            <enum name="ZoomInTransformer" value="13" />
+            <enum name="ZoomOutSlideTransformer" value="14" />
+        </attr>
+        <attr name="autoScrollInterval" format="integer" />
+        <attr name="autoScrollEnabled" format="boolean" />
+        <attr name="useDefaultAdapter" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="OmegaExpandableRecyclerView">
+        <attr name="childAnimation" format="enum">
+            <enum name="Default" value="0" />
+            <enum name="Fade" value="1" />
+            <enum name="Dropdown" value="2" />
+        </attr>
+        <attr name="expandMode" format="enum">
+            <enum name="single" value="0" />
+            <enum name="multiple" value="1" />
+        </attr>
+        <attr name="stickyGroups" format="boolean" />
+        <attr name="backgrounds" format="reference" />
+        <attr name="groupItemSpace" format="dimension" />
+    </declare-styleable>
+
+</resources>

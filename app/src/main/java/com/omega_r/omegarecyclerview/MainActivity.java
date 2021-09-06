@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 
 import com.omega_r.libs.omegaintentbuilder.AppOmegaIntentBuilder;
+import com.omega_r.libs.omegaintentbuilder.OmegaIntentBuilder;
+import com.omega_r.omegarecyclerview.fastscroll_example.FastScrollActivity;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -20,6 +22,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.button_viewpager).setOnClickListener(this);
         findViewById(R.id.button_list_adapter).setOnClickListener(this);
         findViewById(R.id.button_expandable_recyclerview).setOnClickListener(this);
+        findViewById(R.id.button_fastscroll).setOnClickListener(this);
     }
 
     /**
@@ -34,49 +37,47 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 AppOmegaIntentBuilder.from(this)
                         .appActivities()
                         .swipeMenuActivity()
-                        .createIntentHandler()
                         .startActivity();
                 break;
             case R.id.button_sticky_header:
                 AppOmegaIntentBuilder.from(this)
                         .appActivities()
                         .stickyHeaderActivity()
-                        .createIntentHandler()
                         .startActivity();
                 break;
             case R.id.button_pagination:
                 AppOmegaIntentBuilder.from(this)
                         .appActivities()
                         .paginationActivity()
-                        .createIntentHandler()
                         .startActivity();
                 break;
             case R.id.button_sections:
                 AppOmegaIntentBuilder.from(this)
                         .appActivities()
                         .sectionsActivity()
-                        .createIntentHandler()
                         .startActivity();
                 break;
             case R.id.button_viewpager:
                 AppOmegaIntentBuilder.from(this)
                         .appActivities()
                         .viewPagerActivity()
-                        .createIntentHandler()
                         .startActivity();
                 break;
             case R.id.button_list_adapter:
                 AppOmegaIntentBuilder.from(this)
                         .appActivities()
                         .listAdapterActivity()
-                        .createIntentHandler()
                         .startActivity();
                 break;
             case R.id.button_expandable_recyclerview:
                 AppOmegaIntentBuilder.from(this)
                         .appActivities()
                         .chooseExpandableActivity()
-                        .createIntentHandler()
+                        .startActivity();
+                break;
+            case R.id.button_fastscroll:
+                OmegaIntentBuilder.from(this)
+                        .activity(FastScrollActivity.class)
                         .startActivity();
                 break;
         }
