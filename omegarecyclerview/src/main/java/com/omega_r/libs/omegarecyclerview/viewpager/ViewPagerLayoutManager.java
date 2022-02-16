@@ -89,6 +89,9 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
     private int mOrientation;
     private boolean mIsInfinite;
 
+    private int mHeight;
+    private int mWidth;
+
     ViewPagerLayoutManager(@NonNull Context context,
                            @Nullable AttributeSet attrs, int defStyleAttr,
                            @NonNull ScrollStateListener scrollStateListener) {
@@ -128,6 +131,8 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
             if (mIsFirstOrEmptyLayout) {
                 initChildDimensions(recycler);
             }
+        } else if (mHeight != getHeight() || mWidth != getWidth()) {
+            initChildDimensions(recycler);
         }
         updateRecyclerDimensions();
         detachAndScrapAttachedViews(recycler);
@@ -147,6 +152,8 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
     }
 
     private void initChildDimensions(RecyclerView.Recycler recycler) {
+        mWidth = getWidth();
+        mHeight = getHeight();
         View viewToMeasure = getMeasuredChildForAdapterPosition(0, recycler);
 
         int childViewWidth = getMeasuredWidthWithMargin(viewToMeasure);
@@ -207,7 +214,7 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
         switch (mOrientation) {
             case HORIZONTAL:
                 int heightMode = getHeightMode();
-                if ((heightMode == View.MeasureSpec.AT_MOST && height <=0) || heightMode == UNSPECIFIED) {
+                if (heightMode == View.MeasureSpec.AT_MOST || heightMode == UNSPECIFIED) {
                     heightSpec = View.MeasureSpec.makeMeasureSpec(0, UNSPECIFIED);
                 }
                 break;
