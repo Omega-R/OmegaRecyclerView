@@ -207,7 +207,9 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
         switch (mOrientation) {
             case HORIZONTAL:
                 int heightMode = getHeightMode();
-                if (heightMode == View.MeasureSpec.AT_MOST || heightMode == UNSPECIFIED) {
+                if (heightMode == View.MeasureSpec.AT_MOST) {
+                    heightSpec = View.MeasureSpec.makeMeasureSpec(getHeight(), View.MeasureSpec.AT_MOST);
+                } else if (heightMode == UNSPECIFIED) {
                     heightSpec = View.MeasureSpec.makeMeasureSpec(0, UNSPECIFIED);
                 }
                 break;
