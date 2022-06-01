@@ -35,7 +35,7 @@ public class SectionsActivity extends AppCompatActivity implements View.OnClickL
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.textview_header:
-                Toast.makeText(getApplicationContext(), "Header clicked", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), mRecyclerView.getAdapter().toString(), Toast.LENGTH_SHORT).show();
                 break;
             case R.id.textview_footer:
                 OmegaIntentBuilder.from(this)

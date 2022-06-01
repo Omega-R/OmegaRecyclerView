@@ -4,7 +4,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/recyclerview"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+    app:spanCount="3"
+    app:headerWidthType="Custom"
+    app:headerWidth="10"
+    app:footerWidthType="Custom"
+    app:footerWidth="2">
 
     <TextView
         android:id="@+id/textview_header"
