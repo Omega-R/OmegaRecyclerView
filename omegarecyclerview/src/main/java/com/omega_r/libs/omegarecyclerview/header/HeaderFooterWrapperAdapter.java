@@ -1,16 +1,17 @@
 package com.omega_r.libs.omegarecyclerview.header;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.RecyclerView;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.omega_r.libs.omegarecyclerview.OmegaRecyclerView;
 import com.omega_r.libs.omegarecyclerview.R;
-import com.omega_r.libs.omegarecyclerview.sticky_decoration.StickyAdapter;
 import com.omega_r.libs.omegarecyclerview.sticky_decoration.HeaderStickyDecoration;
+import com.omega_r.libs.omegarecyclerview.sticky_decoration.StickyAdapter;
 
 import java.util.List;
 
@@ -137,11 +138,11 @@ public class HeaderFooterWrapperAdapter<T extends RecyclerView.Adapter> extends 
         return mRealAdapter;
     }
 
-    private boolean isHeader(int viewType) {
+    public boolean isHeader(int viewType) {
         return viewType >= BASE_HEADER_VIEW_TYPE && viewType < (BASE_HEADER_VIEW_TYPE + mHeaderArray.size());
     }
 
-    private boolean isFooter(int viewType) {
+    public boolean isFooter(int viewType) {
         return viewType >= BASE_FOOTER_VIEW_TYPE && viewType < (BASE_FOOTER_VIEW_TYPE + mFooterArray.size());
     }
 
