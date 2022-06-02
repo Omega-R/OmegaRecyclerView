@@ -24,18 +24,6 @@
             <enum name="Header" value="0"/>
             <enum name="Middle" value="1"/>
         </attr>
-        <attr name="headerWidthType" format="enum">
-            <enum name="Custom" value="-1" />
-            <enum name="Full" value="0"/>
-            <enum name="Default" value="1" />
-        </attr>
-        <attr name="footerWidthType" format="enum">
-            <enum name="Custom" value="-1" />
-            <enum name="Full" value="0"/>
-            <enum name="Default" value="1" />
-        </attr>
-        <attr name="headerWidth" format="integer" />
-        <attr name="footerWidth" format="integer" />
     </declare-styleable>
 
     <declare-styleable name="OmegaRecyclerView_Layout">
