@@ -48,6 +48,8 @@ import java.util.WeakHashMap;
 public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenuHelper.Callback {
 
     private static final int[] DEFAULT_DIVIDER_ATTRS = new int[]{android.R.attr.listDivider};
+    private static final int HEADER = 0;
+    private static final int FOOTER = 1;
 
     private final WeakHashMap<ViewGroup.LayoutParams, SectionState> mLayoutParamCache = new WeakHashMap<>();
     private final SwipeMenuHelper mSwipeMenuHelper = new SwipeMenuHelper(this);
@@ -72,10 +74,10 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
     private int mItemSpace;
     private int mDividerSize;
     private boolean mIsAdapterConnected;
-    private int headerSize = SectionSize.DEFAULT.getValue();
-    private int footerSize = SectionSize.DEFAULT.getValue();
-    private int headerWidth;
-    private int footerWidth;
+    private int headerType = SectionSize.DEFAULT.getValue();
+    private int footerType = SectionSize.DEFAULT.getValue();
+    private int headerSpanSize;
+    private int footerSpanSize;
 
     public OmegaRecyclerView(Context context) {
         super(context);
@@ -102,7 +104,6 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
             initEmptyView(a);
             initPagination(a);
             initStickyMode(a);
-            initHeaderAndFooter(a);
             a.recycle();
         }
         mPageRequester.attach(this);
@@ -188,18 +189,21 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
         mStickyMode = a.getInt(R.styleable.OmegaRecyclerView_stickyMode, mStickyMode);
     }
 
-    private void initHeaderAndFooter(TypedArray a) {
-        if (a.hasValue(R.styleable.OmegaRecyclerView_headerWidthType)) {
-            headerSize = a.getInt(R.styleable.OmegaRecyclerView_headerWidthType, headerSize);
-        }
-        if (a.hasValue(R.styleable.OmegaRecyclerView_footerWidthType)) {
-            footerSize = a.getInt(R.styleable.OmegaRecyclerView_footerWidthType, headerSize);
-        }
-        if (a.hasValue(R.styleable.OmegaRecyclerView_headerWidth)) {
-            headerWidth = a.getInt(R.styleable.OmegaRecyclerView_headerWidth, 0);
-        }
-        if (a.hasValue(R.styleable.OmegaRecyclerView_footerWidth)) {
-            footerWidth = a.getInt(R.styleable.OmegaRecyclerView_footerWidth, 0);
+    private void initHeaderAndFooter(int section, TypedArray a) {
+        if (section == HEADER) {
+            if (a.hasValue(R.styleable.OmegaRecyclerView_Layout_sectionType)) {
+                headerType = a.getInt(R.styleable.OmegaRecyclerView_Layout_sectionType, headerType);
+            }
+            if (a.hasValue(R.styleable.OmegaRecyclerView_Layout_spanSize)) {
+                headerSpanSize = a.getInt(R.styleable.OmegaRecyclerView_Layout_spanSize, 0);
+            }
+        } else if (section == FOOTER) {
+            if (a.hasValue(R.styleable.OmegaRecyclerView_Layout_sectionType)) {
+                footerType = a.getInt(R.styleable.OmegaRecyclerView_Layout_sectionType, headerType);
+            }
+            if (a.hasValue(R.styleable.OmegaRecyclerView_Layout_spanSize)) {
+                footerSpanSize = a.getInt(R.styleable.OmegaRecyclerView_Layout_spanSize, 0);
+            }
         }
     }
 
@@ -217,10 +221,10 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
             @Override
             public int getSpanSize(int position) {
                 if (adapter.isHeadersVisible() && adapter.isHeader(adapter.getItemViewType(position))) {
-                    return getItemSpan(lm, headerSize, headerWidth);
+                    return getItemSpan(lm, headerType, headerSpanSize);
                 }
                 if (adapter.isFootersVisible() && adapter.isFooter(adapter.getItemViewType(position))) {
-                    return getItemSpan(lm, footerSize, footerWidth);
+                    return getItemSpan(lm, footerType, footerSpanSize);
                 }
                 return 1;
             }
@@ -232,7 +236,7 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
         if (spanType == SectionSize.FULL.getValue()) {
             return maxSpan;
         }
-        if (spanType == SectionSize.CUSTOM.getValue()) {
+        if (spanType == SectionSize.CUSTOM.getValue() && span > 0) {
             return Math.min(span, maxSpan);
         }
         return 1;
@@ -464,8 +468,9 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
         ViewGroup.LayoutParams layoutParams = super.generateLayoutParams(attrs);
         if (!mFinishedInflate) {
             final TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.OmegaRecyclerView_Layout);
-            int section = typedArray.getInt(R.styleable.OmegaRecyclerView_Layout_layout_section, 0);
+            int section = typedArray.getInt(R.styleable.OmegaRecyclerView_Layout_layout_section, -1);
             boolean showDivider = typedArray.getBoolean(R.styleable.OmegaRecyclerView_Layout_layout_showDivider, true);
+            initHeaderAndFooter(section, typedArray);
             typedArray.recycle();
             mLayoutParamCache.put(layoutParams, new SectionState(section, showDivider));
         }
@@ -664,19 +669,19 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
     }
 
     public void setHeaderType(SectionSize sizeType) {
-        headerSize = sizeType.getValue();
+        headerType = sizeType.getValue();
     }
 
     public SectionSize getHeaderType() {
-        return SectionSize.valueOf(headerSize);
+        return SectionSize.valueOf(headerType);
     }
 
     public void setFooterType(SectionSize sizeType) {
-        footerSize = sizeType.getValue();
+        footerType = sizeType.getValue();
     }
 
     public SectionSize getFooterType() {
-        return SectionSize.valueOf(footerSize);
+        return SectionSize.valueOf(footerType);
     }
 
     private final AdapterDataObserver mEmptyObserver = new AdapterDataObserver() {
