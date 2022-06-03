@@ -74,10 +74,10 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
     private int mItemSpace;
     private int mDividerSize;
     private boolean mIsAdapterConnected;
-    private int headerType = SectionSize.DEFAULT.getValue();
-    private int footerType = SectionSize.DEFAULT.getValue();
-    private int headerSpanSize;
-    private int footerSpanSize;
+    private int mHeaderType = SectionSize.DEFAULT.getValue();
+    private int mFooterType = SectionSize.DEFAULT.getValue();
+    private int mHeaderSpanSize;
+    private int mFooterSpanSize;
 
     public OmegaRecyclerView(Context context) {
         super(context);
@@ -192,17 +192,17 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
     private void initHeaderAndFooter(int section, TypedArray a) {
         if (section == HEADER) {
             if (a.hasValue(R.styleable.OmegaRecyclerView_Layout_sectionType)) {
-                headerType = a.getInt(R.styleable.OmegaRecyclerView_Layout_sectionType, headerType);
+                mHeaderType = a.getInt(R.styleable.OmegaRecyclerView_Layout_sectionType, mHeaderType);
             }
             if (a.hasValue(R.styleable.OmegaRecyclerView_Layout_spanSize)) {
-                headerSpanSize = a.getInt(R.styleable.OmegaRecyclerView_Layout_spanSize, 0);
+                mHeaderSpanSize = a.getInt(R.styleable.OmegaRecyclerView_Layout_spanSize, 0);
             }
         } else if (section == FOOTER) {
             if (a.hasValue(R.styleable.OmegaRecyclerView_Layout_sectionType)) {
-                footerType = a.getInt(R.styleable.OmegaRecyclerView_Layout_sectionType, headerType);
+                mFooterType = a.getInt(R.styleable.OmegaRecyclerView_Layout_sectionType, mHeaderType);
             }
             if (a.hasValue(R.styleable.OmegaRecyclerView_Layout_spanSize)) {
-                footerSpanSize = a.getInt(R.styleable.OmegaRecyclerView_Layout_spanSize, 0);
+                mFooterSpanSize = a.getInt(R.styleable.OmegaRecyclerView_Layout_spanSize, 0);
             }
         }
     }
@@ -221,10 +221,10 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
             @Override
             public int getSpanSize(int position) {
                 if (adapter.isHeadersVisible() && adapter.isHeader(adapter.getItemViewType(position))) {
-                    return getItemSpan(lm, headerType, headerSpanSize);
+                    return getItemSpan(lm, mHeaderType, mHeaderSpanSize);
                 }
                 if (adapter.isFootersVisible() && adapter.isFooter(adapter.getItemViewType(position))) {
-                    return getItemSpan(lm, footerType, footerSpanSize);
+                    return getItemSpan(lm, mFooterType, mFooterSpanSize);
                 }
                 return 1;
             }
@@ -668,20 +668,38 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
         }
     }
 
+    public void setHeaderSpanSize(int spanSize) {
+        mHeaderSpanSize = spanSize;
+        checkLayoutManager(getLayoutManager(), getAdapter());
+    }
+
+    public int getHeaderSpanSize() {
+        return mHeaderSpanSize;
+    }
+
+    public void setFooterSpanSize(int spanSize) {
+        mFooterSpanSize = spanSize;
+        checkLayoutManager(getLayoutManager(), getAdapter());
+    }
+
+    public int getFooterSpanSize() {
+        return mFooterSpanSize;
+    }
+
     public void setHeaderType(SectionSize sizeType) {
-        headerType = sizeType.getValue();
+        mHeaderType = sizeType.getValue();
     }
 
     public SectionSize getHeaderType() {
-        return SectionSize.valueOf(headerType);
+        return SectionSize.valueOf(mHeaderType);
     }
 
     public void setFooterType(SectionSize sizeType) {
-        footerType = sizeType.getValue();
+        mFooterType = sizeType.getValue();
     }
 
     public SectionSize getFooterType() {
-        return SectionSize.valueOf(footerType);
+        return SectionSize.valueOf(mFooterType);
     }
 
     private final AdapterDataObserver mEmptyObserver = new AdapterDataObserver() {
