@@ -122,6 +122,8 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
             mCurrentPosition = mPendingPosition = NO_POSITION;
             mScrolled = mPendingScroll = 0;
             return;
+        } else if (!mIsInfinite && state.getItemCount() <= mCurrentPosition) {
+            mCurrentPosition = NO_POSITION;
         }
         if (mCurrentPosition == NO_POSITION) {
             mCurrentPosition = calculateFirstPosition();
