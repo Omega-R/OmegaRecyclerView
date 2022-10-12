@@ -150,7 +150,7 @@ public class HeaderFooterWrapperAdapter<T extends RecyclerView.Adapter> extends 
     }
 
     private boolean isFooterPosition(int position) {
-        return position >= mRealAdapter.getItemCount() + mHeaderArray.size();
+        return mFooterArray.size() - 1 >= position && position >= mRealAdapter.getItemCount() + mHeaderArray.size();
     }
 
     public void setHeaders(@NonNull List<View> list) {
