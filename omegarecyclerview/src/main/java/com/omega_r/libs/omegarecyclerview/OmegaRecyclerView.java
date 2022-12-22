@@ -22,12 +22,14 @@ import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.ExpandedRecyclerView;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.omega_r.libs.omegarecyclerview.header.HeaderFooterWrapperAdapter;
-import com.omega_r.libs.omegarecyclerview.item_decoration.DividerItemDecoration;
+import com.omega_r.libs.omegarecyclerview.header.SectionSize;
 import com.omega_r.libs.omegarecyclerview.item_decoration.BaseSpaceItemDecoration;
+import com.omega_r.libs.omegarecyclerview.item_decoration.DividerItemDecoration;
 import com.omega_r.libs.omegarecyclerview.pagination.OnPageRequestListener;
 import com.omega_r.libs.omegarecyclerview.pagination.PageRequester;
 import com.omega_r.libs.omegarecyclerview.pagination.PaginationAdapter;
@@ -46,6 +48,8 @@ import java.util.WeakHashMap;
 public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenuHelper.Callback {
 
     private static final int[] DEFAULT_DIVIDER_ATTRS = new int[]{android.R.attr.listDivider};
+    private static final int HEADER = 0;
+    private static final int FOOTER = 1;
 
     private final WeakHashMap<ViewGroup.LayoutParams, SectionState> mLayoutParamCache = new WeakHashMap<>();
     private final SwipeMenuHelper mSwipeMenuHelper = new SwipeMenuHelper(this);
@@ -70,6 +74,10 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
     private int mItemSpace;
     private int mDividerSize;
     private boolean mIsAdapterConnected;
+    private int mHeaderType = SectionSize.DEFAULT.getValue();
+    private int mFooterType = SectionSize.DEFAULT.getValue();
+    private int mHeaderSpanSize;
+    private int mFooterSpanSize;
 
     public OmegaRecyclerView(Context context) {
         super(context);
@@ -118,7 +126,8 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
         mItemSpace = (int) a.getDimension(R.styleable.OmegaRecyclerView_itemSpace, 0);
         mBaseSpaceItemDecoration = createSpaceItemDecoration(showDivider, mItemSpace);
 
-        if (a.hasValue(R.styleable.OmegaRecyclerView_itemSpace)) addItemDecoration(mBaseSpaceItemDecoration);
+        if (a.hasValue(R.styleable.OmegaRecyclerView_itemSpace))
+            addItemDecoration(mBaseSpaceItemDecoration);
     }
 
     protected BaseSpaceItemDecoration createSpaceItemDecoration(int showDivider, int itemSpace) {
@@ -180,6 +189,59 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
         mStickyMode = a.getInt(R.styleable.OmegaRecyclerView_stickyMode, mStickyMode);
     }
 
+    private void initHeaderAndFooter(int section, TypedArray a) {
+        if (section == HEADER) {
+            if (a.hasValue(R.styleable.OmegaRecyclerView_Layout_sectionType)) {
+                mHeaderType = a.getInt(R.styleable.OmegaRecyclerView_Layout_sectionType, mHeaderType);
+            }
+            if (a.hasValue(R.styleable.OmegaRecyclerView_Layout_spanSize)) {
+                mHeaderSpanSize = a.getInt(R.styleable.OmegaRecyclerView_Layout_spanSize, 0);
+            }
+        } else if (section == FOOTER) {
+            if (a.hasValue(R.styleable.OmegaRecyclerView_Layout_sectionType)) {
+                mFooterType = a.getInt(R.styleable.OmegaRecyclerView_Layout_sectionType, mHeaderType);
+            }
+            if (a.hasValue(R.styleable.OmegaRecyclerView_Layout_spanSize)) {
+                mFooterSpanSize = a.getInt(R.styleable.OmegaRecyclerView_Layout_spanSize, 0);
+            }
+        }
+    }
+
+    private void checkLayoutManager(LayoutManager layout, RecyclerView.Adapter adapter) {
+        if (layout instanceof GridLayoutManager && adapter instanceof HeaderFooterWrapperAdapter) {
+            setFooterAndHeaderSpan(
+                    (GridLayoutManager) layout,
+                    (HeaderFooterWrapperAdapter) adapter
+            );
+        }
+    }
+
+    private void setFooterAndHeaderSpan(final GridLayoutManager lm, final HeaderFooterWrapperAdapter adapter) {
+        lm.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+                if (adapter.isHeadersVisible() && adapter.isHeader(adapter.getItemViewType(position))) {
+                    return getItemSpan(lm, mHeaderType, mHeaderSpanSize);
+                }
+                if (adapter.isFootersVisible() && adapter.isFooter(adapter.getItemViewType(position))) {
+                    return getItemSpan(lm, mFooterType, mFooterSpanSize);
+                }
+                return 1;
+            }
+        });
+    }
+
+    private int getItemSpan(GridLayoutManager lm, int spanType, int span) {
+        int maxSpan = lm.getSpanCount();
+        if (spanType == SectionSize.FULL.getValue()) {
+            return maxSpan;
+        }
+        if (spanType == SectionSize.CUSTOM.getValue() && span > 0) {
+            return Math.min(span, maxSpan);
+        }
+        return 1;
+    }
+
     @Override
     @SuppressWarnings("unchecked")
     public void setAdapter(RecyclerView.Adapter adapter) {
@@ -205,6 +267,7 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
                 shellAdapter = new HeaderFooterWrapperAdapter(shellAdapter);
                 ((HeaderFooterWrapperAdapter) shellAdapter).setHeaders(mHeadersList);
                 ((HeaderFooterWrapperAdapter) shellAdapter).setFooters(mFooterList);
+                checkLayoutManager(getLayoutManager(), shellAdapter);
             }
         }
         super.setAdapter(shellAdapter);
@@ -304,6 +367,7 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
         }
         super.smoothScrollToPosition(scrollPosition);
     }
+
     @NonNull
     protected final BaseSpaceItemDecoration getSpaceDecoration() {
         return mBaseSpaceItemDecoration;
@@ -406,6 +470,7 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
             final TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.OmegaRecyclerView_Layout);
             int section = typedArray.getInt(R.styleable.OmegaRecyclerView_Layout_layout_section, 0);
             boolean showDivider = typedArray.getBoolean(R.styleable.OmegaRecyclerView_Layout_layout_showDivider, true);
+            initHeaderAndFooter(section, typedArray);
             typedArray.recycle();
             mLayoutParamCache.put(layoutParams, new SectionState(section, showDivider));
         }
@@ -432,7 +497,8 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         boolean result = mSwipeMenuHelper.handleInterceptTouchEvent(ev, super.onInterceptTouchEvent(ev));
-        if (mBaseStickyDecoration != null && !result) return mBaseStickyDecoration.onTouchEvent(this, ev, result);
+        if (mBaseStickyDecoration != null && !result)
+            return mBaseStickyDecoration.onTouchEvent(this, ev, result);
         return result;
     }
 
@@ -600,6 +666,40 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
         if (adapter instanceof HeaderFooterWrapperAdapter) {
             ((HeaderFooterWrapperAdapter) adapter).setFootersVisible(visible);
         }
+    }
+
+    public void setHeaderSpanSize(int spanSize) {
+        mHeaderSpanSize = spanSize;
+        checkLayoutManager(getLayoutManager(), getAdapter());
+    }
+
+    public int getHeaderSpanSize() {
+        return mHeaderSpanSize;
+    }
+
+    public void setFooterSpanSize(int spanSize) {
+        mFooterSpanSize = spanSize;
+        checkLayoutManager(getLayoutManager(), getAdapter());
+    }
+
+    public int getFooterSpanSize() {
+        return mFooterSpanSize;
+    }
+
+    public void setHeaderType(SectionSize sizeType) {
+        mHeaderType = sizeType.getValue();
+    }
+
+    public SectionSize getHeaderType() {
+        return SectionSize.valueOf(mHeaderType);
+    }
+
+    public void setFooterType(SectionSize sizeType) {
+        mFooterType = sizeType.getValue();
+    }
+
+    public SectionSize getFooterType() {
+        return SectionSize.valueOf(mFooterType);
     }
 
     private final AdapterDataObserver mEmptyObserver = new AdapterDataObserver() {
