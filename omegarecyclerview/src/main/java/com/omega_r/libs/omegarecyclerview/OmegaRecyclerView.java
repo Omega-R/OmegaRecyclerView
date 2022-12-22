@@ -468,7 +468,7 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
         ViewGroup.LayoutParams layoutParams = super.generateLayoutParams(attrs);
         if (!mFinishedInflate) {
             final TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.OmegaRecyclerView_Layout);
-            int section = typedArray.getInt(R.styleable.OmegaRecyclerView_Layout_layout_section, -1);
+            int section = typedArray.getInt(R.styleable.OmegaRecyclerView_Layout_layout_section, 0);
             boolean showDivider = typedArray.getBoolean(R.styleable.OmegaRecyclerView_Layout_layout_showDivider, true);
             initHeaderAndFooter(section, typedArray);
             typedArray.recycle();
