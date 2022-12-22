@@ -31,6 +31,12 @@
             <enum name="header" value="0" />
             <enum name="footer" value="1" />
         </attr>
+        <attr name="sectionType" format="enum">
+            <enum name="Custom" value="-1" />
+            <enum name="Full" value="0" />
+            <enum name="Default" value="1" />
+        </attr>
+        <attr name="spanSize" format="integer"/>
         <attr name="layout_showDivider" format="boolean" />
     </declare-styleable>
 
