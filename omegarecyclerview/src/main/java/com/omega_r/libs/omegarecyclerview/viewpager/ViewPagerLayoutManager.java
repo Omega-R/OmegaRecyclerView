@@ -89,6 +89,9 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
     private int mOrientation;
     private boolean mIsInfinite;
 
+    private int mHeight;
+    private int mWidth;
+
     ViewPagerLayoutManager(@NonNull Context context,
                            @Nullable AttributeSet attrs, int defStyleAttr,
                            @NonNull ScrollStateListener scrollStateListener) {
@@ -119,6 +122,8 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
             mCurrentPosition = mPendingPosition = NO_POSITION;
             mScrolled = mPendingScroll = 0;
             return;
+        } else if (!mIsInfinite && state.getItemCount() <= mCurrentPosition) {
+            mCurrentPosition = NO_POSITION;
         }
         if (mCurrentPosition == NO_POSITION) {
             mCurrentPosition = calculateFirstPosition();
@@ -128,6 +133,8 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
             if (mIsFirstOrEmptyLayout) {
                 initChildDimensions(recycler);
             }
+        } else if (mHeight != getHeight() || mWidth != getWidth()) {
+            initChildDimensions(recycler);
         }
         updateRecyclerDimensions();
         detachAndScrapAttachedViews(recycler);
@@ -147,6 +154,8 @@ public class ViewPagerLayoutManager extends RecyclerView.LayoutManager {
     }
 
     private void initChildDimensions(RecyclerView.Recycler recycler) {
+        mWidth = getWidth();
+        mHeight = getHeight();
         View viewToMeasure = getMeasuredChildForAdapterPosition(0, recycler);
 
         int childViewWidth = getMeasuredWidthWithMargin(viewToMeasure);
