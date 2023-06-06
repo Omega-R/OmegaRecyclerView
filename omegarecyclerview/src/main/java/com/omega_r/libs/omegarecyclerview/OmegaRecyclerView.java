@@ -603,7 +603,7 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
         if (adapter instanceof HeaderFooterWrapperAdapter) {
             adapter = ((HeaderFooterWrapperAdapter) adapter).getWrappedAdapter();
         }
-        if (adapter != null && mPageRequester.getCallback() != null && !(adapter instanceof PaginationAdapter)) {
+        if (adapter != null && !(adapter instanceof PaginationAdapter)) {
             setAdapter(new PaginationAdapter(adapter, mPaginationLayout, mPaginationErrorLayout));
         }
         mPageRequester.setPaginationCallback(callback);
