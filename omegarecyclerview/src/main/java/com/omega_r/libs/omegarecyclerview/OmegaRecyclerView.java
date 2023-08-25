@@ -654,6 +654,10 @@ public class OmegaRecyclerView extends ExpandedRecyclerView implements SwipeMenu
         }
     }
 
+    public void resetPagination() {
+        mPageRequester.reset();
+    }
+
     public void setHeadersVisibility(boolean visible) {
         RecyclerView.Adapter adapter = getAdapter();
         if (adapter instanceof HeaderFooterWrapperAdapter) {

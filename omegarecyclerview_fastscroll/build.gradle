@@ -1,5 +1,5 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'maven-publish'
 
 android {
     compileSdkVersion rootProject.compileSdkVersion
@@ -13,6 +13,28 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+publishing {
+    publications {
+        release(MavenPublication) {
+            groupId 'com.github.Omega-R.OmegaRecyclerView'
+            artifactId project.name
+            version project.hasProperty('version') ? project.version : gradle.gitHash()
+            afterEvaluate {
+                from components.release
+            }
+        }
+    }
+    repositories {
+        maven {
+            url gradle.nexusUrl
+            credentials {
+                username gradle.nexusUsername
+                password gradle.nexusPassword
+            }
         }
     }
 }
